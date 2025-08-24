@@ -6,6 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>MONO PARTY | 감정이 흐르는 무드 파티</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Playfair+Display:wght@400;700;900&display=swap');
         
@@ -54,6 +55,55 @@
             border: 1px solid var(--neon-accent);
             box-shadow: 0 0 20px rgba(0, 255, 136, 0.5), inset 0 0 20px rgba(0, 255, 136, 0.1);
             transition: all 0.3s ease;
+        }
+        
+        /* 실시간 알림 스타일 */
+        .live-viewer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--neon-accent);
+            border-radius: 10px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .notification-item {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--neon-pink);
+            border-radius: 10px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s ease;
+            margin-top: 10px;
         }
         
         /* Hero Section - Mobile Optimized */
@@ -603,8 +653,58 @@
             opacity: 0.9;
         }
         
+        /* Party Schedule Cards */
+        .party-card {
+            background: var(--bg-card);
+            border: 2px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .party-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+        
+        .party-card.saturday {
+            border-color: var(--neon-pink);
+        }
+        
+        .floating-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            padding: 8px 16px;
+            font-weight: 700;
+            z-index: 2;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
         /* Mobile Specific Optimizations */
         @media (max-width: 768px) {
+            /* 실시간 알림을 하단에 표시 */
+            .live-viewer {
+                bottom: 20px;
+                top: auto;
+                right: 20px;
+                left: 20px;
+                max-width: none;
+            }
+            
+            #notificationContainer {
+                position: fixed;
+                bottom: 80px;
+                right: 20px;
+                left: 20px;
+                max-width: none !important;
+            }
+            
             /* Reduce padding on mobile */
             .section {
                 padding: 50px 15px;
@@ -664,11 +764,6 @@
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
         }
         
         @keyframes neonFlicker {
@@ -764,19 +859,6 @@
             }
         }
         
-        /* Mobile Menu Button (if needed) */
-        .mobile-menu-button {
-            display: none;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: var(--bg-card);
-            border: 1px solid var(--input-border);
-            padding: 10px;
-            border-radius: 10px;
-        }
-        
         /* Optimize images loading */
         img {
             loading: lazy;
@@ -846,6 +928,19 @@
 <body>
     <!-- Particles Background - Desktop Only -->
     <div class="particles" id="particles"></div>
+    
+    <!-- 실시간 조회 인원 및 알림 -->
+    <div class="live-viewer">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="live-dot"></div>
+            <span style="color: var(--neon-accent); font-size: 0.9rem;">현재 <span id="viewerCount">23</span>명이 보고 있어요</span>
+        </div>
+    </div>
+    
+    <!-- 실시간 참여 알림 컨테이너 -->
+    <div id="notificationContainer" style="position: fixed; top: 70px; right: 20px; z-index: 1000; max-width: 300px;">
+        <!-- 알림이 여기에 추가됩니다 -->
+    </div>
     
     <!-- Hero Section -->
     <section class="hero">
@@ -1144,7 +1239,7 @@
         </div>
     </section>
     
-    <!-- Video Section -->
+    <!-- Video Section with TOP 3 -->
     <section class="section" style="background: var(--bg-primary); position: relative; overflow: hidden;">
         <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 30% 50%, rgba(255, 0, 102, 0.1) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(0, 229, 255, 0.1) 0%, transparent 50%);"></div>
         
@@ -1305,7 +1400,7 @@
         
         <div style="position: relative; z-index: 1;">
             <h2 class="section-title">
-                파티계의 끝판왕,<br><span class="neon-glow">느좋남의 정석</span>
+                파티계의 끝판왕,<br><span class="neon-glow">느좟남의 정석</span>
             </h2>
             
             <div style="max-width: 1200px; margin: 50px auto;">
@@ -1467,7 +1562,7 @@
                             자연스럽게 섞이는게 신기해요!"
                         </p>
                     </div>
-                    <div class="floating-badge" style="position: absolute; top: 20px; right: 20px; background: var(--neon-accent); color: var(--bg-primary); padding: 8px 16px; font-weight: 700; z-index: 2; border-radius: 20px; font-size: 0.85rem;">
+                    <div class="floating-badge">
                         매회차 마감
                     </div>
                 </div>
@@ -1576,6 +1671,20 @@
         </div>
     </section>
     
+    <!-- 파티 일정 섹션 (새로 추가) -->
+    <section class="section" style="background: var(--bg-secondary);">
+        <h2 class="section-title">🗓️ 다가오는 파티 일정</h2>
+        
+        <div id="upcomingParties" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px;">
+            <!-- 파티 날짜가 여기에 동적으로 추가됩니다 -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">선착순 마감! 서둘러 신청하세요</p>
+            <a href="application.html" class="cta-button neon-glow">지금 참가 신청하기</a>
+        </div>
+    </section>
+    
     <!-- FAQ Section -->
     <section class="section" style="background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);">
         <h2 class="section-title">자주 묻는 질문</h2>
@@ -1610,9 +1719,8 @@
             <div class="faq-item">
                 <h3>언제 파티가 열리나요?</h3>
                 <p>
-                    매주 목요일과 토요일에 파티가 열립니다. 
-                    평일의 피로를 날려버릴 목요일 파티와 주말의 시작을 알리는 토요일 파티! 
-                    두 파티 모두 같은 퀄리티의 프로그램으로 진행되니 편한 날짜에 참여하세요.
+                    파티 일정은 유동적으로 운영됩니다. 위의 파티 일정을 확인해주세요!
+                    보통 주말 위주로 진행되며, 특별한 날에는 스페셜 파티도 열립니다.
                 </p>
             </div>
             
@@ -1639,7 +1747,7 @@
             
             <div style="background: rgba(0, 255, 136, 0.1); border: 2px solid var(--neon-accent); padding: 30px 20px; margin-bottom: 35px; border-radius: 15px;">
                 <p style="font-size: 1.3rem; margin-bottom: 18px; font-weight: 700;">
-                    매주 <span style="color: var(--neon-accent);">목요일 & 토요일</span>
+                    매주 <span style="color: var(--neon-accent);">스페셜 파티</span>
                 </p>
                 <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6;">
                     선착순 70명만 받습니다.<br>
@@ -1724,10 +1832,187 @@
     </footer>
     
     <script>
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://wframchrsfspkxrpughn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmcmFtY2hyc2ZzcGt4cnB1Z2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0OTg1NDIsImV4cCI6MjA2OTA3NDU0Mn0.62tDcKGS8eVPC92MmO6mXyfNcM6QKiaRpydaBYKsum0';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // 실시간 조회 인원 업데이트
+        function updateViewerCount() {
+            const count = Math.floor(Math.random() * 100) + 1;
+            document.getElementById('viewerCount').textContent = count;
+        }
+        
+        // 5초마다 조회 인원 업데이트
+        setInterval(updateViewerCount, 5000);
+        
+        // 실시간 참여 알림 표시
+        function showNotification(gender, age) {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            
+            notification.className = 'notification-item';
+            notification.style.opacity = '0';
+            
+            const genderText = gender === 'male' ? '남성' : '여성';
+            const emoji = gender === 'male' ? '🤵' : '👗';
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">${emoji}</span>
+                    <div>
+                        <div style="color: var(--text-primary); font-weight: 500;">${genderText}(${age}세)</div>
+                        <div style="color: var(--text-secondary); font-size: 0.8rem;">방금 참가 신청</div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertBefore(notification, container.firstChild);
+            
+            // 애니메이션
+            setTimeout(() => {
+                notification.style.opacity = '1';
+            }, 100);
+            
+            // 5초 후 제거
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 5000);
+            
+            // 최대 3개까지만 표시
+            const notifications = container.children;
+            if (notifications.length > 3) {
+                notifications[notifications.length - 1].remove();
+            }
+        }
+        
+        // 파티 날짜 불러오기
+        async function loadPartyDates() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('party_schedules')
+                    .select('*')
+                    .eq('is_active', true)
+                    .gte('party_date', new Date().toISOString().split('T')[0])
+                    .order('party_date', { ascending: true })
+                    .limit(6);
+                
+                if (error) throw error;
+                
+                const container = document.getElementById('upcomingParties');
+                
+                if (data && data.length > 0) {
+                    container.innerHTML = data.map(party => {
+                        const date = new Date(party.party_date + 'T00:00:00');
+                        const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                        const dayOfWeek = dayNames[date.getDay()];
+                        const month = date.getMonth() + 1;
+                        const day = date.getDate();
+                        
+                        // 토요일은 특별 표시
+                        const isSaturday = date.getDay() === 6;
+                        const borderColor = isSaturday ? 'var(--neon-pink)' : 'var(--neon-accent)';
+                        
+                        return `
+                            <div class="party-card ${isSaturday ? 'saturday' : ''}" style="border-color: ${borderColor};">
+                                <div style="font-size: 2.5rem; margin-bottom: 10px;">
+                                    ${isSaturday ? '🎉' : '✨'}
+                                </div>
+                                <div style="font-size: 1.8rem; font-weight: 700; color: ${borderColor};">
+                                    ${month}월 ${day}일
+                                </div>
+                                <div style="font-size: 1.2rem; color: var(--text-secondary); margin-top: 5px;">
+                                    ${dayOfWeek}요일
+                                </div>
+                                <div style="margin-top: 15px; padding: 8px; background: rgba(0, 255, 136, 0.1); border-radius: 20px;">
+                                    <span style="color: var(--neon-accent); font-size: 0.9rem;">잔여 ${Math.floor(Math.random() * 20) + 5}석</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                            <p style="color: var(--text-secondary); font-size: 1.1rem;">
+                                새로운 파티 일정을 준비중입니다.<br>
+                                인스타그램에서 최신 소식을 확인하세요!
+                            </p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading party dates:', error);
+                // 에러 시 기본 표시
+                const container = document.getElementById('upcomingParties');
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                        <p style="color: var(--text-secondary); font-size: 1.1rem;">
+                            파티 일정을 확인중입니다...<br>
+                            잠시만 기다려주세요!
+                        </p>
+                    </div>
+                `;
+            }
+        }
+        
+        // 실시간 알림 구독
+        async function subscribeToNotifications() {
+            const channel = supabaseClient
+                .channel('notifications')
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'live_notifications'
+                }, (payload) => {
+                    if (payload.new.type === 'registration') {
+                        showNotification(payload.new.gender, payload.new.age);
+                    }
+                })
+                .subscribe();
+        }
+        
+        // 실제 신청 시 알림 추가
+        async function subscribeToApplications() {
+            const channel = supabaseClient
+                .channel('applications')
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'applications'
+                }, (payload) => {
+                    // 실제 신청이 들어오면 알림 표시
+                    showNotification(payload.new.gender, payload.new.age);
+                })
+                .subscribe();
+        }
+        
+        // 랜덤 알림 생성 (초기 활성화를 위해)
+        function generateRandomNotifications() {
+            // 페이지 로드 후 3-10초 사이에 첫 알림
+            setTimeout(() => {
+                const gender = Math.random() > 0.5 ? 'male' : 'female';
+                const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
+                showNotification(gender, age);
+            }, Math.random() * 7000 + 3000);
+            
+            // 이후 20-60초마다 랜덤 알림
+            setInterval(() => {
+                if (Math.random() > 0.7) { // 30% 확률로 알림 생성
+                    const gender = Math.random() > 0.5 ? 'male' : 'female';
+                    const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
+                    showNotification(gender, age);
+                }
+            }, Math.random() * 40000 + 20000);
+        }
+        
         // Create floating particles - Desktop only
         if (window.innerWidth > 768) {
             const particlesContainer = document.getElementById('particles');
-            const particleCount = 30; // Reduced for better performance
+            const particleCount = 30;
             
             for (let i = 0; i < particleCount; i++) {
                 const particle = document.createElement('div');
@@ -1738,116 +2023,6 @@
                 particlesContainer.appendChild(particle);
             }
         }
-        
-        // Smooth scroll for CTA buttons
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-        
-        // Mobile-optimized scroll reveal
-        if ('IntersectionObserver' in window) {
-            const observerOptions = {
-                threshold: 0.05,
-                rootMargin: '0px 0px -30px 0px'
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, observerOptions);
-            
-            // Observe elements with simpler selectors for better performance
-            document.querySelectorAll('.section, .concept-card, .testimonial').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(el);
-            });
-        }
-        
-        // Touch-friendly interactions
-        if ('ontouchstart' in window) {
-            // Add touch feedback to interactive elements
-            document.querySelectorAll('.cta-button, .concept-card, .feature-item').forEach(el => {
-                el.addEventListener('touchstart', function() {
-                    this.style.transform = 'scale(0.98)';
-                });
-                
-                el.addEventListener('touchend', function() {
-                    this.style.transform = '';
-                });
-            });
-        }
-        
-        // Optimize video loading on mobile
-        const videos = document.querySelectorAll('iframe');
-        if (videos.length > 0 && 'IntersectionObserver' in window) {
-            const videoObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const iframe = entry.target;
-                        if (!iframe.src && iframe.dataset.src) {
-                            iframe.src = iframe.dataset.src;
-                        }
-                    }
-                });
-            }, { rootMargin: '200px' });
-            
-            videos.forEach(video => {
-                videoObserver.observe(video);
-            });
-        }
-        
-        // Prevent zoom on iOS when focusing inputs
-        document.addEventListener('touchstart', function(event) {
-            if (event.touches.length > 1) {
-                event.preventDefault();
-            }
-        });
-        
-        // Add viewport height fix for mobile browsers
-        function setVH() {
-            let vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        }
-        
-        setVH();
-        window.addEventListener('resize', setVH);
-        window.addEventListener('orientationchange', setVH);
-        
-        // Optimize scroll performance
-        let ticking = false;
-        function requestTick() {
-            if (!ticking) {
-                window.requestAnimationFrame(updateOnScroll);
-                ticking = true;
-            }
-        }
-        
-        function updateOnScroll() {
-            ticking = false;
-            // Add any scroll-based animations here
-        }
-        
-        // Throttle scroll events
-        let scrollTimeout;
-        window.addEventListener('scroll', function() {
-            if (scrollTimeout) {
-                window.cancelAnimationFrame(scrollTimeout);
-            }
-            scrollTimeout = window.requestAnimationFrame(requestTick);
-        }, { passive: true });
         
         // Create floating emojis - Desktop only
         if (window.innerWidth > 768) {
@@ -1880,17 +2055,94 @@
             setInterval(createFloatingEmoji, 4000);
         }
         
-        // Preload critical images
-        const criticalImages = [
-            'https://ifh.cc/g/cg9lOf.jpg',
-            'https://ifh.cc/g/DtMZ8p.webp',
-            'https://ifh.cc/g/xxbXJt.webp'
-        ];
-        
-        criticalImages.forEach(src => {
-            const img = new Image();
-            img.src = src;
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPartyDates();
+            subscribeToNotifications();
+            subscribeToApplications();
+            generateRandomNotifications();
+            updateViewerCount();
+            
+            // Smooth scroll for CTA buttons
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+            
+            // Mobile-optimized scroll reveal
+            if ('IntersectionObserver' in window) {
+                const observerOptions = {
+                    threshold: 0.05,
+                    rootMargin: '0px 0px -30px 0px'
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
+                
+                // Observe elements with simpler selectors for better performance
+                document.querySelectorAll('.section, .concept-card, .testimonial').forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(20px)';
+                    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    observer.observe(el);
+                });
+            }
+            
+            // Touch-friendly interactions
+            if ('ontouchstart' in window) {
+                // Add touch feedback to interactive elements
+                document.querySelectorAll('.cta-button, .concept-card, .feature-item').forEach(el => {
+                    el.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.98)';
+                    });
+                    
+                    el.addEventListener('touchend', function() {
+                        this.style.transform = '';
+                    });
+                });
+            }
+            
+            // Preload critical images
+            const criticalImages = [
+                'https://ifh.cc/g/cg9lOf.jpg',
+                'https://ifh.cc/g/DtMZ8p.webp',
+                'https://ifh.cc/g/xxbXJt.webp'
+            ];
+            
+            criticalImages.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
         });
+        
+        // Prevent zoom on iOS when focusing inputs
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        });
+        
+        // Add viewport height fix for mobile browsers
+        function setVH() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        setVH();
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', setVH);
     </script>
 </body>
 </html>
