@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MONO PARTY | 일정 관리</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Playfair+Display:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --neon-accent: #00ff88;
+            --neon-pink: #ff0066;
+            --neon-blue: #00e5ff;
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-card: #111111;
+            --input-bg: #1a1a1a;
+            --input-border: #333333;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            color: var(--neon-accent);
+            text-shadow: 0 0 20px var(--neon-accent);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+        
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--neon-accent);
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+        
+        .calendar-container {
+            background: var(--input-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-month {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .calendar-nav-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-primary);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .calendar-nav-btn:hover {
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-secondary);
+            padding: 10px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .calendar-day:hover {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: var(--neon-accent);
+        }
+        
+        .calendar-day.selected {
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            font-weight: 700;
+        }
+        
+        .calendar-day.has-party {
+            border-color: var(--neon-pink);
+            background: rgba(255, 0, 102, 0.1);
+        }
+        
+        .calendar-day.has-party::after {
+            content: '🎉';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.8rem;
+        }
+        
+        .selected-dates {
+            background: var(--input-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .date-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .date-item {
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            padding: 10px 15px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .date-remove {
+            background: var(--neon-pink);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .date-remove:hover {
+            transform: scale(1.1);
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+        
+        .btn-danger {
+            background: var(--neon-pink);
+        }
+        
+        .btn-danger:hover {
+            box-shadow: 0 10px 30px rgba(255, 0, 102, 0.3);
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .setting-item {
+            background: var(--input-bg);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .setting-label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+        
+        .setting-input {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--input-border);
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--neon-accent);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .status-success {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--neon-accent);
+            color: var(--neon-accent);
+        }
+        
+        .status-error {
+            background: rgba(255, 0, 102, 0.1);
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+        }
+        
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .login-box {
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        
+        #mainContent {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <h1 class="logo">MONO PARTY</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 30px;">관리자 로그인</p>
+            <input type="password" class="login-input" id="passwordInput" placeholder="비밀번호를 입력하세요" onkeypress="if(event.keyCode==13) checkPassword()">
+            <button class="btn" onclick="checkPassword()" style="width: 100%;">로그인</button>
+            <p class="status-message status-error" id="loginError" style="margin-top: 15px;">비밀번호가 틀렸습니다.</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+        <div class="container">
+            <div class="header">
+                <h1 class="logo">MONO PARTY</h1>
+                <p class="subtitle">파티 일정 관리 시스템</p>
+            </div>
+            
+            <!-- Calendar Section -->
+            <div class="section">
+                <h2 class="section-title">📅 파티 날짜 선택</h2>
+                
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div class="calendar-month" id="currentMonth">2025년 1월</div>
+                        <div class="calendar-nav">
+                            <button class="calendar-nav-btn" onclick="prevMonth()">◀</button>
+                            <button class="calendar-nav-btn" onclick="nextMonth()">▶</button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Calendar will be generated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="selected-dates">
+                    <h3>선택된 파티 날짜</h3>
+                    <div class="date-list" id="selectedDatesList">
+                        <!-- Selected dates will appear here -->
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="savePartyDates()">날짜 저장하기</button>
+                <button class="btn btn-danger" onclick="clearAllDates()" style="margin-left: 10px;">모든 날짜 초기화</button>
+            </div>
+            
+            <!-- Settings Section -->
+            <div class="section">
+                <h2 class="section-title">⚙️ 파티 설정</h2>
+                
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label class="setting-label">참가 신청 받기</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="registrationToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label class="setting-label">파티 정원 (기본: 70명)</label>
+                        <input type="number" class="setting-input" id="maxCapacity" value="70" min="10" max="200">
+                    </div>
+                    
+                    <div class="setting-item">
+                        <label class="setting-label">공지사항 (선택사항)</label>
+                        <textarea class="setting-input" id="announcement" rows="3" placeholder="파티 관련 공지사항을 입력하세요"></textarea>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="saveSettings()" style="margin-top: 20px;">설정 저장하기</button>
+            </div>
+            
+            <!-- Simulation Section -->
+            <div class="section">
+                <h2 class="section-title">🎮 테스트 알림 발송</h2>
+                
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label class="setting-label">테스트 참가 알림 보내기</label>
+                        <button class="btn" onclick="sendTestNotification()">랜덤 참가 알림 발송</button>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 10px;">
+                            메인 페이지에 "여성(25세) 방금 참가" 같은 알림이 표시됩니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status Messages -->
+            <div class="status-message status-success" id="successMessage">
+                ✅ 저장되었습니다!
+            </div>
+            
+            <div class="status-message status-error" id="errorMessage">
+                ❌ 오류가 발생했습니다.
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://wframchrsfspkxrpughn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmcmFtY2hyc2ZzcGt4cnB1Z2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0OTg1NDIsImV4cCI6MjA2OTA3NDU0Mn0.62tDcKGS8eVPC92MmO6mXyfNcM6QKiaRpydaBYKsum0';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Admin password
+        const ADMIN_PASSWORD = '1234';
+        
+        // Calendar variables
+        let currentYear = 2025;
+        let currentMonth = 0; // January
+        let selectedDates = new Set();
+        const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+        const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+        
+        // Check password
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === ADMIN_PASSWORD) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                loadExistingDates();
+                loadSettings();
+                generateCalendar();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+        
+        // Load existing party dates
+        async function loadExistingDates() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('party_schedules')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('party_date', { ascending: true });
+                
+                if (error) throw error;
+                
+                selectedDates.clear();
+                if (data) {
+                    data.forEach(item => {
+                        selectedDates.add(item.party_date);
+                    });
+                }
+                
+                updateSelectedDatesList();
+                generateCalendar();
+            } catch (error) {
+                console.error('Error loading dates:', error);
+            }
+        }
+        
+        // Load settings
+        async function loadSettings() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('party_settings')
+                    .select('*')
+                    .single();
+                
+                if (data) {
+                    document.getElementById('registrationToggle').checked = data.is_registration_open;
+                    document.getElementById('announcement').value = data.announcement_text || '';
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+        
+        // Generate calendar
+        function generateCalendar() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            const currentMonthElement = document.getElementById('currentMonth');
+            
+            currentMonthElement.textContent = `${currentYear}년 ${monthNames[currentMonth]}`;
+            
+            // Clear calendar
+            calendarGrid.innerHTML = '';
+            
+            // Add day headers
+            dayNames.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day-header';
+                dayHeader.textContent = day;
+                calendarGrid.appendChild(dayHeader);
+            });
+            
+            // Get first day of month and number of days
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Add days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                // Check if date is selected
+                if (selectedDates.has(dateStr)) {
+                    dayElement.classList.add('has-party');
+                }
+                
+                // Check if date is in the past
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const currentDate = new Date(currentYear, currentMonth, day);
+                
+                if (currentDate >= today) {
+                    dayElement.addEventListener('click', () => toggleDate(dateStr));
+                } else {
+                    dayElement.style.opacity = '0.3';
+                    dayElement.style.cursor = 'not-allowed';
+                }
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+        
+        // Toggle date selection
+        function toggleDate(dateStr) {
+            if (selectedDates.has(dateStr)) {
+                selectedDates.delete(dateStr);
+            } else {
+                selectedDates.add(dateStr);
+            }
+            generateCalendar();
+            updateSelectedDatesList();
+        }
+        
+        // Update selected dates list
+        function updateSelectedDatesList() {
+            const list = document.getElementById('selectedDatesList');
+            list.innerHTML = '';
+            
+            const sortedDates = Array.from(selectedDates).sort();
+            
+            sortedDates.forEach(dateStr => {
+                const dateItem = document.createElement('div');
+                dateItem.className = 'date-item';
+                
+                const date = new Date(dateStr + 'T00:00:00');
+                const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+                
+                dateItem.innerHTML = `
+                    <span>${dateStr} (${dayOfWeek})</span>
+                    <button class="date-remove" onclick="removeDate('${dateStr}')">×</button>
+                `;
+                
+                list.appendChild(dateItem);
+            });
+            
+            if (sortedDates.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-secondary);">선택된 날짜가 없습니다.</p>';
+            }
+        }
+        
+        // Remove date
+        function removeDate(dateStr) {
+            selectedDates.delete(dateStr);
+            generateCalendar();
+            updateSelectedDatesList();
+        }
+        
+        // Navigate calendar
+        function prevMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            generateCalendar();
+        }
+        
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            generateCalendar();
+        }
+        
+        // Save party dates
+        async function savePartyDates() {
+            try {
+                // First, deactivate all existing dates
+                await supabaseClient
+                    .from('party_schedules')
+                    .update({ is_active: false })
+                    .eq('is_active', true);
+                
+                // Then, insert new dates
+                const newDates = Array.from(selectedDates).map(date => ({
+                    party_date: date,
+                    is_active: true,
+                    max_capacity: parseInt(document.getElementById('maxCapacity').value) || 70
+                }));
+                
+                if (newDates.length > 0) {
+                    const { error } = await supabaseClient
+                        .from('party_schedules')
+                        .insert(newDates);
+                    
+                    if (error) throw error;
+                }
+                
+                showMessage('success', '파티 날짜가 저장되었습니다!');
+            } catch (error) {
+                console.error('Error saving dates:', error);
+                showMessage('error', '저장 중 오류가 발생했습니다.');
+            }
+        }
+        
+        // Save settings
+        async function saveSettings() {
+            try {
+                const { error } = await supabaseClient
+                    .from('party_settings')
+                    .update({
+                        is_registration_open: document.getElementById('registrationToggle').checked,
+                        announcement_text: document.getElementById('announcement').value,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', 1);
+                
+                if (error) throw error;
+                
+                showMessage('success', '설정이 저장되었습니다!');
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                showMessage('error', '저장 중 오류가 발생했습니다.');
+            }
+        }
+        
+        // Clear all dates
+        function clearAllDates() {
+            if (confirm('정말로 모든 파티 날짜를 초기화하시겠습니까?')) {
+                selectedDates.clear();
+                generateCalendar();
+                updateSelectedDatesList();
+            }
+        }
+        
+        // Send test notification
+        async function sendTestNotification() {
+            try {
+                const genders = ['male', 'female'];
+                const gender = genders[Math.floor(Math.random() * genders.length)];
+                const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
+                
+                const { error } = await supabaseClient
+                    .from('live_notifications')
+                    .insert({
+                        type: 'registration',
+                        gender: gender,
+                        age: age
+                    });
+                
+                if (error) throw error;
+                
+                showMessage('success', `테스트 알림이 발송되었습니다: ${gender === 'male' ? '남성' : '여성'}(${age}세)`);
+            } catch (error) {
+                console.error('Error sending notification:', error);
+                showMessage('error', '알림 발송 중 오류가 발생했습니다.');
+            }
+        }
+        
+        // Show message
+        function showMessage(type, message) {
+            const messageEl = type === 'success' ? 
+                document.getElementById('successMessage') : 
+                document.getElementById('errorMessage');
+            
+            messageEl.textContent = message;
+            messageEl.style.display = 'block';
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('passwordInput').focus();
+        });
+    </script>
+</body>
+</html>
