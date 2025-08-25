@@ -206,6 +206,8 @@
             -webkit-touch-callout: none;
             -webkit-user-select: none;
             user-select: none;
+            -webkit-tap-highlight-color: transparent; /* 추가 */
+            z-index: 10; /* 추가 */
         }
         
         .cta-button::before {
@@ -232,7 +234,8 @@
         
         /* Touch feedback for mobile */
         .cta-button:active {
-            transform: scale(0.98);
+            transform: scale(0.95);
+            background: rgba(0, 255, 136, 0.9); /* 추가: 색상 변화로 피드백 강화 */
         }
         
         /* Section Styles - Mobile Optimized */
@@ -695,7 +698,14 @@
                 right: 20px;
                 left: 20px;
                 max-width: none;
+                pointer-events: none; /* 추가: 클릭 이벤트 통과 */
             }
+
+                .live-viewer > * {
+        pointer-events: auto; /* 추가: 자식 요소는 클릭 가능 */
+    }
+    
+            
             
             #notificationContainer {
                 position: fixed;
@@ -703,7 +713,19 @@
                 right: 20px;
                 left: 20px;
                 max-width: none !important;
+                pointer-events: none; /* 추가: 컨테이너는 클릭 통과 */
             }
+                .notification-item {
+        pointer-events: auto; /* 추가: 알림 아이템은 클릭 가능 */
+    }
+    
+    /* CTA 버튼 z-index 우선순위 높이기 */
+    .cta-button {
+        position: relative;
+        z-index: 1001; /* 추가: 알림보다 위에 표시 */
+    }
+
+            
             
             /* Reduce padding on mobile */
             .section {
@@ -2156,7 +2178,56 @@ async function loadPartyDates() {
                 img.src = src;
             });
         });
+         // 모바일에서 CTA 버튼 클릭 이벤트 보장
+    document.querySelectorAll('.cta-button').forEach(button => {
+        // 터치 이벤트 개선
+        button.addEventListener('touchstart', function(e) {
+            this.style.transform = 'scale(0.95)';
+            this.style.background = 'rgba(0, 255, 136, 0.9)';
+        }, {passive: true});
         
+        button.addEventListener('touchend', function(e) {
+            this.style.transform = '';
+            this.style.background = '';
+            
+            // 링크 클릭 확인
+            console.log('Button clicked:', this.href);
+            
+            // 만약 href가 있으면 페이지 이동
+            if (this.href) {
+                window.location.href = this.href;
+            }
+        }, {passive: false});
+        
+        // 클릭 이벤트도 추가 (데스크톱 호환성)
+        button.addEventListener('click', function(e) {
+            console.log('Button clicked (click event):', this.href);
+        });
+    });
+    
+    // iOS Safari 버그 해결
+    document.addEventListener('touchstart', function() {}, {passive: true});
+    
+    // 모바일에서 z-index 충돌 해결
+    if (window.innerWidth <= 768) {
+        // 모든 CTA 버튼의 z-index를 높임
+        document.querySelectorAll('.cta-button').forEach(button => {
+            button.style.position = 'relative';
+            button.style.zIndex = '1001';
+        });
+        
+        // 알림 컨테이너가 버튼을 가리지 않도록 설정
+        const notificationContainer = document.getElementById('notificationContainer');
+        if (notificationContainer) {
+            notificationContainer.style.pointerEvents = 'none';
+        }
+        
+        const liveViewer = document.querySelector('.live-viewer');
+        if (liveViewer) {
+            liveViewer.style.pointerEvents = 'none';
+        }
+    }
+
         // Prevent zoom on iOS when focusing inputs
         document.addEventListener('touchstart', function(event) {
             if (event.touches.length > 1) {
