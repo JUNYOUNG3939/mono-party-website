@@ -2169,14 +2169,23 @@ function getFemaleBenefitBadge(benefit) {
                 message_sent: false,
                 message_responded: false,
                 participation_count: 0,
-                created_at: new Date().toISOString()
+                
             };
-            
+            console.log('Sending data:', participant);  // 디버깅용
             try {
                 const { data, error } = await supabaseClient
                     .from('advanced_participants')
                     .insert([participant])
                     .select();
+                        
+                if (error) {
+            console.error('Supabase Error:', error);
+            console.error('Error details:', error.details);
+            console.error('Error message:', error.message);
+            console.error('Error hint:', error.hint);
+            alert(`저장 실패: ${error.message}`);
+            throw error;
+        }
                 
                 if (error) throw error;
                 
