@@ -551,6 +551,7 @@
         let currentYear = 2025;
         let currentMonth = 0; // January
         let selectedDates = new Map(); // Map to store date and remaining seats
+        let existingDatesFromDB = new Map(); // Store original DB data
         const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
         const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
         
@@ -575,18 +576,27 @@
                 const { data, error } = await supabaseClient
                     .from('party_schedules')
                     .select('*')
-                    .eq('is_active', true)
                     .order('party_date', { ascending: true });
                 
                 if (error) throw error;
                 
                 selectedDates.clear();
+                existingDatesFromDB.clear();
+                
                 if (data) {
                     data.forEach(item => {
-                        selectedDates.set(item.party_date, {
+                        // Active인 것만 selectedDates에 추가
+                        if (item.is_active) {
+                            selectedDates.set(item.party_date, {
+                                id: item.id,
+                                remaining_seats: item.remaining_seats || 70,
+                                max_capacity: item.max_capacity || 70
+                            });
+                        }
+                        // 모든 기존 데이터를 별도로 저장
+                        existingDatesFromDB.set(item.party_date, {
                             id: item.id,
-                            remaining_seats: item.remaining_seats || 70,
-                            max_capacity: item.max_capacity || 70
+                            is_active: item.is_active
                         });
                     });
                 }
@@ -595,6 +605,7 @@
                 generateCalendar();
             } catch (error) {
                 console.error('Error loading dates:', error);
+                showMessage('error', '데이터 로드 중 오류가 발생했습니다.');
             }
         }
         
@@ -678,7 +689,11 @@
                 selectedDates.delete(dateStr);
             } else {
                 const maxCapacity = parseInt(document.getElementById('maxCapacity').value) || 70;
+                // 기존 DB에 있는 날짜인지 확인
+                const existingDate = existingDatesFromDB.get(dateStr);
+                
                 selectedDates.set(dateStr, {
+                    id: existingDate?.id || null,
                     remaining_seats: maxCapacity,
                     max_capacity: maxCapacity
                 });
@@ -781,16 +796,20 @@
             generateCalendar();
         }
         
-        // Save party dates
+        // Save party dates - 완전히 수정된 버전
         async function savePartyDates() {
             try {
-                // First, deactivate all existing dates
-                await supabaseClient
+                showMessage('success', '저장 중...');
+                
+                // 1. 먼저 모든 기존 날짜를 비활성화
+                const { error: deactivateError } = await supabaseClient
                     .from('party_schedules')
                     .update({ is_active: false })
-                    .eq('is_active', true);
+                    .neq('id', -1); // 모든 레코드 업데이트
                 
-                // Then, insert or update new dates
+                if (deactivateError) throw deactivateError;
+                
+                // 2. 선택된 날짜들 처리
                 const promises = [];
                 
                 for (const [dateStr, dateInfo] of selectedDates) {
@@ -801,36 +820,53 @@
                         remaining_seats: dateInfo.remaining_seats
                     };
                     
-                    if (dateInfo.id) {
-                        // Update existing record
+                    // 기존 레코드가 있는지 확인
+                    const existingRecord = existingDatesFromDB.get(dateStr);
+                    
+                    if (existingRecord && existingRecord.id) {
+                        // 기존 레코드 업데이트
                         promises.push(
                             supabaseClient
                                 .from('party_schedules')
                                 .update(partyData)
-                                .eq('id', dateInfo.id)
+                                .eq('id', existingRecord.id)
                         );
                     } else {
-                        // Insert new record
+                        // 새 레코드 삽입
                         promises.push(
                             supabaseClient
                                 .from('party_schedules')
-                                .insert(partyData)
+                                .upsert({
+                                    ...partyData,
+                                    party_date: dateStr // party_date를 unique key로 사용
+                                }, {
+                                    onConflict: 'party_date'
+                                })
                         );
                     }
                 }
                 
-                await Promise.all(promises);
+                // 3. 모든 작업 실행
+                const results = await Promise.all(promises);
                 
-                showMessage('success', '파티 날짜와 잔여석이 저장되었습니다!');
+                // 에러 체크
+                results.forEach((result, index) => {
+                    if (result.error) {
+                        console.error(`Error at index ${index}:`, result.error);
+                        throw result.error;
+                    }
+                });
                 
-                // Reload to get updated IDs
+                showMessage('success', '✅ 파티 날짜와 잔여석이 성공적으로 저장되었습니다!');
+                
+                // 4. 데이터 다시 로드 (ID 업데이트를 위해)
                 setTimeout(() => {
                     loadExistingDates();
-                }, 1000);
+                }, 500);
                 
             } catch (error) {
                 console.error('Error saving dates:', error);
-                showMessage('error', '저장 중 오류가 발생했습니다.');
+                showMessage('error', `저장 중 오류가 발생했습니다: ${error.message}`);
             }
         }
         
@@ -857,10 +893,11 @@
         
         // Clear all dates
         function clearAllDates() {
-            if (confirm('정말로 모든 파티 날짜를 초기화하시겠습니까?')) {
+            if (confirm('정말로 모든 파티 날짜를 초기화하시겠습니까?\n\n⚠️ 이 작업은 되돌릴 수 없습니다!')) {
                 selectedDates.clear();
                 generateCalendar();
                 updateSelectedDatesList();
+                showMessage('success', '모든 날짜가 초기화되었습니다. 저장 버튼을 눌러 변경사항을 적용하세요.');
             }
         }
         
@@ -911,6 +948,13 @@
         window.updateRemainingSeats = updateRemainingSeats;
         window.quickAdjustSeats = quickAdjustSeats;
         window.removeDate = removeDate;
+        window.prevMonth = prevMonth;
+        window.nextMonth = nextMonth;
+        window.savePartyDates = savePartyDates;
+        window.saveSettings = saveSettings;
+        window.clearAllDates = clearAllDates;
+        window.sendTestNotification = sendTestNotification;
+        window.checkPassword = checkPassword;
     </script>
 </body>
 </html>
