@@ -173,19 +173,57 @@
         
         .date-list {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            flex-direction: column;
+            gap: 15px;
             margin-top: 15px;
         }
         
         .date-item {
             background: var(--bg-card);
             border: 1px solid var(--neon-accent);
-            padding: 10px 15px;
-            border-radius: 25px;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .date-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .date-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .remaining-seats-control {
             display: flex;
             align-items: center;
             gap: 10px;
+            background: var(--input-bg);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--input-border);
+        }
+        
+        .seats-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .seats-input {
+            width: 60px;
+            padding: 5px;
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            color: var(--neon-accent);
+            text-align: center;
+            font-weight: 700;
         }
         
         .date-remove {
@@ -193,11 +231,14 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 20px;
-            height: 20px;
+            width: 30px;
+            height: 30px;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 1.2rem;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .date-remove:hover {
@@ -353,6 +394,46 @@
         #mainContent {
             display: none;
         }
+        
+        /* Quick adjust buttons */
+        .quick-adjust {
+            display: flex;
+            gap: 5px;
+            margin-left: 10px;
+        }
+        
+        .quick-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            color: var(--text-secondary);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-btn:hover {
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            border-color: var(--neon-accent);
+        }
+        
+        @media (max-width: 768px) {
+            .date-item {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .date-info {
+                width: 100%;
+            }
+            
+            .remaining-seats-control {
+                width: 100%;
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -393,13 +474,13 @@
                 </div>
                 
                 <div class="selected-dates">
-                    <h3>선택된 파티 날짜</h3>
+                    <h3>선택된 파티 날짜 & 잔여석 관리</h3>
                     <div class="date-list" id="selectedDatesList">
                         <!-- Selected dates will appear here -->
                     </div>
                 </div>
                 
-                <button class="btn" onclick="savePartyDates()">날짜 저장하기</button>
+                <button class="btn" onclick="savePartyDates()">날짜 및 잔여석 저장하기</button>
                 <button class="btn btn-danger" onclick="clearAllDates()" style="margin-left: 10px;">모든 날짜 초기화</button>
             </div>
             
@@ -417,7 +498,7 @@
                     </div>
                     
                     <div class="setting-item">
-                        <label class="setting-label">파티 정원 (기본: 70명)</label>
+                        <label class="setting-label">기본 파티 정원 (새로 추가되는 날짜에 적용)</label>
                         <input type="number" class="setting-input" id="maxCapacity" value="70" min="10" max="200">
                     </div>
                     
@@ -469,7 +550,7 @@
         // Calendar variables
         let currentYear = 2025;
         let currentMonth = 0; // January
-        let selectedDates = new Set();
+        let selectedDates = new Map(); // Map to store date and remaining seats
         const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
         const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
         
@@ -502,7 +583,11 @@
                 selectedDates.clear();
                 if (data) {
                     data.forEach(item => {
-                        selectedDates.add(item.party_date);
+                        selectedDates.set(item.party_date, {
+                            id: item.id,
+                            remaining_seats: item.remaining_seats || 70,
+                            max_capacity: item.max_capacity || 70
+                        });
                     });
                 }
                 
@@ -592,10 +677,35 @@
             if (selectedDates.has(dateStr)) {
                 selectedDates.delete(dateStr);
             } else {
-                selectedDates.add(dateStr);
+                const maxCapacity = parseInt(document.getElementById('maxCapacity').value) || 70;
+                selectedDates.set(dateStr, {
+                    remaining_seats: maxCapacity,
+                    max_capacity: maxCapacity
+                });
             }
             generateCalendar();
             updateSelectedDatesList();
+        }
+        
+        // Update remaining seats for a specific date
+        function updateRemainingSeats(dateStr, value) {
+            if (selectedDates.has(dateStr)) {
+                const dateInfo = selectedDates.get(dateStr);
+                dateInfo.remaining_seats = parseInt(value) || 0;
+                selectedDates.set(dateStr, dateInfo);
+            }
+        }
+        
+        // Quick adjust seats
+        function quickAdjustSeats(dateStr, adjustment) {
+            if (selectedDates.has(dateStr)) {
+                const dateInfo = selectedDates.get(dateStr);
+                const currentSeats = dateInfo.remaining_seats;
+                const newSeats = Math.max(0, Math.min(dateInfo.max_capacity, currentSeats + adjustment));
+                dateInfo.remaining_seats = newSeats;
+                selectedDates.set(dateStr, dateInfo);
+                document.getElementById(`seats-${dateStr}`).value = newSeats;
+            }
         }
         
         // Update selected dates list
@@ -603,9 +713,10 @@
             const list = document.getElementById('selectedDatesList');
             list.innerHTML = '';
             
-            const sortedDates = Array.from(selectedDates).sort();
+            const sortedDates = Array.from(selectedDates.keys()).sort();
             
             sortedDates.forEach(dateStr => {
+                const dateInfo = selectedDates.get(dateStr);
                 const dateItem = document.createElement('div');
                 dateItem.className = 'date-item';
                 
@@ -613,7 +724,26 @@
                 const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
                 
                 dateItem.innerHTML = `
-                    <span>${dateStr} (${dayOfWeek})</span>
+                    <div class="date-info">
+                        <span class="date-text">${dateStr} (${dayOfWeek})</span>
+                        <div class="remaining-seats-control">
+                            <span class="seats-label">잔여석:</span>
+                            <input type="number" 
+                                   class="seats-input" 
+                                   id="seats-${dateStr}"
+                                   value="${dateInfo.remaining_seats}" 
+                                   min="0" 
+                                   max="${dateInfo.max_capacity}"
+                                   onchange="updateRemainingSeats('${dateStr}', this.value)">
+                            <span class="seats-label">/ ${dateInfo.max_capacity}명</span>
+                            <div class="quick-adjust">
+                                <button class="quick-btn" onclick="quickAdjustSeats('${dateStr}', -5)">-5</button>
+                                <button class="quick-btn" onclick="quickAdjustSeats('${dateStr}', -1)">-1</button>
+                                <button class="quick-btn" onclick="quickAdjustSeats('${dateStr}', 1)">+1</button>
+                                <button class="quick-btn" onclick="quickAdjustSeats('${dateStr}', 5)">+5</button>
+                            </div>
+                        </div>
+                    </div>
                     <button class="date-remove" onclick="removeDate('${dateStr}')">×</button>
                 `;
                 
@@ -660,22 +790,44 @@
                     .update({ is_active: false })
                     .eq('is_active', true);
                 
-                // Then, insert new dates
-                const newDates = Array.from(selectedDates).map(date => ({
-                    party_date: date,
-                    is_active: true,
-                    max_capacity: parseInt(document.getElementById('maxCapacity').value) || 70
-                }));
+                // Then, insert or update new dates
+                const promises = [];
                 
-                if (newDates.length > 0) {
-                    const { error } = await supabaseClient
-                        .from('party_schedules')
-                        .insert(newDates);
+                for (const [dateStr, dateInfo] of selectedDates) {
+                    const partyData = {
+                        party_date: dateStr,
+                        is_active: true,
+                        max_capacity: dateInfo.max_capacity,
+                        remaining_seats: dateInfo.remaining_seats
+                    };
                     
-                    if (error) throw error;
+                    if (dateInfo.id) {
+                        // Update existing record
+                        promises.push(
+                            supabaseClient
+                                .from('party_schedules')
+                                .update(partyData)
+                                .eq('id', dateInfo.id)
+                        );
+                    } else {
+                        // Insert new record
+                        promises.push(
+                            supabaseClient
+                                .from('party_schedules')
+                                .insert(partyData)
+                        );
+                    }
                 }
                 
-                showMessage('success', '파티 날짜가 저장되었습니다!');
+                await Promise.all(promises);
+                
+                showMessage('success', '파티 날짜와 잔여석이 저장되었습니다!');
+                
+                // Reload to get updated IDs
+                setTimeout(() => {
+                    loadExistingDates();
+                }, 1000);
+                
             } catch (error) {
                 console.error('Error saving dates:', error);
                 showMessage('error', '저장 중 오류가 발생했습니다.');
@@ -687,12 +839,12 @@
             try {
                 const { error } = await supabaseClient
                     .from('party_settings')
-                    .update({
+                    .upsert({
+                        id: 1,
                         is_registration_open: document.getElementById('registrationToggle').checked,
                         announcement_text: document.getElementById('announcement').value,
                         updated_at: new Date().toISOString()
-                    })
-                    .eq('id', 1);
+                    });
                 
                 if (error) throw error;
                 
@@ -754,6 +906,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('passwordInput').focus();
         });
+        
+        // Make functions globally accessible
+        window.updateRemainingSeats = updateRemainingSeats;
+        window.quickAdjustSeats = quickAdjustSeats;
+        window.removeDate = removeDate;
     </script>
 </body>
 </html>
