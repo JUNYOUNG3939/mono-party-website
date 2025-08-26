@@ -1078,16 +1078,17 @@
         </div>
         
         <div id="spotifyEmbed">
-            <iframe 
-                style="border-radius: 12px;" 
-                src="https://open.spotify.com/embed/playlist/1tlsYtkpQjsymCt4vqo8J6?utm_source=generator&theme=0" 
-                width="300" 
-                height="152" 
-                frameBorder="0" 
-                allowfullscreen="" 
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                loading="lazy">
-            </iframe>
+<iframe 
+    id="spotifyIframe"
+    style="border-radius: 12px;" 
+    src="https://open.spotify.com/embed/playlist/1tlsYtkpQjsymCt4vqo8J6?utm_source=generator&theme=0&autoplay=true" 
+    width="300" 
+    height="152" 
+    frameBorder="0" 
+    allowfullscreen="" 
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
+    loading="eager">
+</iframe>
         </div>
     </div>
 
@@ -2064,6 +2065,50 @@
         </iframe>
     </div>
 </div>
+    <!-- 자동재생 유도 오버레이 -->
+    <div id="autoplayOverlay" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 9998;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(5px);
+        cursor: pointer;
+    ">
+        <div style="
+            text-align: center;
+            padding: 40px;
+            background: var(--bg-card);
+            border: 2px solid var(--neon-accent);
+            border-radius: 20px;
+            max-width: 400px;
+            animation: fadeIn 0.5s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 20px;">🎵</div>
+            <h2 style="color: var(--neon-accent); margin-bottom: 15px; font-size: 1.8rem;">MONO PARTY VIBES</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6;">
+                최고의 경험을 위해 음악과 함께 즐겨주세요
+            </p>
+            <button onclick="startExperience()" style="
+                padding: 15px 40px;
+                background: var(--neon-accent);
+                color: var(--bg-primary);
+                border: none;
+                border-radius: 50px;
+                font-size: 1.1rem;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                음악과 함께 시작하기
+            </button>
+        </div>
+    </div>
     <script>
         // Supabase 초기화
         const SUPABASE_URL = 'https://wframchrsfspkxrpughn.supabase.co';
@@ -2383,15 +2428,97 @@ async function loadPartyDates() {
                 }
             }
 
-            // 페이지 로드 5초 후 자동으로 미니 플레이어로 변경
-            setTimeout(() => {
-                const player = document.getElementById('spotifyPlayer');
-                const miniPlayer = document.getElementById('miniMusicPlayer');
-                if (player && miniPlayer) {
-                    player.style.display = 'none';
-                    miniPlayer.style.display = 'block';
+
+            // Spotify 자동재생 시도
+            function attemptAutoplay() {
+                const spotifyIframe = document.getElementById('spotifyIframe');
+                if (spotifyIframe) {
+                    // iframe 새로고침으로 자동재생 시도
+                    const currentSrc = spotifyIframe.src;
+                    spotifyIframe.src = currentSrc.includes('autoplay=true') 
+                        ? currentSrc 
+                        : currentSrc + '&autoplay=true';
+                    
+                    // 플레이어를 잠시 표시했다가 숨기기
+                    const player = document.getElementById('spotifyPlayer');
+                    const miniPlayer = document.getElementById('miniMusicPlayer');
+                    
+                    if (player && miniPlayer) {
+                        // 3초 동안 보여주고 자동 최소화
+                        setTimeout(() => {
+                            player.style.display = 'none';
+                            miniPlayer.style.display = 'block';
+                        }, 3000);
+                    }
                 }
-            }, 5000);
+            }
+            
+            // 페이지 로드 완료 후 자동재생 시도
+            window.addEventListener('load', attemptAutoplay);
+            
+            // 첫 클릭 시 자동재생 (브라우저 정책 우회)
+            let hasUserInteracted = false;
+            document.addEventListener('click', function() {
+                if (!hasUserInteracted) {
+                    hasUserInteracted = true;
+                    attemptAutoplay();
+                    
+                    // 자동재생 성공 알림 (선택사항)
+                    const miniPlayer = document.getElementById('miniMusicPlayer');
+                    if (miniPlayer) {
+                        miniPlayer.style.animation = 'pulse 0.5s ease 3';
+                    }
+                }
+            }, { once: true });
+            
+            // 스크롤 시에도 자동재생 시도
+            document.addEventListener('scroll', function() {
+                if (!hasUserInteracted) {
+                    hasUserInteracted = true;
+                    attemptAutoplay();
+                }
+            }, { once: true });
+
+                        // 경험 시작 (자동재생 활성화)
+            window.startExperience = function() {
+                // 오버레이 숨기기
+                const overlay = document.getElementById('autoplayOverlay');
+                if (overlay) {
+                    overlay.style.display = 'none';
+                }
+                
+                // Spotify 재생
+                const spotifyIframe = document.getElementById('spotifyIframe');
+                if (spotifyIframe) {
+                    // iframe 새로고침으로 재생 시작
+                    const src = spotifyIframe.src;
+                    spotifyIframe.src = '';
+                    setTimeout(() => {
+                        spotifyIframe.src = src + '&autoplay=true';
+                    }, 100);
+                }
+                
+                // 3초 후 미니 플레이어로 전환
+                setTimeout(() => {
+                    const player = document.getElementById('spotifyPlayer');
+                    const miniPlayer = document.getElementById('miniMusicPlayer');
+                    if (player && miniPlayer) {
+                        player.style.display = 'none';
+                        miniPlayer.style.display = 'block';
+                    }
+                }, 3000);
+            }
+            
+            // 오버레이 클릭으로도 시작
+            const autoplayOverlay = document.getElementById('autoplayOverlay');
+            if (autoplayOverlay) {
+                autoplayOverlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        startExperience();
+                    }
+                });
+            }
+            
             // Smooth scroll for CTA buttons
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
