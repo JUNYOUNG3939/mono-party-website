@@ -946,8 +946,8 @@
             }
         }
     <style>
-        @media (max-width: 768px) {
-        #spotifyPlayer {
+       @media (max-width: 768px) {
+        #youtubePlayer {
             bottom: 100px !important;
             left: 50% !important;
             transform: translateX(-50%);
@@ -955,60 +955,15 @@
             max-width: 350px;
         }
         
-        #spotifyPlayer iframe {
+        #youtubePlayer iframe {
             width: 100% !important;
         }
         
-        #miniMusicPlayer {
+        #miniYoutubePlayer {
             bottom: 100px !important;
             left: 50% !important;
             transform: translateX(-50%) !important;
         }
-        
-        #miniMusicPlayer:hover {
-            transform: translateX(-50%) scale(1.05) !important;
-        }
-    }
-    
-    /* 플레이어 애니메이션 */
-    @keyframes musicSlideIn {
-        from {
-            transform: translateX(-100%);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes musicFadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    #spotifyPlayer {
-        animation: musicSlideIn 0.5s ease;
-    }
-    
-    #miniMusicPlayer {
-        animation: musicFadeIn 0.3s ease;
-    }
-    
-    /* 호버 효과 */
-    #spotifyPlayer button:hover {
-        color: var(--neon-accent) !important;
-        transform: rotate(180deg);
-    }
-    
-    #miniMusicPlayer:hover {
-        transform: scale(1.05);
-        background: rgba(0, 255, 136, 0.05) !important;
-    }
-    
-    /* 플레이어 숨김/표시 트랜지션 */
-    #spotifyPlayer, #miniMusicPlayer {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 </style>
 
@@ -1024,13 +979,8 @@
             <span style="color: var(--neon-accent); font-size: 0.9rem;">현재 <span id="viewerCount">23</span>명이 보고 있어요</span>
         </div>
     </div>
-    
-    <!-- 실시간 참여 알림 컨테이너 -->
-    <div id="notificationContainer" style="position: fixed; top: 70px; right: 20px; z-index: 1000; max-width: 300px;">
-        <!-- 알림이 여기에 추가됩니다 -->
-    </div>
-    <!-- Spotify 음악 플레이어 시작 -->
-    <div id="spotifyPlayer" style="
+    <!-- YouTube 음악 플레이어 시작 -->
+    <div id="youtubePlayer" style="
         position: fixed;
         bottom: 30px;
         left: 30px;
@@ -1061,7 +1011,7 @@
             ">
                 🎵 MONO PARTY VIBES
             </span>
-            <button onclick="toggleMusicPlayer()" style="
+            <button onclick="toggleYoutubePlayer()" style="
                 background: none;
                 border: none;
                 color: var(--text-secondary);
@@ -1077,22 +1027,21 @@
             ">▼</button>
         </div>
         
-        <div id="spotifyEmbed">
-<iframe 
-    id="spotifyIframe"
-    style="border-radius: 12px;" 
-    src="https://open.spotify.com/embed/playlist/1tlsYtkpQjsymCt4vqo8J6?utm_source=generator&theme=0&autoplay=true" 
-    width="300" 
-    height="152" 
-    frameBorder="0" 
-    allowfullscreen="" 
-    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-    loading="eager">
-</iframe>
+        <div id="youtubeEmbed">
+            <iframe 
+                id="youtubeIframe"
+                width="300" 
+                height="169" 
+                src="https://www.youtube.com/embed/DTy6sj9Gl9s?autoplay=1&loop=1&playlist=DTy6sj9Gl9s&controls=1&mute=0&enablejsapi=1" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen
+                style="border-radius: 12px;">
+            </iframe>
         </div>
     </div>
 
-    <div id="miniMusicPlayer" style="
+    <div id="miniYoutubePlayer" style="
         position: fixed;
         bottom: 30px;
         left: 30px;
@@ -1106,7 +1055,7 @@
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 5px 20px rgba(0, 255, 136, 0.2);
-    " onclick="toggleMusicPlayer()">
+    " onclick="toggleYoutubePlayer()">
         <div style="display: flex; align-items: center; gap: 12px;">
             <div class="pulse-dot" style="
                 width: 10px;
@@ -1120,7 +1069,12 @@
             </span>
         </div>
     </div>
-    <!-- Spotify 음악 플레이어 끝 -->
+    <!-- YouTube 음악 플레이어 끝 -->
+    <!-- 실시간 참여 알림 컨테이너 -->
+    <div id="notificationContainer" style="position: fixed; top: 70px; right: 20px; z-index: 1000; max-width: 300px;">
+        <!-- 알림이 여기에 추가됩니다 -->
+    </div>
+
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
@@ -2414,10 +2368,10 @@ async function loadPartyDates() {
                     closeApplicationModal();
                 }
             });
-            // Spotify 플레이어 토글 기능
-            window.toggleMusicPlayer = function() {
-                const player = document.getElementById('spotifyPlayer');
-                const miniPlayer = document.getElementById('miniMusicPlayer');
+// YouTube 플레이어 토글 기능
+            window.toggleYoutubePlayer = function() {
+                const player = document.getElementById('youtubePlayer');
+                const miniPlayer = document.getElementById('miniYoutubePlayer');
                 
                 if (player.style.display === 'none') {
                     player.style.display = 'block';
@@ -2429,57 +2383,42 @@ async function loadPartyDates() {
             }
 
 
-            // Spotify 자동재생 시도
-            function attemptAutoplay() {
-                const spotifyIframe = document.getElementById('spotifyIframe');
-                if (spotifyIframe) {
-                    // iframe 새로고침으로 자동재생 시도
-                    const currentSrc = spotifyIframe.src;
-                    spotifyIframe.src = currentSrc.includes('autoplay=true') 
-                        ? currentSrc 
-                        : currentSrc + '&autoplay=true';
-                    
-                    // 플레이어를 잠시 표시했다가 숨기기
-                    const player = document.getElementById('spotifyPlayer');
-                    const miniPlayer = document.getElementById('miniMusicPlayer');
-                    
-                    if (player && miniPlayer) {
-                        // 3초 동안 보여주고 자동 최소화
-                        setTimeout(() => {
-                            player.style.display = 'none';
-                            miniPlayer.style.display = 'block';
-                        }, 3000);
-                    }
+// YouTube 자동재생 시도
+            function attemptYoutubeAutoplay() {
+                const youtubeIframe = document.getElementById('youtubeIframe');
+                if (youtubeIframe) {
+                    // YouTube 자동재생 URL 설정
+                    const videoId = 'DTy6sj9Gl9s';
+                    youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=1&mute=0&enablejsapi=1`;
                 }
             }
             
-            // 페이지 로드 완료 후 자동재생 시도
-            window.addEventListener('load', attemptAutoplay);
+            // 페이지 로드 후 자동재생 시도
+            window.addEventListener('load', function() {
+                setTimeout(() => {
+                    attemptYoutubeAutoplay();
+                    // 5초 후 미니 플레이어로 전환
+                    const player = document.getElementById('youtubePlayer');
+                    const miniPlayer = document.getElementById('miniYoutubePlayer');
+                    if (player && miniPlayer) {
+                        setTimeout(() => {
+                            player.style.display = 'none';
+                            miniPlayer.style.display = 'block';
+                        }, 5000);
+                    }
+                }, 1000);
+            });
             
             // 첫 클릭 시 자동재생 (브라우저 정책 우회)
             let hasUserInteracted = false;
             document.addEventListener('click', function() {
                 if (!hasUserInteracted) {
                     hasUserInteracted = true;
-                    attemptAutoplay();
-                    
-                    // 자동재생 성공 알림 (선택사항)
-                    const miniPlayer = document.getElementById('miniMusicPlayer');
-                    if (miniPlayer) {
-                        miniPlayer.style.animation = 'pulse 0.5s ease 3';
-                    }
-                }
-            }, { once: true });
-            
-            // 스크롤 시에도 자동재생 시도
-            document.addEventListener('scroll', function() {
-                if (!hasUserInteracted) {
-                    hasUserInteracted = true;
-                    attemptAutoplay();
+                    attemptYoutubeAutoplay();
                 }
             }, { once: true });
 
-                        // 경험 시작 (자동재생 활성화)
+            // 경험 시작 (자동재생 활성화)
             window.startExperience = function() {
                 // 오버레이 숨기기
                 const overlay = document.getElementById('autoplayOverlay');
@@ -2487,21 +2426,17 @@ async function loadPartyDates() {
                     overlay.style.display = 'none';
                 }
                 
-                // Spotify 재생
-                const spotifyIframe = document.getElementById('spotifyIframe');
-                if (spotifyIframe) {
-                    // iframe 새로고침으로 재생 시작
-                    const src = spotifyIframe.src;
-                    spotifyIframe.src = '';
-                    setTimeout(() => {
-                        spotifyIframe.src = src + '&autoplay=true';
-                    }, 100);
+                // YouTube 재생
+                const youtubeIframe = document.getElementById('youtubeIframe');
+                if (youtubeIframe) {
+                    const videoId = 'DTy6sj9Gl9s';
+                    youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=1&mute=0&enablejsapi=1`;
                 }
                 
                 // 3초 후 미니 플레이어로 전환
                 setTimeout(() => {
-                    const player = document.getElementById('spotifyPlayer');
-                    const miniPlayer = document.getElementById('miniMusicPlayer');
+                    const player = document.getElementById('youtubePlayer');
+                    const miniPlayer = document.getElementById('miniYoutubePlayer');
                     if (player && miniPlayer) {
                         player.style.display = 'none';
                         miniPlayer.style.display = 'block';
