@@ -953,6 +953,20 @@
         50% { height: 20px; }
         100% { height: 5px; }
     }
+        /* 음악바 애니메이션 클래스 기반으로 변경 */
+#musicBars.playing > div {
+    animation-play-state: running !important;
+}
+
+#musicBars:not(.playing) > div {
+    animation-play-state: paused !important;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
     
     /* 모바일 반응형 - 겹침 문제 해결 */
     @media (max-width: 768px) {
@@ -2197,117 +2211,139 @@
         <!-- ⬇️⬇️⬇️ YouTube API 스크립트 추가 ⬇️⬇️⬇️ -->
     <script src="https://www.youtube.com/iframe_api"></script>
     
-    <script>
-        // YouTube 플레이어 변수
-        var player;
-        var isPlaying = false;
-        
-        // YouTube API 준비
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('youtubeIframe', {
-                videoId: 'DTy6sj9Gl9s',
-                playerVars: {
-                    'autoplay': 1,
-                    'loop': 1,
-                    'playlist': 'DTy6sj9Gl9s',
-                    'controls': 0,
-                    'disablekb': 1,
-                    'fs': 0,
-                    'modestbranding': 1,
-                    'playsinline': 1
-                },
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
+   <script>
+    // YouTube 플레이어 변수
+    var player;
+    var isPlaying = false;
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // YouTube API 준비
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtubeIframe', {
+            videoId: 'DTy6sj9Gl9s',
+            playerVars: {
+                'autoplay': 1,
+                'loop': 1,
+                'playlist': 'DTy6sj9Gl9s',
+                'controls': 0,
+                'disablekb': 1,
+                'fs': 0,
+                'modestbranding': 1,
+                'playsinline': 1,
+                'mute': isMobile ? 1 : 0  // 모바일에서는 음소거로 시작
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+    
+    // 플레이어 준비 완료
+    function onPlayerReady(event) {
+        // 모바일에서 음소거 상태로 자동재생
+        if (isMobile) {
+            player.mute();
+            player.playVideo();
+            
+            // 사용자 상호작용 후 음소거 해제
+            document.addEventListener('click', function unmuteMobile() {
+                if (player && player.isMuted()) {
+                    player.unMute();
+                    // 음소거 해제 알림
+                    showMusicNotification();
                 }
-            });
+                document.removeEventListener('click', unmuteMobile);
+            }, { once: true });
+            
+            // 터치 이벤트로도 음소거 해제
+            document.addEventListener('touchstart', function unmuteMobileTouch() {
+                if (player && player.isMuted()) {
+                    player.unMute();
+                    showMusicNotification();
+                }
+                document.removeEventListener('touchstart', unmuteMobileTouch);
+            }, { once: true });
+        } else {
+            // 데스크톱에서는 바로 재생
+            player.playVideo();
         }
         
-        // 플레이어 준비 완료
-        function onPlayerReady(event) {
-            // 모바일에서도 자동재생 시도
-            setTimeout(() => {
+        isPlaying = true;
+        updatePlayButton();
+    }
+    
+    // 음악 재생 알림 표시
+    function showMusicNotification() {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 255, 136, 0.9);
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            z-index: 10000;
+            animation: fadeInOut 2s ease;
+        `;
+        notification.textContent = '🎵 음악이 재생됩니다';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 2000);
+    }
+    
+    // 재생 상태 변경
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+            isPlaying = true;
+            updatePlayButton();
+            document.getElementById('musicBars').classList.add('playing');
+        } else if (event.data == YT.PlayerState.PAUSED) {
+            isPlaying = false;
+            updatePlayButton();
+            document.getElementById('musicBars').classList.remove('playing');
+        } else if (event.data == YT.PlayerState.ENDED) {
+            player.playVideo();
+        }
+    }
+    
+    // 재생/일시정지 토글
+    function togglePlayPause() {
+        if (player) {
+            if (isPlaying) {
+                player.pauseVideo();
+            } else {
                 player.playVideo();
-                isPlaying = true;
-                updatePlayButton();
-            }, 1000);
-            
-            // 사용자 상호작용 시 재생
-            document.addEventListener('click', function startMusic() {
-                if (!isPlaying) {
-                    player.playVideo();
-                    isPlaying = true;
-                    updatePlayButton();
-                }
-                document.removeEventListener('click', startMusic);
-            }, { once: true });
-            
-            // 스크롤 시에도 재생
-            document.addEventListener('scroll', function startMusicOnScroll() {
-                if (!isPlaying) {
-                    player.playVideo();
-                    isPlaying = true;
-                    updatePlayButton();
-                }
-                document.removeEventListener('scroll', startMusicOnScroll);
-            }, { once: true });
-            
-            // 터치 이벤트 (모바일)
-            document.addEventListener('touchstart', function startMusicOnTouch() {
-                if (!isPlaying) {
-                    player.playVideo();
-                    isPlaying = true;
-                    updatePlayButton();
-                }
-                document.removeEventListener('touchstart', startMusicOnTouch);
-            }, { once: true });
-        }
-        
-        // 재생 상태 변경
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING) {
-                isPlaying = true;
-                updatePlayButton();
-                // 음악바 애니메이션 활성화
-                document.getElementById('musicBars').style.animationPlayState = 'running';
-            } else if (event.data == YT.PlayerState.PAUSED) {
-                isPlaying = false;
-                updatePlayButton();
-                // 음악바 애니메이션 일시정지
-                document.getElementById('musicBars').style.animationPlayState = 'paused';
-            } else if (event.data == YT.PlayerState.ENDED) {
-                // 반복재생
-                player.playVideo();
-            }
-        }
-        
-        // 재생/일시정지 토글
-        function togglePlayPause() {
-            if (player) {
-                if (isPlaying) {
-                    player.pauseVideo();
-                } else {
-                    player.playVideo();
+                // 모바일에서 음소거 상태면 해제
+                if (isMobile && player.isMuted()) {
+                    player.unMute();
+                    showMusicNotification();
                 }
             }
         }
+    }
+    
+    // 버튼 상태 업데이트
+    function updatePlayButton() {
+        const playBtn = document.getElementById('playPauseIcon');
+        const miniPlayBtn = document.getElementById('miniPlayPauseIcon');
         
-        // 버튼 상태 업데이트
-        function updatePlayButton() {
-            const mainBtn = document.getElementById('playPauseBtn');
-            const miniBtn = document.getElementById('miniPlayBtn');
-            
-            if (mainBtn) {
-                mainBtn.textContent = isPlaying ? '⏸️' : '▶️';
-            }
-            if (miniBtn) {
-                miniBtn.textContent = isPlaying ? '⏸️' : '▶️';
-            }
+        if (playBtn) {
+            playBtn.textContent = isPlaying ? '⏸️' : '▶️';
         }
-        
-        // 전역 함수로 등록
-        window.togglePlayPause = togglePlayPause;
-    </script>
+        if (miniPlayBtn) {
+            miniPlayBtn.textContent = isPlaying ? '⏸️' : '▶️';
+        }
+    }
+    
+    // 전역 함수로 등록
+    window.togglePlayPause = togglePlayPause;
+</script>
     <script>
         // Supabase 초기화
         const SUPABASE_URL = 'https://wframchrsfspkxrpughn.supabase.co';
@@ -2573,6 +2609,40 @@ async function loadPartyDates() {
             subscribeToApplications();
             generateRandomNotifications();
             updateViewerCount();
+            // 모바일 사용자에게 음악 안내
+if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+    setTimeout(() => {
+        const musicTip = document.createElement('div');
+        musicTip.style.cssText = `
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            color: var(--neon-accent);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        `;
+        musicTip.innerHTML = '👆 화면을 탭하면 음악이 재생됩니다';
+        document.body.appendChild(musicTip);
+        
+        // 클릭 시 제거
+        document.addEventListener('click', () => {
+            musicTip.remove();
+        }, { once: true });
+        
+        // 10초 후 자동 제거
+        setTimeout(() => {
+            if (musicTip.parentNode) {
+                musicTip.remove();
+            }
+        }, 10000);
+    }, 2000);
+}
             // 모달로 신청 페이지 열기
             window.openApplicationModal = function() {
                 const modal = document.getElementById('applicationModal');
@@ -2678,30 +2748,42 @@ async function loadPartyDates() {
             }, { once: true });
 
             // 경험 시작 (자동재생 활성화)
-            window.startExperience = function() {
-                // 오버레이 숨기기
-                const overlay = document.getElementById('autoplayOverlay');
-                if (overlay) {
-                    overlay.style.display = 'none';
-                }
-                
-                // YouTube 재생
-                const youtubeIframe = document.getElementById('youtubeIframe');
-                if (youtubeIframe) {
-                    const videoId = 'DTy6sj9Gl9s';
-                    youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=1&mute=0&enablejsapi=1`;
-                }
-                
-                // 3초 후 미니 플레이어로 전환
-                setTimeout(() => {
-                    const player = document.getElementById('youtubePlayer');
-                    const miniPlayer = document.getElementById('miniYoutubePlayer');
-                    if (player && miniPlayer) {
-                        player.style.display = 'none';
-                        miniPlayer.style.display = 'block';
-                    }
-                }, 3000);
-            }
+window.startExperience = function() {
+    // 오버레이 숨기기
+    const overlay = document.getElementById('autoplayOverlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+    
+    // 모바일 체크
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (player) {
+        // YouTube Player API 사용
+        if (isMobile && player.isMuted()) {
+            player.unMute();
+        }
+        player.playVideo();
+    } else {
+        // fallback: iframe src 변경
+        const youtubeIframe = document.getElementById('youtubeIframe');
+        if (youtubeIframe) {
+            const videoId = 'DTy6sj9Gl9s';
+            const muteParam = isMobile ? '1' : '0';
+            youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&enablejsapi=1&mute=${muteParam}&playsinline=1`;
+        }
+    }
+    
+    // 3초 후 미니 플레이어로 전환
+    setTimeout(() => {
+        const playerEl = document.getElementById('youtubePlayer');
+        const miniPlayer = document.getElementById('miniYoutubePlayer');
+        if (playerEl && miniPlayer) {
+            playerEl.style.display = 'none';
+            miniPlayer.style.display = 'block';
+        }
+    }, 3000);
+}
             
             // 오버레이 클릭으로도 시작
             const autoplayOverlay = document.getElementById('autoplayOverlay');
