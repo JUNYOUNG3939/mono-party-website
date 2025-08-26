@@ -953,7 +953,23 @@
         50% { height: 20px; }
         100% { height: 5px; }
     }
-        /* 음악바 애니메이션 클래스 기반으로 변경 */
+/* 버튼 호버 효과 */
+#playBtn:hover, #miniPlayBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+}
+
+#pauseBtn:hover, #miniPauseBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(255, 0, 102, 0.5);
+}
+
+#playBtn:active, #pauseBtn:active,
+#miniPlayBtn:active, #miniPauseBtn:active {
+    transform: scale(0.95);
+}
+
+/* 음악바 애니메이션 클래스 */
 #musicBars.playing > div {
     animation-play-state: running !important;
 }
@@ -962,6 +978,7 @@
     animation-play-state: paused !important;
 }
 
+/* 페이드 애니메이션 */
 @keyframes fadeInOut {
     0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
     50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -1124,42 +1141,41 @@
             align-items: center;
             gap: 15px;
         ">
-            <!-- 재생/일시정지 버튼 -->
-<!-- 재생/일시정지 버튼 분리 -->
-<div style="display: flex; gap: 10px;">
+ <!-- 재생/일시정지 버튼 영역 -->
+<div style="display: flex; gap: 10px; align-items: center;">
     <!-- 재생 버튼 -->
-    <button id="playBtn" onclick="playMusic()" style="
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, var(--neon-accent) 0%, #00cc70 100%);
+    <button id="playBtn" onclick="playMusic()" title="음악 재생" style="
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #00ff88 0%, #00cc70 100%);
         border: none;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.3rem;
+        font-size: 1.5rem;
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
-    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+    ">
         ▶️
     </button>
     
     <!-- 일시정지 버튼 -->
-    <button id="pauseBtn" onclick="pauseMusic()" style="
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, var(--neon-pink) 0%, #cc0044 100%);
+    <button id="pauseBtn" onclick="pauseMusic()" title="일시정지" style="
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #ff0066 0%, #cc0044 100%);
         border: none;
         border-radius: 50%;
         display: none;
         align-items: center;
         justify-content: center;
-        font-size: 1.3rem;
+        font-size: 1.5rem;
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 5px 15px rgba(255, 0, 102, 0.3);
-    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+    ">
         ⏸️
     </button>
 </div>
@@ -1221,10 +1237,11 @@
         box-shadow: 0 5px 20px rgba(0, 255, 136, 0.2);
     " onclick="toggleYoutubePlayer()">
         <div style="display: flex; align-items: center; gap: 12px;">
-<div style="display: flex; gap: 8px;">
+<!-- 미니 플레이어 버튼들 -->
+<div style="display: flex; gap: 8px; align-items: center;">
     <!-- 미니 재생 버튼 -->
-    <button id="miniPlayBtn" onclick="event.stopPropagation(); playMusic();" style="
-        background: var(--neon-accent);
+    <button id="miniPlayBtn" onclick="event.stopPropagation(); playMusic();" title="재생" style="
+        background: #00ff88;
         border: none;
         border-radius: 50%;
         width: 30px;
@@ -1234,13 +1251,14 @@
         justify-content: center;
         cursor: pointer;
         font-size: 0.8rem;
+        transition: all 0.3s ease;
     ">
         ▶️
     </button>
     
     <!-- 미니 일시정지 버튼 -->
-    <button id="miniPauseBtn" onclick="event.stopPropagation(); pauseMusic();" style="
-        background: var(--neon-pink);
+    <button id="miniPauseBtn" onclick="event.stopPropagation(); pauseMusic();" title="일시정지" style="
+        background: #ff0066;
         border: none;
         border-radius: 50%;
         width: 30px;
@@ -1250,6 +1268,7 @@
         justify-content: center;
         cursor: pointer;
         font-size: 0.8rem;
+        transition: all 0.3s ease;
     ">
         ⏸️
     </button>
@@ -2249,10 +2268,10 @@
             </button>
         </div>
     </div>
-        <!-- ⬇️⬇️⬇️ YouTube API 스크립트 추가 ⬇️⬇️⬇️ -->
-    <script src="https://www.youtube.com/iframe_api"></script>
-    
-   <script>
+       <!-- ⬇️⬇️⬇️ YouTube API 스크립트 추가 ⬇️⬇️⬇️ -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
     // YouTube 플레이어 변수
     var player;
     var isPlaying = false;
@@ -2271,7 +2290,7 @@
                 'fs': 0,
                 'modestbranding': 1,
                 'playsinline': 1,
-                'mute': isMobile ? 1 : 0  // 모바일에서는 음소거로 시작
+                'mute': isMobile ? 1 : 0
             },
             events: {
                 'onReady': onPlayerReady,
@@ -2291,27 +2310,13 @@
             document.addEventListener('click', function unmuteMobile() {
                 if (player && player.isMuted()) {
                     player.unMute();
-                    // 음소거 해제 알림
                     showMusicNotification();
                 }
-                document.removeEventListener('click', unmuteMobile);
-            }, { once: true });
-            
-            // 터치 이벤트로도 음소거 해제
-            document.addEventListener('touchstart', function unmuteMobileTouch() {
-                if (player && player.isMuted()) {
-                    player.unMute();
-                    showMusicNotification();
-                }
-                document.removeEventListener('touchstart', unmuteMobileTouch);
             }, { once: true });
         } else {
             // 데스크톱에서는 바로 재생
             player.playVideo();
         }
-        
-        isPlaying = true;
-        updatePlayButton();
     }
     
     // 음악 재생 알림 표시
@@ -2342,76 +2347,89 @@
     function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.PLAYING) {
             isPlaying = true;
-            updatePlayButton();
-            document.getElementById('musicBars').classList.add('playing');
+            updateButtonDisplay();
+            // 음악바 애니메이션 시작
+            const musicBars = document.getElementById('musicBars');
+            if (musicBars) {
+                musicBars.classList.add('playing');
+            }
         } else if (event.data == YT.PlayerState.PAUSED) {
             isPlaying = false;
-            updatePlayButton();
-            document.getElementById('musicBars').classList.remove('playing');
+            updateButtonDisplay();
+            // 음악바 애니메이션 중지
+            const musicBars = document.getElementById('musicBars');
+            if (musicBars) {
+                musicBars.classList.remove('playing');
+            }
         } else if (event.data == YT.PlayerState.ENDED) {
+            // 반복재생
             player.playVideo();
         }
     }
     
-    // 재생/일시정지 토글
-    function togglePlayPause() {
-        if (player) {
-            if (isPlaying) {
-                player.pauseVideo();
-            } else {
-                player.playVideo();
-                // 모바일에서 음소거 상태면 해제
-                if (isMobile && player.isMuted()) {
-                    player.unMute();
-                    showMusicNotification();
-                }
-            }
-        }
-    }
-    
-// 버튼 상태 업데이트
-function updatePlayButton() {
-    const playBtn = document.getElementById('playBtn');
-    const pauseBtn = document.getElementById('pauseBtn');
-    const miniPlayBtn = document.getElementById('miniPlayBtn');
-    const miniPauseBtn = document.getElementById('miniPauseBtn');
-    
-    if (isPlaying) {
-        // 재생 중일 때: 일시정지 버튼 표시
-        if (playBtn) playBtn.style.display = 'none';
-        if (pauseBtn) pauseBtn.style.display = 'flex';
-        if (miniPlayBtn) miniPlayBtn.style.display = 'none';
-        if (miniPauseBtn) miniPauseBtn.style.display = 'flex';
-    } else {
-        // 일시정지 상태: 재생 버튼 표시
-        if (playBtn) playBtn.style.display = 'flex';
-        if (pauseBtn) pauseBtn.style.display = 'none';
-        if (miniPlayBtn) miniPlayBtn.style.display = 'flex';
-        if (miniPauseBtn) miniPauseBtn.style.display = 'none';
-    }
-}
     // 재생 함수
-function playMusic() {
-    if (player) {
-        player.playVideo();
-        // 모바일에서 음소거 상태면 해제
-        if (isMobile && player.isMuted()) {
-            player.unMute();
-            showMusicNotification();
+    function playMusic() {
+        console.log('Play music called');
+        if (player && player.playVideo) {
+            player.playVideo();
+            // 모바일에서 음소거 상태면 해제
+            if (isMobile && player.isMuted && player.isMuted()) {
+                player.unMute();
+                showMusicNotification();
+            }
+            isPlaying = true;
+            updateButtonDisplay();
         }
     }
-}
-
-// 일시정지 함수
-function pauseMusic() {
-    if (player) {
-        player.pauseVideo();
+    
+    // 일시정지 함수
+    function pauseMusic() {
+        console.log('Pause music called');
+        if (player && player.pauseVideo) {
+            player.pauseVideo();
+            isPlaying = false;
+            updateButtonDisplay();
+        }
     }
-}
+    
+    // 토글 함수 (기존 호환성 유지)
+    function togglePlayPause() {
+        if (isPlaying) {
+            pauseMusic();
+        } else {
+            playMusic();
+        }
+    }
+    
+    // 버튼 표시 업데이트
+    function updateButtonDisplay() {
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const miniPlayBtn = document.getElementById('miniPlayBtn');
+        const miniPauseBtn = document.getElementById('miniPauseBtn');
+        
+        console.log('Updating buttons, isPlaying:', isPlaying);
+        
+        if (isPlaying) {
+            // 재생 중: 일시정지 버튼만 표시
+            if (playBtn) playBtn.style.display = 'none';
+            if (pauseBtn) pauseBtn.style.display = 'flex';
+            if (miniPlayBtn) miniPlayBtn.style.display = 'none';
+            if (miniPauseBtn) miniPauseBtn.style.display = 'flex';
+        } else {
+            // 일시정지 중: 재생 버튼만 표시
+            if (playBtn) playBtn.style.display = 'flex';
+            if (pauseBtn) pauseBtn.style.display = 'none';
+            if (miniPlayBtn) miniPlayBtn.style.display = 'flex';
+            if (miniPauseBtn) miniPauseBtn.style.display = 'none';
+        }
+    }
+    
     // 전역 함수로 등록
-window.togglePlayPause = togglePlayPause;
-window.playMusic = playMusic;
-window.pauseMusic = pauseMusic;
+    window.togglePlayPause = togglePlayPause;
+    window.playMusic = playMusic;
+    window.pauseMusic = pauseMusic;
+    window.updateButtonDisplay = updateButtonDisplay;
 </script>
     <script>
         // Supabase 초기화
@@ -2678,6 +2696,12 @@ async function loadPartyDates() {
             subscribeToApplications();
             generateRandomNotifications();
             updateViewerCount();
+            // 버튼 초기 상태 설정
+setTimeout(() => {
+    if (window.updateButtonDisplay) {
+        window.updateButtonDisplay();
+    }
+}, 1000);
             // 모바일 사용자에게 음악 안내
 if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
     setTimeout(() => {
