@@ -1125,22 +1125,44 @@
             gap: 15px;
         ">
             <!-- 재생/일시정지 버튼 -->
-            <button id="playPauseBtn" onclick="togglePlayPause()" style="
-                width: 60px;
-                height: 60px;
-                background: linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%);
-                border: none;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.5rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
-            " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-                <span id="playPauseIcon">▶️</span>
-            </button>
+<!-- 재생/일시정지 버튼 분리 -->
+<div style="display: flex; gap: 10px;">
+    <!-- 재생 버튼 -->
+    <button id="playBtn" onclick="playMusic()" style="
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--neon-accent) 0%, #00cc70 100%);
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        ▶️
+    </button>
+    
+    <!-- 일시정지 버튼 -->
+    <button id="pauseBtn" onclick="pauseMusic()" style="
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--neon-pink) 0%, #cc0044 100%);
+        border: none;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(255, 0, 102, 0.3);
+    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        ⏸️
+    </button>
+</div>
             
             <div style="flex: 1;">
                 <div style="
@@ -1199,20 +1221,39 @@
         box-shadow: 0 5px 20px rgba(0, 255, 136, 0.2);
     " onclick="toggleYoutubePlayer()">
         <div style="display: flex; align-items: center; gap: 12px;">
-            <button onclick="event.stopPropagation(); togglePlayPause();" style="
-                background: var(--neon-accent);
-                border: none;
-                border-radius: 50%;
-                width: 30px;
-                height: 30px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                font-size: 0.8rem;
-            ">
-                <span id="miniPlayPauseIcon">▶️</span>
-            </button>
+<div style="display: flex; gap: 8px;">
+    <!-- 미니 재생 버튼 -->
+    <button id="miniPlayBtn" onclick="event.stopPropagation(); playMusic();" style="
+        background: var(--neon-accent);
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.8rem;
+    ">
+        ▶️
+    </button>
+    
+    <!-- 미니 일시정지 버튼 -->
+    <button id="miniPauseBtn" onclick="event.stopPropagation(); pauseMusic();" style="
+        background: var(--neon-pink);
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.8rem;
+    ">
+        ⏸️
+    </button>
+</div>
             <span style="color: var(--text-primary); font-size: 0.85rem; font-weight: 500;">
                 🎵 Welcome to the Show - DAY6
             </span>
@@ -2328,21 +2369,49 @@
         }
     }
     
-    // 버튼 상태 업데이트
-    function updatePlayButton() {
-        const playBtn = document.getElementById('playPauseIcon');
-        const miniPlayBtn = document.getElementById('miniPlayPauseIcon');
-        
-        if (playBtn) {
-            playBtn.textContent = isPlaying ? '⏸️' : '▶️';
-        }
-        if (miniPlayBtn) {
-            miniPlayBtn.textContent = isPlaying ? '⏸️' : '▶️';
+// 버튼 상태 업데이트
+function updatePlayButton() {
+    const playBtn = document.getElementById('playBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const miniPlayBtn = document.getElementById('miniPlayBtn');
+    const miniPauseBtn = document.getElementById('miniPauseBtn');
+    
+    if (isPlaying) {
+        // 재생 중일 때: 일시정지 버튼 표시
+        if (playBtn) playBtn.style.display = 'none';
+        if (pauseBtn) pauseBtn.style.display = 'flex';
+        if (miniPlayBtn) miniPlayBtn.style.display = 'none';
+        if (miniPauseBtn) miniPauseBtn.style.display = 'flex';
+    } else {
+        // 일시정지 상태: 재생 버튼 표시
+        if (playBtn) playBtn.style.display = 'flex';
+        if (pauseBtn) pauseBtn.style.display = 'none';
+        if (miniPlayBtn) miniPlayBtn.style.display = 'flex';
+        if (miniPauseBtn) miniPauseBtn.style.display = 'none';
+    }
+}
+    // 재생 함수
+function playMusic() {
+    if (player) {
+        player.playVideo();
+        // 모바일에서 음소거 상태면 해제
+        if (isMobile && player.isMuted()) {
+            player.unMute();
+            showMusicNotification();
         }
     }
-    
+}
+
+// 일시정지 함수
+function pauseMusic() {
+    if (player) {
+        player.pauseVideo();
+    }
+}
     // 전역 함수로 등록
-    window.togglePlayPause = togglePlayPause;
+window.togglePlayPause = togglePlayPause;
+window.playMusic = playMusic;
+window.pauseMusic = pauseMusic;
 </script>
     <script>
         // Supabase 초기화
