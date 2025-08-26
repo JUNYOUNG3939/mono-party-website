@@ -946,40 +946,96 @@
             }
         }
     <style>
-       @media (max-width: 768px) {
+       <style>
+    /* 음악 바 애니메이션 */
+    @keyframes musicWave {
+        0% { height: 5px; }
+        50% { height: 20px; }
+        100% { height: 5px; }
+    }
+    
+    /* 모바일 반응형 - 겹침 문제 해결 */
+    @media (max-width: 768px) {
+        /* 실시간 조회 인원을 상단으로 이동 */
+        .live-viewer {
+            bottom: auto !important;
+            top: 20px !important;
+            right: 20px !important;
+            left: auto !important;
+            max-width: 200px;
+        }
+        
+        /* YouTube 플레이어 위치 조정 */
         #youtubePlayer {
-            bottom: 100px !important;
+            bottom: 20px !important;
             left: 50% !important;
             transform: translateX(-50%);
             width: 90%;
             max-width: 350px;
-        }
-        
-        #youtubePlayer iframe {
-            width: 100% !important;
+            min-width: auto;
         }
         
         #miniYoutubePlayer {
-            bottom: 100px !important;
+            bottom: 20px !important;
             left: 50% !important;
             transform: translateX(-50%) !important;
+            max-width: 90%;
+        }
+        
+        /* 실시간 알림 위치 조정 */
+        #notificationContainer {
+            top: 80px !important;
+            right: 10px !important;
+            left: 10px !important;
+            max-width: none !important;
+        }
+    }
+    
+    /* 태블릿 대응 */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        #youtubePlayer {
+            bottom: 30px !important;
+            left: 30px !important;
+        }
+        
+        .live-viewer {
+            bottom: auto !important;
+            top: 30px !important;
+            right: 30px !important;
         }
     }
 </style>
+
 
 </head>
 <body>
     <!-- Particles Background - Desktop Only -->
     <div class="particles" id="particles"></div>
     
-    <!-- 실시간 조회 인원 및 알림 -->
-    <div class="live-viewer">
+<!-- 실시간 조회 인원 및 알림 -->
+    <div class="live-viewer" id="liveViewer">
         <div style="display: flex; align-items: center; gap: 10px;">
             <div class="live-dot"></div>
-            <span style="color: var(--neon-accent); font-size: 0.9rem;">현재 <span id="viewerCount">23</span>명이 보고 있어요</span>
+            <span style="color: var(--neon-accent); font-size: 0.9rem;">
+                <span class="desktop-text">현재 <span id="viewerCount">23</span>명이 보고 있어요</span>
+                <span class="mobile-text" style="display: none;"><span id="viewerCountMobile">23</span>명 접속중</span>
+            </span>
         </div>
     </div>
-    <!-- YouTube 음악 플레이어 시작 -->
+    
+    <style>
+        /* 모바일에서 텍스트 간소화 */
+        @media (max-width: 768px) {
+            .desktop-text { display: none !important; }
+            .mobile-text { display: inline !important; }
+        }
+    </style>
+
+    <!-- 실시간 참여 알림 컨테이너 -->
+    <div id="notificationContainer" style="position: fixed; top: 70px; right: 20px; z-index: 1000; max-width: 300px;">
+        <!-- 알림이 여기에 추가됩니다 -->
+    </div>
+            <!-- YouTube 음악 플레이어 시작 -->
     <div id="youtubePlayer" style="
         position: fixed;
         bottom: 30px;
@@ -988,18 +1044,17 @@
         background: rgba(0, 0, 0, 0.95);
         border: 1px solid var(--neon-accent);
         border-radius: 15px;
-        padding: 15px;
+        padding: 20px;
         backdrop-filter: blur(10px);
         box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
         transition: all 0.3s ease;
+        min-width: 280px;
     ">
         <div style="
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 15px;
         ">
             <span style="
                 color: var(--neon-accent);
@@ -1009,7 +1064,7 @@
                 align-items: center;
                 gap: 8px;
             ">
-                🎵 MONO PARTY VIBES
+                🎵 NOW PLAYING
             </span>
             <button onclick="toggleYoutubePlayer()" style="
                 background: none;
@@ -1027,16 +1082,61 @@
             ">▼</button>
         </div>
         
-        <div id="youtubeEmbed">
+        <!-- 노래 정보 표시 -->
+        <div style="
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        ">
+            <div style="
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%);
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2rem;
+            ">
+                🎵
+            </div>
+            <div style="flex: 1;">
+                <div style="
+                    color: var(--text-primary);
+                    font-size: 1rem;
+                    font-weight: 600;
+                    margin-bottom: 5px;
+                ">Welcome to the Show</div>
+                <div style="
+                    color: var(--text-secondary);
+                    font-size: 0.85rem;
+                ">DAY6</div>
+                <!-- 음악 바 애니메이션 -->
+                <div style="
+                    display: flex;
+                    gap: 3px;
+                    margin-top: 10px;
+                    align-items: flex-end;
+                    height: 20px;
+                ">
+                    <div style="width: 3px; background: var(--neon-accent); height: 10px; animation: musicWave 0.5s ease infinite alternate;"></div>
+                    <div style="width: 3px; background: var(--neon-accent); height: 15px; animation: musicWave 0.5s ease infinite alternate 0.1s;"></div>
+                    <div style="width: 3px; background: var(--neon-accent); height: 8px; animation: musicWave 0.5s ease infinite alternate 0.2s;"></div>
+                    <div style="width: 3px; background: var(--neon-accent); height: 18px; animation: musicWave 0.5s ease infinite alternate 0.3s;"></div>
+                    <div style="width: 3px; background: var(--neon-accent); height: 12px; animation: musicWave 0.5s ease infinite alternate 0.4s;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 숨겨진 YouTube iframe (오디오만) -->
+        <div style="position: absolute; left: -9999px; top: -9999px;">
             <iframe 
                 id="youtubeIframe"
-                width="300" 
-                height="169" 
-                src="https://www.youtube.com/embed/DTy6sj9Gl9s?autoplay=1&loop=1&playlist=DTy6sj9Gl9s&controls=1&mute=0&enablejsapi=1" 
+                width="1" 
+                height="1" 
+                src="https://www.youtube.com/embed/DTy6sj9Gl9s?autoplay=1&loop=1&playlist=DTy6sj9Gl9s&controls=0&mute=0&enablejsapi=1" 
                 frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen
-                style="border-radius: 12px;">
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
             </iframe>
         </div>
     </div>
@@ -1065,15 +1165,11 @@
                 animation: pulse 2s infinite;
             "></div>
             <span style="color: var(--text-primary); font-size: 0.85rem; font-weight: 500;">
-                🎵 MUSIC ON
+                🎵 Welcome to the Show - DAY6
             </span>
         </div>
     </div>
     <!-- YouTube 음악 플레이어 끝 -->
-    <!-- 실시간 참여 알림 컨테이너 -->
-    <div id="notificationContainer" style="position: fixed; top: 70px; right: 20px; z-index: 1000; max-width: 300px;">
-        <!-- 알림이 여기에 추가됩니다 -->
-    </div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -2070,11 +2166,15 @@
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // 실시간 조회 인원 업데이트
-        function updateViewerCount() {
-            const count = Math.floor(Math.random() * 100) + 1;
-            document.getElementById('viewerCount').textContent = count;
-        }
+// 실시간 조회 인원 업데이트
+function updateViewerCount() {
+    const count = Math.floor(Math.random() * 100) + 1;
+    const desktopCounter = document.getElementById('viewerCount');
+    const mobileCounter = document.getElementById('viewerCountMobile');
+    
+    if (desktopCounter) desktopCounter.textContent = count;
+    if (mobileCounter) mobileCounter.textContent = count;
+}
         
         // 5초마다 조회 인원 업데이트
         setInterval(updateViewerCount, 5000);
