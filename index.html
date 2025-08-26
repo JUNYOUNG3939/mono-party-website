@@ -1131,7 +1131,7 @@
                 소개팅도, 클럽도, 어설픈 술자리가 아닌<br>
                 <strong>감정이 흐르는 대로 스며드는 '무드 기반 소셜링 파티'</strong>
             </p>
-            <a href="application.html" class="cta-button neon-glow">지금 바로 참가하기</a>
+            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">지금 바로 참가하기</a>
         </div>
     </section>
     
@@ -1859,7 +1859,8 @@
         
         <div style="text-align: center; margin-top: 40px;">
             <p style="color: var(--text-secondary); margin-bottom: 20px;">선착순 마감! 서둘러 신청하세요</p>
-            <a href="application.html" class="cta-button neon-glow">지금 참가 신청하기</a>
+            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">지금 참가 신청하기</a>
+
         </div>
     </section>
     
@@ -1999,7 +2000,7 @@
         </div>
         
         <div style="text-align: center; margin-top: 50px;">
-            <a href="application.html" class="cta-button neon-glow">지금 참가 신청하기</a>
+            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">지금 참가 신청하기</a>
         </div>
     </section>
     
@@ -2008,7 +2009,61 @@
         <h3 class="footer-logo">MONO PARTY</h3>
         <p class="footer-text">당신의 감정을, 우리가 함께 디자인합니다.</p>
     </footer>
-    
+    <!-- 신청 모달 -->
+<div id="applicationModal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 10000;
+    overflow-y: auto;
+    backdrop-filter: blur(10px);
+">
+    <div style="
+        position: relative;
+        max-width: 900px;
+        margin: 20px auto;
+        background: var(--bg-primary);
+        border: 2px solid var(--neon-accent);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 255, 136, 0.3);
+    ">
+        <!-- 닫기 버튼 -->
+        <button onclick="closeApplicationModal()" style="
+            position: sticky;
+            top: 20px;
+            right: 20px;
+            float: right;
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10001;
+            margin: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">×</button>
+        
+        <!-- iframe으로 신청 페이지 로드 -->
+        <iframe 
+            id="applicationFrame"
+            src="" 
+            style="
+                width: 100%;
+                height: calc(100vh - 40px);
+                border: none;
+                border-radius: 20px;
+            ">
+        </iframe>
+    </div>
+</div>
     <script>
         // Supabase 초기화
         const SUPABASE_URL = 'https://wframchrsfspkxrpughn.supabase.co';
@@ -2270,6 +2325,50 @@ async function loadPartyDates() {
             subscribeToApplications();
             generateRandomNotifications();
             updateViewerCount();
+            // 모달로 신청 페이지 열기
+            window.openApplicationModal = function() {
+                const modal = document.getElementById('applicationModal');
+                const iframe = document.getElementById('applicationFrame');
+                
+                // iframe에 페이지 로드
+                iframe.src = 'application.html';
+                modal.style.display = 'block';
+                
+                // 스크롤 방지
+                document.body.style.overflow = 'hidden';
+                
+                // 모달 열릴 때 애니메이션
+                modal.style.animation = 'fadeIn 0.3s ease';
+            }
+            
+            // 모달 닫기
+            window.closeApplicationModal = function() {
+                const modal = document.getElementById('applicationModal');
+                const iframe = document.getElementById('applicationFrame');
+                
+                modal.style.display = 'none';
+                iframe.src = ''; // iframe 초기화
+                
+                // 스크롤 복구
+                document.body.style.overflow = 'auto';
+            }
+            
+            // ESC 키로 모달 닫기
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('applicationModal');
+                    if (modal && modal.style.display === 'block') {
+                        closeApplicationModal();
+                    }
+                }
+            });
+            
+            // 모달 외부 클릭시 닫기
+            document.getElementById('applicationModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeApplicationModal();
+                }
+            });
             // Spotify 플레이어 토글 기능
             window.toggleMusicPlayer = function() {
                 const player = document.getElementById('spotifyPlayer');
