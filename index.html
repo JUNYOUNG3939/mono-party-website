@@ -1186,11 +1186,11 @@
                     font-size: 1rem;
                     font-weight: 600;
                     margin-bottom: 5px;
-                ">Welcome to the Show</div>
+                ">MONO PARTY MIX(Youtube)</div>
                 <div style="
                     color: var(--text-secondary);
                     font-size: 0.85rem;
-                ">DAY6</div>
+                ">플리메이커(Youtube)</div>
                 <!-- 음악 바 애니메이션 -->
                 <div id="musicBars" style="
                     display: flex;
@@ -1208,17 +1208,17 @@
             </div>
         </div>
         
-        <!-- 숨겨진 YouTube iframe (오디오만) -->
-        <div style="position: absolute; left: -9999px; top: -9999px;">
-            <iframe 
-                id="youtubeIframe"
-                width="1" 
-                height="1" 
-                src="https://www.youtube.com/embed/DTy6sj9Gl9s?autoplay=1&loop=1&playlist=DTy6sj9Gl9s&controls=0&enablejsapi=1&mute=0" 
-                frameborder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
-            </iframe>
-        </div>
+<!-- 숨겨진 YouTube iframe (오디오만) -->
+<div style="position: absolute; left: -9999px; top: -9999px;">
+    <iframe 
+        id="youtubeIframe"
+        width="1" 
+        height="1" 
+        src="https://www.youtube.com/embed/CY3ZzFmCCd0?autoplay=1&loop=1&playlist=CY3ZzFmCCd0&controls=0&enablejsapi=1&mute=0" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+    </iframe>
+</div>
     </div>
 
     <div id="miniYoutubePlayer" style="
@@ -1274,7 +1274,7 @@
     </button>
 </div>
             <span style="color: var(--text-primary); font-size: 0.85rem; font-weight: 500;">
-                🎵 Welcome to the Show - DAY6
+                🎵 MONO PARTY MIX - 플리메이커(Youtube)
             </span>
         </div>
     </div>
@@ -2280,11 +2280,11 @@
     // YouTube API 준비
     function onYouTubeIframeAPIReady() {
         player = new YT.Player('youtubeIframe', {
-            videoId: 'DTy6sj9Gl9s',
+            videoId: 'CY3ZzFmCCd0',
             playerVars: {
                 'autoplay': 1,
                 'loop': 1,
-                'playlist': 'DTy6sj9Gl9s',
+                'playlist': 'CY3ZzFmCCd0',
                 'controls': 0,
                 'disablekb': 1,
                 'fs': 0,
@@ -2810,7 +2810,7 @@ if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
                 const youtubeIframe = document.getElementById('youtubeIframe');
                 if (youtubeIframe) {
                     // YouTube 자동재생 URL 설정
-                    const videoId = 'DTy6sj9Gl9s';
+                    const videoId = 'CY3ZzFmCCd0';
                     youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=1&mute=0&enablejsapi=1`;
                 }
             }
@@ -2861,7 +2861,7 @@ window.startExperience = function() {
         // fallback: iframe src 변경
         const youtubeIframe = document.getElementById('youtubeIframe');
         if (youtubeIframe) {
-            const videoId = 'DTy6sj9Gl9s';
+            const videoId = 'CY3ZzFmCCd0';
             const muteParam = isMobile ? '1' : '0';
             youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&enablejsapi=1&mute=${muteParam}&playsinline=1`;
         }
