@@ -2119,69 +2119,69 @@
             document.getElementById('inputFemaleCount').value = femaleCount;
         }
         
-        // Render Table
-        function renderTable() {
-            const tbody = document.getElementById('participantsBody');
-            const searchInput = document.getElementById('searchInput')?.value?.toLowerCase() || '';
-            const genderFilter = document.getElementById('genderFilter')?.value || '';
-            const channelFilter = document.getElementById('channelFilter')?.value || '';
-            const statusFilter = document.getElementById('statusFilter')?.value || '';
-            const benefitFilter = document.getElementById('benefitFilter')?.value || '';
-            
-            let filtered = participants.filter(p => {
-                const matchesSearch = p.name.toLowerCase().includes(searchInput) || 
-                                     p.phone.includes(searchInput);
-                const matchesGender = !genderFilter || p.gender === genderFilter;
-                const matchesChannel = !channelFilter || p.channel === channelFilter;
-                const matchesBenefit = !benefitFilter || p.female_benefit === benefitFilter;
-                const matchesStatus = !statusFilter || 
-                    (statusFilter === 'our-abusing' && p.is_our_abusing) ||
-                    (statusFilter === 'other-abusing' && p.is_other_abusing) ||
-                    (statusFilter === p.status);
-                
-                return matchesSearch && matchesGender && matchesChannel && matchesStatus && matchesBenefit;
-            });
-            
-            tbody.innerHTML = filtered.map((p, index) => {
-                const rowClass = p.is_blacklisted ? 'is-blacklisted' : 
-                                p.is_our_abusing || p.is_other_abusing ? 'is-abusing' : '';
-                
-                return `
-                    <tr class="${rowClass}">
-                        <td>${index + 1}</td>
-                        <td>${p.name}</td>
-                        <td>${getGenderBadge(p.gender)}</td>
-                        <td>${p.age}세</td>
-                        <td>${p.phone}</td>
-                        <td>${p.party_date || '-'}</td>
-                        <td>${getChannelName(p.channel)}</td>
-                        <td>${getStatusBadge(p.status)}</td>
-                        <td>${getFemaleBenefitBadge(p.female_benefit)}</td>
-                        <td>${getAbusingBadges(p)}</td>
-                        <td>${p.message_sent ? (p.message_responded ? '✅' : '❌') : '-'}</td>
-                        <td>${p.participation_count || 0}회</td>
-                        <td>${new Date(p.created_at).toLocaleDateString('ko-KR')}</td>
-                        <td>
-                            <div style="display: flex; gap: 5px;">
-                                <button class="btn-icon" onclick="editParticipant(${p.id})" title="수정">✏️</button>
-                                <button class="btn-icon" onclick="toggleStatus(${p.id})" title="상태변경">🔄</button>
-                                <button class="btn-icon" onclick="deleteParticipant(${p.id})" title="삭제">🗑️</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-            
-            if (filtered.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="14" style="text-align: center; padding: 40px; color: var(--text-secondary);">
-                            데이터가 없습니다
-                        </td>
-                    </tr>
-                `;
-            }
-        }
+// Render Table
+function renderTable() {
+    const tbody = document.getElementById('participantsBody');
+    const searchInput = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+    const genderFilter = document.getElementById('genderFilter')?.value || '';
+    const channelFilter = document.getElementById('channelFilter')?.value || '';
+    const statusFilter = document.getElementById('statusFilter')?.value || '';
+    const benefitFilter = document.getElementById('benefitFilter')?.value || '';
+    
+    let filtered = participants.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchInput) || 
+                             p.phone.includes(searchInput);
+        const matchesGender = !genderFilter || p.gender === genderFilter;
+        const matchesChannel = !channelFilter || p.channel === channelFilter;
+        const matchesBenefit = !benefitFilter || p.female_benefit === benefitFilter;
+        const matchesStatus = !statusFilter || 
+            (statusFilter === 'our-abusing' && p.is_our_abusing) ||
+            (statusFilter === 'other-abusing' && p.is_other_abusing) ||
+            (statusFilter === p.status);
+        
+        return matchesSearch && matchesGender && matchesChannel && matchesStatus && matchesBenefit;
+    });
+    
+    tbody.innerHTML = filtered.map((p, index) => {
+        const rowClass = p.is_blacklisted ? 'is-blacklisted' : 
+                        p.is_our_abusing || p.is_other_abusing ? 'is-abusing' : '';
+        
+        return `
+            <tr class="${rowClass}">
+                <td>${index + 1}</td>
+                <td>${p.name}</td>
+                <td>${getGenderBadge(p.gender)}</td>
+                <td>${p.age}세</td>
+                <td>${p.phone}</td>
+                <td>${p.party_date || '-'}</td>
+                <td>${getChannelName(p.channel)}</td>
+                <td>${getStatusBadge(p.status)}</td>
+                <td>${getFemaleBenefitBadge(p.female_benefit)}</td>
+                <td>${getAbusingBadges(p)}</td>
+                <td>${p.message_sent ? (p.message_responded ? '✅' : '❌') : '-'}</td>
+                <td>${p.participation_count || 0}회</td>
+                <td>${new Date(p.created_at).toLocaleDateString('ko-KR')}</td>
+                <td>
+                    <div style="display: flex; gap: 5px;">
+                        <button class="btn-icon" onclick="editParticipant(${p.id})" title="수정" style="cursor: pointer;">✏️</button>
+                        <button class="btn-icon" onclick="toggleStatus(${p.id})" title="상태변경" style="cursor: pointer;">🔄</button>
+                        <button class="btn-icon" onclick="deleteParticipant(${p.id})" title="삭제" style="cursor: pointer;">🗑️</button>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="14" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                    데이터가 없습니다
+                </td>
+            </tr>
+        `;
+    }
+}
         
         // Helper Functions
         function getGenderBadge(gender) {
