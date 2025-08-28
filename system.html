@@ -1717,7 +1717,112 @@
             </form>
         </div>
     </div>
-    
+    <!-- Edit Participant Modal -->
+<div class="modal" id="editModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">참가자 정보 수정</h3>
+            <button class="btn-icon" onclick="closeModal('editModal')">×</button>
+        </div>
+        
+        <form id="editParticipantForm" onsubmit="updateParticipant(event)">
+            <input type="hidden" name="participantId" id="editParticipantId">
+            
+            <div class="form-group">
+                <label class="form-label">이름 *</label>
+                <input type="text" class="form-input" name="name" id="editName" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">성별 *</label>
+                <div style="display: flex; gap: 20px;">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="radio" name="gender" value="male" id="editGenderMale" required onchange="toggleEditFemaleBenefit()">
+                        <span>남성</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="radio" name="gender" value="female" id="editGenderFemale" required onchange="toggleEditFemaleBenefit()">
+                        <span>여성</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">나이 *</label>
+                <input type="number" class="form-input" name="age" id="editAge" min="20" max="40" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">연락처 *</label>
+                <input type="tel" class="form-input" name="phone" id="editPhone" placeholder="010-0000-0000" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">파티 날짜 *</label>
+                <input type="date" class="form-input" name="partyDate" id="editPartyDate" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">등록 채널 *</label>
+                <select class="form-select" name="channel" id="editChannel" required>
+                    <option value="">선택하세요</option>
+                    <option value="munto">문토 앱</option>
+                    <option value="instagram">인스타그램</option>
+                    <option value="onsite">현장결제</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">상태</label>
+                <select class="form-select" name="status" id="editStatus">
+                    <option value="pending">대기</option>
+                    <option value="confirmed">확정</option>
+                    <option value="cancelled">취소</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="editFemaleBenefitGroup" style="display: none;">
+                <label class="form-label">여성 혜택</label>
+                <select class="form-select" name="femaleBenefit" id="editFemaleBenefit">
+                    <option value="">없음</option>
+                    <option value="part2-free">2부 무료</option>
+                    <option value="staff">일일스텝 (1부+2부 무료)</option>
+                    <option value="discount-11000">선착순 혜택 (1부 11,000원 할인)</option>
+                    <option value="discount-21000">선착순 혜택 (1부 21,000원 할인)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">계정 타입</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="isOurAbusing" id="editIsOurAbusing">
+                        <span>우리 어뷰징 계정</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="isOtherAbusing" id="editIsOtherAbusing">
+                        <span>타파티 어뷰징 계정</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="isSuspicious" id="editIsSuspicious">
+                        <span>의심 계정</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="noResponse" id="editNoResponse">
+                        <span>메시지 무응답</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">메모</label>
+                <textarea class="form-textarea" name="memo" id="editMemo" rows="3" placeholder="특이사항 입력..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%;">수정 저장</button>
+        </form>
+    </div>
+</div>
     <script>
         // Supabase Configuration
         const SUPABASE_URL = 'https://wframchrsfspkxrpughn.supabase.co';
@@ -2146,7 +2251,122 @@ function getFemaleBenefitBadge(benefit) {
                 document.querySelector('select[name="femaleBenefit"]').value = '';
             }
         }
+        // Edit Participant - 참가자 수정 창 열기
+function editParticipant(id) {
+    const participant = participants.find(p => p.id === id);
+    if (!participant) {
+        alert('참가자를 찾을 수 없습니다.');
+        return;
+    }
+    
+    // 폼에 기존 데이터 채우기
+    document.getElementById('editParticipantId').value = participant.id;
+    document.getElementById('editName').value = participant.name;
+    document.getElementById('editAge').value = participant.age;
+    document.getElementById('editPhone').value = participant.phone;
+    document.getElementById('editPartyDate').value = participant.party_date || '';
+    document.getElementById('editChannel').value = participant.channel || '';
+    document.getElementById('editStatus').value = participant.status || 'pending';
+    document.getElementById('editMemo').value = participant.memo || '';
+    
+    // 성별 선택
+    if (participant.gender === 'male') {
+        document.getElementById('editGenderMale').checked = true;
+    } else {
+        document.getElementById('editGenderFemale').checked = true;
+    }
+    
+    // 여성 혜택
+    if (participant.gender === 'female') {
+        document.getElementById('editFemaleBenefitGroup').style.display = 'block';
+        document.getElementById('editFemaleBenefit').value = participant.female_benefit || '';
+    } else {
+        document.getElementById('editFemaleBenefitGroup').style.display = 'none';
+    }
+    
+    // 체크박스들
+    document.getElementById('editIsOurAbusing').checked = participant.is_our_abusing || false;
+    document.getElementById('editIsOtherAbusing').checked = participant.is_other_abusing || false;
+    document.getElementById('editIsSuspicious').checked = participant.is_suspicious || false;
+    document.getElementById('editNoResponse').checked = participant.no_response || false;
+    
+    // 모달 열기
+    document.getElementById('editModal').style.display = 'block';
+}
+
+// Toggle Female Benefit for Edit Modal
+function toggleEditFemaleBenefit() {
+    const gender = document.querySelector('input[name="gender"]:checked')?.value;
+    const benefitGroup = document.getElementById('editFemaleBenefitGroup');
+    
+    if (gender === 'female') {
+        benefitGroup.style.display = 'block';
+    } else {
+        benefitGroup.style.display = 'none';
+        document.getElementById('editFemaleBenefit').value = '';
+    }
+}
+
+// Update Participant - 참가자 정보 수정 저장
+async function updateParticipant(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+    const participantId = parseInt(formData.get('participantId'));
+    
+    const updatedData = {
+        name: formData.get('name'),
+        gender: formData.get('gender'),
+        age: parseInt(formData.get('age')),
+        phone: formData.get('phone'),
+        party_date: formData.get('partyDate'),
+        channel: formData.get('channel'),
+        status: formData.get('status'),
+        female_benefit: formData.get('femaleBenefit') || null,
+        is_our_abusing: formData.get('isOurAbusing') === 'on',
+        is_other_abusing: formData.get('isOtherAbusing') === 'on',
+        is_suspicious: formData.get('isSuspicious') === 'on',
+        no_response: formData.get('noResponse') === 'on',
+        memo: formData.get('memo'),
+        updated_at: new Date().toISOString()
+    };
+    
+    try {
+        // Supabase 업데이트
+        const { data, error } = await supabaseClient
+            .from('advanced_participants')
+            .update(updatedData)
+            .eq('id', participantId)
+            .select();
         
+        if (error) throw error;
+        
+        // 로컬 데이터 업데이트
+        const index = participants.findIndex(p => p.id === participantId);
+        if (index !== -1) {
+            participants[index] = { ...participants[index], ...updatedData };
+        }
+        
+        updateDashboard();
+        updatePartyDateSelects();
+        closeModal('editModal');
+        showNotification('✅ 참가자 정보가 수정되었습니다');
+        
+    } catch (error) {
+        console.error('Error updating participant:', error);
+        
+        // 오프라인 모드에서도 업데이트
+        const index = participants.findIndex(p => p.id === participantId);
+        if (index !== -1) {
+            participants[index] = { ...participants[index], ...updatedData };
+            localStorage.setItem('monoParticipants', JSON.stringify(participants));
+            updateDashboard();
+            updatePartyDateSelects();
+            closeModal('editModal');
+            showNotification('⚠️ 로컬에서 수정되었습니다');
+        }
+    }
+}
         // Save Participant
         async function saveParticipant(event) {
             event.preventDefault();
