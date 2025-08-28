@@ -2416,28 +2416,38 @@
         animation-delay: 0.4s;
     }
     
-    /* 모바일 반응형 */
-    @media (max-width: 768px) {
-        #chatbotWindow {
-            width: calc(100vw - 20px);
-            height: calc(100vh - 100px);
-            right: -15px;
-            left: 10px;
-            bottom: 70px;
-        }
-        
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    /* 챗봇 컨테이너 위치 수정 */
     #chatbotContainer {
-        bottom: 100px !important;  /* YouTube 플레이어 위로 올림 */
-        right: 20px !important;
+        position: fixed !important;
+        bottom: 120px !important;  /* 음악 플레이어 위로 */
+        right: 15px !important;
         z-index: 99999 !important;
     }
     
+    /* 챗봇 토글 버튼 */
     #chatbotToggle {
-        width: 55px !important;
-        height: 55px !important;
-        box-shadow: 0 5px 25px rgba(0, 255, 136, 0.6) !important;
+        width: 56px !important;
+        height: 56px !important;
+        font-size: 1.6rem !important;
+        box-shadow: 0 8px 30px rgba(0, 255, 136, 0.6) !important;
+        background: linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%) !important;
     }
     
+    /* 챗봇 윈도우 */
+    #chatbotWindow {
+        position: fixed !important;
+        width: calc(100vw - 20px) !important;
+        height: calc(100vh - 140px) !important;
+        max-height: 600px !important;
+        right: 10px !important;
+        left: 10px !important;
+        bottom: 80px !important;
+        margin: 0 auto !important;
+    }
+}
 </style>
 
 <script>
@@ -2707,20 +2717,26 @@ ${fortune.lucky}
 무엇을 도와드릴까요? ✨`;
     
     // 챗봇 토글
-    window.toggleChatbot = function() {
-        const window = document.getElementById('chatbotWindow');
-        const toggle = document.getElementById('chatbotToggle');
-        
-        if (window.style.display === 'none' || window.style.display === '') {
-            window.style.display = 'flex';
-            toggle.innerHTML = '✕';
-            toggle.style.background = 'linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-accent) 100%)';
-        } else {
-            window.style.display = 'none';
-            toggle.innerHTML = '💬';
-            toggle.style.background = 'linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%)';
-        }
+window.toggleChatbot = function() {
+    const window = document.getElementById('chatbotWindow');
+    const toggle = document.getElementById('chatbotToggle');
+    
+    if (window.style.display === 'none' || window.style.display === '') {
+        window.style.display = 'flex';
+        toggle.innerHTML = '✕';
+        toggle.style.background = 'linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-accent) 100%)';
+        // 모바일에서 버튼 위치 유지
+        toggle.style.visibility = 'visible';
+        toggle.style.display = 'flex';
+    } else {
+        window.style.display = 'none';
+        toggle.innerHTML = '💬';
+        toggle.style.background = 'linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%)';
+        // 모바일에서도 버튼 계속 표시
+        toggle.style.visibility = 'visible';
+        toggle.style.display = 'flex';
     }
+}
     
     // 메시지 전송
     window.sendMessage = function() {
@@ -2828,6 +2844,26 @@ ${fortune.lucky}
             toggle.style.animation = 'pulse 2s infinite, bounce 1s ease';
         }
     }, 3000);
+        // 모바일에서 챗봇 버튼 위치 강제 조정
+    if (window.innerWidth <= 768) {
+        window.addEventListener('load', function() {
+            const container = document.getElementById('chatbotContainer');
+            const toggle = document.getElementById('chatbotToggle');
+            
+            if (container) {
+                container.style.position = 'fixed';
+                container.style.bottom = '120px';
+                container.style.right = '15px';
+                container.style.zIndex = '99999';
+            }
+            
+            if (toggle) {
+                toggle.style.display = 'flex';
+                toggle.style.visibility = 'visible';
+                console.log('✅ 모바일 챗봇 버튼 위치 조정 완료');
+            }
+        });
+    }
 </script>
 <!-- AI 챗봇 끝 -->
     <!-- Footer -->
