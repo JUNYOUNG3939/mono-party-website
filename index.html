@@ -2195,7 +2195,7 @@
     <!-- 챗봇 윈도우 -->
     <div id="chatbotWindow" style="
         position: absolute;
-        bottom: 80px;
+        bottom: 70px;
         right: 0;
         width: 380px;
         height: 600px;
@@ -2419,10 +2419,10 @@
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {
-    /* 챗봇 컨테이너 위치 수정 */
+    /* 챗봇 컨테이너 - 버튼 위치 */
     #chatbotContainer {
         position: fixed !important;
-        bottom: 120px !important;  /* 음악 플레이어 위로 */
+        bottom: 100px !important;
         right: 15px !important;
         z-index: 99999 !important;
     }
@@ -2433,19 +2433,43 @@
         height: 56px !important;
         font-size: 1.6rem !important;
         box-shadow: 0 8px 30px rgba(0, 255, 136, 0.6) !important;
-        background: linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%) !important;
     }
     
-    /* 챗봇 윈도우 */
+    /* 챗봇 윈도우 - 전체 화면 모드 */
     #chatbotWindow {
         position: fixed !important;
-        width: calc(100vw - 20px) !important;
-        height: calc(100vh - 140px) !important;
-        max-height: 600px !important;
-        right: 10px !important;
+        top: 20px !important;
         left: 10px !important;
-        bottom: 80px !important;
-        margin: 0 auto !important;
+        right: 10px !important;
+        bottom: 20px !important;
+        width: calc(100% - 20px) !important;
+        height: calc(100% - 40px) !important;
+        max-width: none !important;
+        max-height: none !important;
+        border-radius: 15px !important;
+        transform: none !important;
+    }
+    
+    /* 채팅 메시지 영역 높이 조정 */
+    #chatMessages {
+        max-height: calc(100vh - 280px) !important;
+        overflow-y: auto !important;
+    }
+    
+    /* 빠른 질문 버튼 영역 */
+    #quickQuestions {
+        max-height: 80px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        white-space: nowrap !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    /* 빠른 버튼 스타일 */
+    .quick-btn {
+        flex-shrink: 0 !important;
+        margin-right: 8px !important;
     }
 }
 </style>
@@ -2864,8 +2888,41 @@ window.toggleChatbot = function() {
             }
         });
     }
+        // 모바일 화면 대응
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.innerWidth <= 768) {
+            const chatWindow = document.getElementById('chatbotWindow');
+            const chatContainer = document.getElementById('chatbotContainer');
+            
+            // 모바일에서 챗봇 윈도우 스타일 강제 적용
+            if (chatWindow) {
+                chatWindow.style.cssText += `
+                    position: fixed !important;
+                    top: 20px !important;
+                    left: 10px !important;
+                    right: 10px !important;
+                    bottom: 20px !important;
+                    width: calc(100% - 20px) !important;
+                    height: calc(100% - 40px) !important;
+                    max-width: none !important;
+                    max-height: none !important;
+                `;
+            }
+            
+            // 챗봇 버튼 위치
+            if (chatContainer) {
+                chatContainer.style.cssText += `
+                    position: fixed !important;
+                    bottom: 100px !important;
+                    right: 15px !important;
+                    z-index: 99999 !important;
+                `;
+            }
+        }
+    });
 </script>
 <!-- AI 챗봇 끝 -->
+    
     <!-- Footer -->
     <footer class="footer">
         <h3 class="footer-logo">MONO PARTY</h3>
