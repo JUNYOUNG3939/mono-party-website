@@ -792,7 +792,10 @@
             0%, 100% { opacity: 1; text-shadow: 0 0 20px var(--neon-accent), 0 0 40px var(--neon-accent); }
             50% { opacity: 0.8; text-shadow: 0 0 10px var(--neon-accent), 0 0 20px var(--neon-accent); }
         }
-        
+        @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
         /* Only apply animations on desktop */
         @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
             .floating {
@@ -2163,7 +2166,663 @@
             <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">지금 참가 신청하기</a>
         </div>
     </section>
+    <!-- AI 챗봇 시작 -->
+<div id="chatbotContainer" style="
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+">
+    <!-- 챗봇 버튼 -->
+    <button id="chatbotToggle" onclick="toggleChatbot()" style="
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        💬
+    </button>
     
+    <!-- 챗봇 윈도우 -->
+    <div id="chatbotWindow" style="
+        position: absolute;
+        bottom: 80px;
+        right: 0;
+        width: 380px;
+        height: 600px;
+        background: var(--bg-primary);
+        border: 2px solid var(--neon-accent);
+        border-radius: 20px;
+        display: none;
+        flex-direction: column;
+        box-shadow: 0 20px 60px rgba(0, 255, 136, 0.3);
+        overflow: hidden;
+        animation: slideUp 0.3s ease;
+    ">
+        <!-- 헤더 -->
+        <div style="
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(255, 0, 102, 0.1) 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        ">
+            <div>
+                <h3 style="
+                    margin: 0;
+                    font-size: 1.2rem;
+                    color: var(--neon-accent);
+                    font-weight: 700;
+                    margin-bottom: 5px;
+                ">MOOD AI ✨</h3>
+                <p style="
+                    margin: 0;
+                    font-size: 0.8rem;
+                    color: var(--text-secondary);
+                ">무엇이든 물어보세요!</p>
+            </div>
+            <button onclick="toggleChatbot()" style="
+                background: none;
+                border: none;
+                color: var(--text-secondary);
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.color='var(--neon-pink)'" onmouseout="this.style.color='var(--text-secondary)'">×</button>
+        </div>
+        
+        <!-- 채팅 영역 -->
+        <div id="chatMessages" style="
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        ">
+            <!-- 웰컴 메시지 -->
+            <div class="bot-message" style="
+                align-self: flex-start;
+                max-width: 80%;
+                background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
+                padding: 15px;
+                border-radius: 18px 18px 18px 5px;
+                border: 1px solid rgba(0, 255, 136, 0.3);
+            ">
+                <p style="margin: 0; font-size: 0.95rem; line-height: 1.5;">
+                    안녕하세요! 🎉 MONO PARTY AI 도우미 MOOD입니다.<br><br>
+                    파티 일정, 드레스코드, 티켓 구매 등 무엇이든 물어보세요!<br><br>
+                    <span style="color: var(--neon-accent);">오늘의 파티 운세</span>도 확인해보세요 ✨
+                </p>
+            </div>
+        </div>
+        
+        <!-- 빠른 질문 버튼들 -->
+        <div id="quickQuestions" style="
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 100px;
+            overflow-y: auto;
+        ">
+            <button class="quick-btn" onclick="sendQuickMessage('파티는 언제 열리나요?')">📅 파티 일정</button>
+            <button class="quick-btn" onclick="sendQuickMessage('혼자 가도 괜찮나요?')">👤 혼자 참가</button>
+            <button class="quick-btn" onclick="sendQuickMessage('드레스코드는 뭔가요?')">👗 드레스코드</button>
+            <button class="quick-btn" onclick="sendQuickMessage('연령대는 어떻게 되나요?')">🎂 연령대</button>
+            <button class="quick-btn" onclick="sendQuickMessage('오늘의 파티 운세')">🔮 파티 운세</button>
+            <button class="quick-btn" onclick="sendQuickMessage('티켓 구매 방법')">🎫 티켓 구매</button>
+        </div>
+        
+        <!-- 입력 영역 -->
+        <div style="
+            padding: 20px;
+            background: var(--bg-card);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+        ">
+            <input 
+                type="text" 
+                id="chatInput" 
+                placeholder="메시지를 입력하세요..."
+                onkeypress="if(event.keyCode==13) sendMessage()"
+                style="
+                    flex: 1;
+                    padding: 12px 15px;
+                    background: var(--bg-primary);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 25px;
+                    color: var(--text-primary);
+                    font-size: 0.95rem;
+                    outline: none;
+                    transition: all 0.3s ease;
+                "
+                onfocus="this.style.borderColor='var(--neon-accent)'"
+                onblur="this.style.borderColor='rgba(255, 255, 255, 0.2)'"
+            >
+            <button onclick="sendMessage()" style="
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                background: var(--neon-accent);
+                color: var(--bg-primary);
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                ➤
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 챗봇 스타일 */
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes typing {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+    }
+    
+    .quick-btn {
+        padding: 8px 14px;
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid rgba(0, 255, 136, 0.3);
+        color: var(--neon-accent);
+        border-radius: 20px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+    
+    .quick-btn:hover {
+        background: rgba(0, 255, 136, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .user-message {
+        align-self: flex-end;
+        max-width: 80%;
+        background: linear-gradient(135deg, rgba(255, 0, 102, 0.1) 0%, rgba(255, 0, 102, 0.05) 100%);
+        padding: 15px;
+        border-radius: 18px 18px 5px 18px;
+        border: 1px solid rgba(255, 0, 102, 0.3);
+        animation: slideUp 0.3s ease;
+    }
+    
+    .bot-message {
+        align-self: flex-start;
+        max-width: 80%;
+        background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
+        padding: 15px;
+        border-radius: 18px 18px 18px 5px;
+        border: 1px solid rgba(0, 255, 136, 0.3);
+        animation: slideUp 0.3s ease;
+    }
+    
+    .typing-indicator {
+        display: flex;
+        gap: 5px;
+        padding: 15px;
+    }
+    
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--neon-accent);
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+    }
+    
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    /* 모바일 반응형 */
+    @media (max-width: 768px) {
+        #chatbotWindow {
+            width: calc(100vw - 20px);
+            height: calc(100vh - 100px);
+            right: -15px;
+            left: 10px;
+            bottom: 70px;
+        }
+        
+        #chatbotContainer {
+            bottom: 20px;
+            right: 20px;
+        }
+    }
+</style>
+
+<script>
+    // 챗봇 답변 데이터
+    const chatbotResponses = {
+        '파티 일정': {
+            keywords: ['언제', '일정', '날짜', '시간', '요일', 'when'],
+            response: `📅 MONO PARTY는 주로 <span style="color: var(--neon-accent);">금요일, 토요일 저녁</span>에 열립니다!
+
+⏰ <strong>시간대:</strong>
+- 1부: 오후 8시 - 11시
+- 2부: 오후 11시 - 새벽 1시 30분
+
+최신 파티 일정은 상단의 "다가오는 파티 일정" 섹션에서 확인하실 수 있어요! 
+
+매회차 <span style="color: var(--neon-pink);">조기 마감</span>되니 서둘러 신청하세요 🎉`
+        },
+        '드레스코드': {
+            keywords: ['드레스', '옷', '복장', '블랙', '화이트', '무채색', 'dress'],
+            response: `🖤 MONO PARTY의 시그니처는 <strong>Black & White</strong>입니다!
+
+<span style="color: var(--neon-accent);">✨ 드레스코드:</span>
+- 올블랙 또는 올화이트
+- 무채색 계열 (검정, 흰색, 회색)
+- 포인트 악세서리 OK
+
+어두운 조명 아래서 당신의 실루엣이 더욱 매력적으로 빛날 거예요! 
+
+대부분 참가자들이 드레스코드를 지켜주셔서 통일감 있고 세련된 분위기가 만들어집니다 🌙`
+        },
+        '티켓 구매': {
+            keywords: ['티켓', '구매', '신청', '예약', '참가', '가격', 'ticket'],
+            response: `🎫 티켓 구매는 정말 간단해요!
+
+<span style="color: var(--neon-accent);">💳 구매 방법:</span>
+1. 홈페이지 "지금 참가 신청하기" 버튼 클릭
+2. 신청서 작성 (2분이면 완료!)
+3. 입금 확인 후 참가 확정
+
+<strong>가격:</strong>
+- 1부만: 남성 42,000원 / 여성 34,000원
+- 2부만: 25,000원
+- <span style="color: var(--neon-pink);">1부+2부 패키지: 특별 할인!</span>
+
+선착순 70명 마감이니 서둘러주세요! 💫`
+        },
+        '혼자 참가': {
+            keywords: ['혼자', '친구', '아는', '처음', 'alone'],
+            response: `👤 혼자 오시는 분들 정말 많아요!
+
+참가자의 <span style="color: var(--neon-accent);">60% 이상이 혼자</span> 오십니다!
+
+오히려 혼자 오시는 분들이 더 적극적이고 재밌게 즐기세요 ✨
+
+<strong>걱정하지 마세요:</strong>
+- 도착하자마자 아이스브레이킹 시작
+- 5분 안에 친해지는 특별한 게임들
+- MC가 자연스럽게 연결해드려요
+- 내향인도 편안한 구조
+
+혼자 와서 <span style="color: var(--neon-pink);">3-5명과 번호 교환</span>하고 가시는게 평균이에요! 😊`
+        },
+        '연령대': {
+            keywords: ['나이', '연령', '몇살', '세대', 'age'],
+            response: `🎂 MONO PARTY 연령대 안내
+
+<span style="color: var(--neon-accent);">✨ 참가 가능 연령:</span>
+- 남성: 25-36세
+- 여성: 20-37세
+
+<strong>주요 참가자층:</strong>
+- 20대 중후반 ~ 30대 초중반
+- 사회 초년생 ~ 중반 커리어
+- 감성적 교류를 원하는 MZ세대
+
+비슷한 연령대가 모여서 공감대 형성이 쉽고, 대화가 자연스럽게 이어져요! 
+
+<span style="color: var(--neon-pink);">신분증 지참 필수!</span> (나이 확인용) 🆔`
+        },
+        '파티 운세': {
+            keywords: ['운세', '오늘', '행운', '타로', '운', '점', '🔮'],
+            response: function() {
+                const fortunes = [
+                    {
+                        emoji: '✨',
+                        title: '네온 빛 아래 운명의 만남',
+                        desc: '오늘 당신은 <span style="color: var(--neon-accent);">검은 옷을 입은 누군가</span>와 특별한 인연을 만날 예정! 2부까지 남으면 연락처 5개는 기본~',
+                        lucky: '럭키 아이템: 향수 한 방울 💫'
+                    },
+                    {
+                        emoji: '🌙',
+                        title: '도파민 폭발의 날',
+                        desc: '미션 게임에서 <span style="color: var(--neon-pink);">주인공</span>이 될 운명! 평소보다 10배는 매력적으로 보이는 날이에요.',
+                        lucky: '럭키 타임: 밤 10시 30분 🕐'
+                    },
+                    {
+                        emoji: '💘',
+                        title: '설렘 지수 MAX',
+                        desc: '첫인상 롤링페이퍼에 <span style="color: var(--neon-accent);">당신을 향한 관심</span>이 폭주할 예정! 오늘은 인기스타~',
+                        lucky: '럭키 스팟: 바 카운터 근처 🍸'
+                    },
+                    {
+                        emoji: '⚡',
+                        title: '전기가 통하는 날',
+                        desc: '눈빛만으로도 <span style="color: var(--neon-pink);">감정 교류</span>가 가능한 날! 말하지 않아도 통하는 사람을 만날 거예요.',
+                        lucky: '럭키 액션: 먼저 다가가기 🚶'
+                    },
+                    {
+                        emoji: '🎯',
+                        title: '백발백중 큐피드의 화살',
+                        desc: '당신이 찍은 사람은 <span style="color: var(--neon-accent);">무조건 당신에게 호감</span>을 느낄 운명! 자신감을 가지세요.',
+                        lucky: '럭키 컬러: 올블랙 🖤'
+                    }
+                ];
+                
+                const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+                return `${fortune.emoji} <strong>오늘의 MONO PARTY 운세</strong> ${fortune.emoji}
+
+<span style="color: var(--neon-accent); font-size: 1.1rem; font-weight: 700;">"${fortune.title}"</span>
+
+${fortune.desc}
+
+${fortune.lucky}
+
+<span style="color: var(--text-secondary); font-size: 0.85rem;">
+💭 조언: 오늘은 평소보다 더 적극적으로! 
+후회 없는 파티를 만들어보세요~
+</span>`;
+            }
+        },
+        '게임 미션': {
+            keywords: ['게임', '미션', '아이스브레이킹', '컨텐츠', 'game'],
+            response: `🎮 MONO PARTY만의 특별한 컨텐츠!
+
+<span style="color: var(--neon-accent);">✨ 1부 하이라이트:</span>
+- <strong>첫인상 롤링페이퍼</strong> - 익명으로 첫인상 주고받기
+- <strong>티키타카 게임</strong> - 마음이 통하는 사람 찾기
+- <strong>칩 게임</strong> - 자연스러운 스킨십의 시작
+
+<span style="color: var(--neon-pink);">💫 2부 딥다이브:</span>
+- <strong>자기소개 타임</strong> - 진짜 나를 보여주기
+- <strong>설렘박스</strong> - 두근두근 이미지 미션
+- <strong>익명라디오</strong> - 솔직한 마음 전하기
+
+지루할 틈이 1초도 없어요! 도파민이 미친듯이 터집니다 🔥`
+        },
+        '장소': {
+            keywords: ['장소', '위치', '어디', '주소', '양재', 'location'],
+            response: `📍 MONO PARTY 위치 안내
+
+<span style="color: var(--neon-accent);">🏢 장소:</span>
+양재역 도보 5분 거리
+60평 프라이빗 감성 파티룸
+
+<strong>특징:</strong>
+- 넓고 쾌적한 단독 공간
+- 무드 있는 조명 시스템
+- 인스타 감성 인테리어
+- 프라이빗한 분위기
+
+<span style="color: var(--neon-pink);">정확한 주소는 참가 확정 후 개별 안내드려요!</span>
+
+양재역에서 정말 가까워서 대중교통 이용이 편해요 🚇`
+        },
+        '다른 파티와 차이': {
+            keywords: ['차이', '다른', '특별', '뭐가', '왜'],
+            response: `💎 MONO PARTY만의 특별함!
+
+<span style="color: var(--neon-accent);">✨ 일반 파티와 다른 점:</span>
+
+<strong>vs 클럽</strong>
+- 시끄럽지 않아 대화 가능
+- 자연스러운 만남과 교류
+- 품격 있는 분위기
+
+<strong>vs 소개팅</strong>
+- 1:1 부담감 제로
+- 여러 사람을 자연스럽게 만남
+- 게임으로 어색함 해소
+
+<strong>vs 일반 소셜파티</strong>
+- <span style="color: var(--neon-pink);">감정 중심</span> 설계
+- 도파민 과학적 접근
+- 검증된 매칭 시스템
+
+"소개팅은 부담스럽고 클럽은 시끄러운" 
+당신을 위한 <strong>무드 기반 파티</strong>입니다! 🌙`
+        },
+        '사진': {
+            keywords: ['사진', '촬영', '인스타', '포토존', 'photo'],
+            response: `📸 인스타 감성 폭발!
+
+<span style="color: var(--neon-accent);">✨ 포토 스팟:</span>
+- 네온사인 포토존
+- 무드등 가득한 공간
+- 올블랙 단체샷 존
+- 미러볼 아래 감성샷
+
+<strong>촬영 팁:</strong>
+- 어두운 조명이 더 매력적으로 만들어줘요
+- 실루엣 샷이 특히 인기
+- 스토리용 부메랑도 찍어보세요
+
+<span style="color: var(--neon-pink);">주의:</span> 다른 참가자 동의 없이 촬영 금지!
+본인 셀카와 분위기 샷은 자유롭게 OK 📱
+
+#MONOPARTY 태그 잊지 마세요! ✨`
+        },
+        '2부': {
+            keywords: ['2부', '투부', '애프터', '이후', 'after'],
+            response: `🌙 2부는 진짜가 시작되는 시간!
+
+<span style="color: var(--neon-accent);">✨ 2부만의 매력:</span>
+- 더 깊은 대화와 교감
+- 소규모 그룹 (50-60% 참여)
+- 편안하고 친밀한 분위기
+- 진짜 연결의 가능성
+
+<strong>2부 프로그램:</strong>
+- 진솔한 자기소개
+- 설렘박스 미션
+- 익명라디오
+- 프리토킹 타임
+
+<span style="color: var(--neon-pink);">💡 Tip:</span> 
+1부에서 마음에 드는 사람을 발견했다면
+2부는 필수! 대부분의 커플이 2부에서 탄생해요 💕
+
+선택사항이지만 강추! 후회 없을 거예요~`
+        },
+        '환불': {
+            keywords: ['환불', '취소', '변경', '못가', 'refund'],
+            response: `💰 환불 정책 안내
+
+<span style="color: var(--neon-accent);">📋 환불 규정:</span>
+- 파티 <strong>7일 전까지</strong>: 100% 환불
+- 파티 <strong>7일 전부터</strong>: 환불 불가
+
+<strong>예시:</strong>
+7월 19일 파티 → 7월 12일까지 환불 가능
+7월 13일부터는 환불 불가
+
+<span style="color: var(--neon-pink);">⚠️ 주의사항:</span>
+- 일정 변경도 7일 전까지만 가능
+- 긴급 상황 시 개별 문의
+- 선발 제외 시 100% 환불
+
+신중하게 일정 확인 후 신청해주세요! 
+문의: 인스타그램 DM @mono_party_ 📩`
+        }
+    };
+    
+    // 기본 응답
+    const defaultResponse = `흠... 정확한 답변을 찾지 못했어요 🤔
+
+하지만 걱정하지 마세요! 
+
+<span style="color: var(--neon-accent);">💬 직접 문의하기:</span>
+- 인스타그램: @mono_party_
+- 홈페이지 상단 파티 일정 확인
+
+자주 묻는 질문:
+- 파티 일정 / 드레스코드
+- 혼자 참가 / 연령대
+- 티켓 구매 / 게임 미션
+
+무엇을 도와드릴까요? ✨`;
+    
+    // 챗봇 토글
+    window.toggleChatbot = function() {
+        const window = document.getElementById('chatbotWindow');
+        const toggle = document.getElementById('chatbotToggle');
+        
+        if (window.style.display === 'none' || window.style.display === '') {
+            window.style.display = 'flex';
+            toggle.innerHTML = '✕';
+            toggle.style.background = 'linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-accent) 100%)';
+        } else {
+            window.style.display = 'none';
+            toggle.innerHTML = '💬';
+            toggle.style.background = 'linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%)';
+        }
+    }
+    
+    // 메시지 전송
+    window.sendMessage = function() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        
+        if (message) {
+            addUserMessage(message);
+            input.value = '';
+            
+            // 타이핑 인디케이터 표시
+            showTypingIndicator();
+            
+            // 1초 후 봇 응답
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = getResponse(message);
+                addBotMessage(response);
+            }, 1000);
+        }
+    }
+    
+    // 빠른 메시지 전송
+    window.sendQuickMessage = function(message) {
+        addUserMessage(message);
+        showTypingIndicator();
+        
+        setTimeout(() => {
+            removeTypingIndicator();
+            const response = getResponse(message);
+            addBotMessage(response);
+        }, 1000);
+    }
+    
+    // 응답 가져오기
+    function getResponse(message) {
+        const lowerMessage = message.toLowerCase();
+        
+        // 운세는 함수로 처리
+        if (lowerMessage.includes('운세') || lowerMessage.includes('행운')) {
+            return chatbotResponses['파티 운세'].response();
+        }
+        
+        // 키워드 매칭
+        for (const key in chatbotResponses) {
+            const item = chatbotResponses[key];
+            if (item.keywords) {
+                for (const keyword of item.keywords) {
+                    if (lowerMessage.includes(keyword)) {
+                        return typeof item.response === 'function' ? item.response() : item.response;
+                    }
+                }
+            }
+        }
+        
+        return defaultResponse;
+    }
+    
+    // 사용자 메시지 추가
+    function addUserMessage(message) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'user-message';
+        messageDiv.innerHTML = `<p style="margin: 0; font-size: 0.95rem;">${message}</p>`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // 봇 메시지 추가
+    function addBotMessage(message) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'bot-message';
+        messageDiv.innerHTML = `<p style="margin: 0; font-size: 0.95rem; line-height: 1.5;">${message}</p>`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // 타이핑 인디케이터
+    function showTypingIndicator() {
+        const chatMessages = document.getElementById('chatMessages');
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typingIndicator';
+        typingDiv.className = 'bot-message typing-indicator';
+        typingDiv.innerHTML = `
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+    
+    // 초기 환영 메시지 애니메이션
+    setTimeout(() => {
+        const toggle = document.getElementById('chatbotToggle');
+        if (toggle) {
+            toggle.style.animation = 'pulse 2s infinite, bounce 1s ease';
+        }
+    }, 3000);
+</script>
+<!-- AI 챗봇 끝 -->
     <!-- Footer -->
     <footer class="footer">
         <h3 class="footer-logo">MONO PARTY</h3>
