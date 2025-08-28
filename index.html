@@ -2426,11 +2426,18 @@
             bottom: 70px;
         }
         
-        #chatbotContainer {
-            bottom: 20px;
-            right: 20px;
-        }
+    #chatbotContainer {
+        bottom: 100px !important;  /* YouTube 플레이어 위로 올림 */
+        right: 20px !important;
+        z-index: 99999 !important;
     }
+    
+    #chatbotToggle {
+        width: 55px !important;
+        height: 55px !important;
+        box-shadow: 0 5px 25px rgba(0, 255, 136, 0.6) !important;
+    }
+    
 </style>
 
 <script>
@@ -3677,5 +3684,25 @@ window.startExperience = function() {
         window.addEventListener('resize', setVH);
         window.addEventListener('orientationchange', setVH);
     </script>
+        <script>
+        // 챗봇 버튼 확인
+        window.addEventListener('load', function() {
+            const chatbotBtn = document.getElementById('chatbotToggle');
+            if (chatbotBtn) {
+                console.log('✅ 챗봇 버튼이 존재합니다!');
+                // 3초 후 버튼 강조 애니메이션
+                setTimeout(() => {
+                    chatbotBtn.style.animation = 'pulse 2s infinite, bounce 1s ease';
+                    chatbotBtn.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        chatbotBtn.style.transform = 'scale(1)';
+                    }, 1000);
+                }, 3000);
+            } else {
+                console.log('❌ 챗봇 버튼을 찾을 수 없습니다!');
+            }
+        });
+    </script>
+    <!-- 🔼 테스트 코드 끝 🔼 -->
 </body>
 </html>
