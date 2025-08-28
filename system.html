@@ -3093,7 +3093,8 @@ async function updateParticipant(event) {
                     isOCRProcessing = true;
                     document.getElementById('progressText').textContent = 'OCR 엔진 로딩 중... (최초 1회만 시간이 걸립니다)';
                     
-                    ocrWorker = await Tesseract.createWorker('kor', 1, {
+                    // 한글+영문 동시 인식을 위해 언어 설정 변경
+ocrWorker = await Tesseract.createWorker(['kor', 'eng'], 1, {
                         logger: m => {
                             if (m.status === 'loading tesseract core' || m.status === 'loading lang data') {
                                 document.getElementById('progressText').textContent = `엔진 로딩 중... ${Math.round(m.progress * 100)}%`;
@@ -3107,9 +3108,9 @@ async function updateParticipant(event) {
                     
                     // OCR 설정 최적화
                     await ocrWorker.setParameters({
-                        tessedit_char_whitelist: '가-힣a-zA-Z0-9 ',
-                        tessedit_pageseg_mode: Tesseract.PSM.SINGLE_BLOCK
-                    });
+    tessedit_pageseg_mode: Tesseract.PSM.SPARSE_TEXT,  // 희소 텍스트 모드로 변경
+    preserve_interword_spaces: '1'  // 단어 간 공백 보존
+});
                     
                     isOCRProcessing = false;
                 }
@@ -3143,55 +3144,97 @@ async function updateParticipant(event) {
                 document.getElementById('ocrProgress').style.display = 'none';
             }
         }
+        / OCR 이미지 처리 (개선된 버전)
+async function processImageWithOCR(file) {
+    try {
+        // 진행 상태 표시
+        document.getElementById('ocrProgress').style.display = 'block';
+        document.getElementById('progressFill').style.width = '0%';
+        document.getElementById('progressText').textContent = 'OCR 시스템 준비 중...';
 
-        // OCR 이미지 처리 (개선된 버전)
-        async function processImageWithOCR(file) {
-            try {
-                // 진행 상태 표시
-                document.getElementById('ocrProgress').style.display = 'block';
-                document.getElementById('progressFill').style.width = '0%';
-                document.getElementById('progressText').textContent = 'OCR 시스템 준비 중...';
+        // 이미지 전처리 추가
+        const preprocessedImage = await preprocessImage(file);
 
-                // OCR 초기화
-                const worker = await initializeOCR();
+        // OCR 초기화
+        const worker = await initializeOCR();
 
-                // 이미지 인식 시작
-                document.getElementById('progressText').textContent = '이미지 분석 시작...';
-                const { data: { text, confidence } } = await worker.recognize(file);
+        // 이미지 인식 시작
+        document.getElementById('progressText').textContent = '이미지 분석 시작...';
+        const { data: { text, confidence, lines } } = await worker.recognize(preprocessedImage);
 
-                console.log('OCR 원본 텍스트:', text);
-                console.log('OCR 신뢰도:', confidence);
+        console.log('OCR 원본 텍스트:', text);
+        console.log('OCR 라인별 텍스트:', lines);
+        console.log('OCR 신뢰도:', confidence);
 
-                // 텍스트에서 이름 추출
-                const names = extractNamesFromText(text);
+        // 라인별 텍스트에서도 이름 추출 시도
+        let names = extractNamesFromText(text);
+        
+        if (lines && lines.length > 0) {
+            lines.forEach(line => {
+                const lineNames = extractNamesFromText(line.text);
+                names = [...names, ...lineNames];
+            });
+        }
 
-                if (names.length === 0) {
-                    // 대체 방법: 더 관대한 패턴으로 재시도
-                    const alternativeNames = extractNamesAlternative(text);
-                    displayExtractedNames(alternativeNames);
-                } else {
-                    displayExtractedNames(names);
-                }
+        // 중복 제거
+        names = [...new Set(names)];
 
-                // 진행 상태 숨기기
-                document.getElementById('ocrProgress').style.display = 'none';
+        if (names.length === 0) {
+            const alternativeNames = extractNamesAlternative(text);
+            displayExtractedNames(alternativeNames);
+        } else {
+            displayExtractedNames(names);
+        }
 
-            } catch (error) {
-                console.error('OCR 처리 오류:', error);
-                document.getElementById('ocrProgress').style.display = 'none';
-                
-                // 사용자 친화적 오류 메시지
-                let errorMessage = '❌ 이미지 분석 중 오류가 발생했습니다';
-                
-                if (error.message.includes('network')) {
-                    errorMessage = '❌ 인터넷 연결을 확인해주세요';
-                } else if (error.message.includes('worker')) {
-                    errorMessage = '❌ OCR 엔진 로딩 실패. 페이지를 새로고침 해주세요';
-                } else {
-                    errorMessage = `❌ 오류: ${error.message}`;
-                }
-                
-                showNotification(errorMessage);
+        document.getElementById('ocrProgress').style.display = 'none';
+
+    } catch (error) {
+        // 에러 처리...
+    }
+}
+
+// 이미지 전처리 함수 추가
+async function preprocessImage(file) {
+    return new Promise((resolve) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = function() {
+            // 이미지 크기 2배로 확대 (OCR 인식률 향상)
+            canvas.width = img.width * 2;
+            canvas.height = img.height * 2;
+            
+            // 배경을 흰색으로
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 이미지 그리기
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            // 그레이스케일 변환 및 대비 증가
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            for (let i = 0; i < data.length; i += 4) {
+                const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+                // 대비 증가
+                const enhanced = gray > 128 ? 255 : gray < 50 ? 0 : gray * 2;
+                data[i] = data[i + 1] = data[i + 2] = enhanced;
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+            
+            canvas.toBlob(resolve);
+        };
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
                 
                 // 수동 입력 옵션 제공
                 showManualInputOption();
@@ -3199,17 +3242,61 @@ async function updateParticipant(event) {
         }
 
         // 이름 추출 함수 (개선된 버전)
-        function extractNamesFromText(text) {
-            console.log('텍스트 분석 시작:', text);
+function extractNamesFromText(text) {
+    console.log('텍스트 분석 시작:', text);
+    
+    // 줄바꿈을 기준으로 먼저 분리
+    const lines = text.split(/[\n\r]+/);
+    const allNames = [];
+    
+    lines.forEach(line => {
+        // 각 줄에서 이름 추출
+        const cleanLine = line.trim();
+        
+        // 다양한 패턴으로 이름 추출
+        // 1. 한글 이름 (1-5글자, 띄어쓰기 포함)
+        const koreanPattern1 = cleanLine.match(/[가-힣]{1,5}/g) || [];
+        
+        // 2. 영문 이름 또는 닉네임
+        const englishPattern = cleanLine.match(/[a-zA-Z]{2,15}/g) || [];
+        
+        // 3. 한글+숫자 조합 (예: 부영이, 니모2 등)
+        const mixedPattern = cleanLine.match(/[가-힣]+[0-9]?/g) || [];
+        
+        allNames.push(...koreanPattern1, ...englishPattern, ...mixedPattern);
+    });
+    
+    // 필터링 개선
+    const filteredNames = allNames
+        .filter(name => {
+            // 최소 1글자 이상 (한글 1글자 이름도 있을 수 있음)
+            if (name.length < 1 || name.length > 15) return false;
             
-            // 텍스트 정리
-            const cleanText = text
-                .replace(/[^\w\s가-힣]/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim();
-
-            // 한글 이름 패턴 (2-4글자)
-            const koreanNames = cleanText.match(/[가-힣]{2,4}/g) || [];
+            // 제외할 일반 단어들 (확장된 목록)
+            const excludeWords = [
+                '참여', '확정', '멤버', '리스트', '목록', '이름', '연락처',
+                '전화', '번호', '나이', '성별', '남성', '여성', '신청',
+                '확인', '취소', '완료', '대기', '승인', '팔로우', 'follow',
+                '참가', '명단', '파티', '모노', '페이지', '다음', '이전',
+                '검색', '필터', '정렬', '날짜', '시간', '장소', '주소'
+            ];
+            
+            // 완전 일치하는 경우만 제외
+            if (excludeWords.includes(name.toLowerCase())) return false;
+            
+            // 숫자만으로 이루어진 경우 제외
+            if (/^\d+$/.test(name)) return false;
+            
+            // 특수문자가 포함된 경우 제외
+            if (/[!@#$%^&*()_+=\[\]{};':"\\|,.<>/?]/.test(name)) return false;
+            
+            return true;
+        })
+        .filter((name, index, self) => self.indexOf(name) === index); // 중복 제거
+    
+    console.log('추출된 이름들:', filteredNames);
+    return filteredNames;
+}
             
             // 영문 이름 패턴
             const englishNames = cleanText.match(/[a-zA-Z]{2,20}/g) || [];
@@ -3241,23 +3328,27 @@ async function updateParticipant(event) {
         }
 
         // 대체 이름 추출 방법
-        function extractNamesAlternative(text) {
-            // 더 관대한 패턴으로 추출
-            const lines = text.split('\n');
-            const possibleNames = [];
-            
-            lines.forEach(line => {
-                const trimmed = line.trim();
-                if (trimmed.length >= 2 && trimmed.length <= 10) {
-                    // 한글 또는 영문으로만 구성된 경우
-                    if (/^[가-힣]+$/.test(trimmed) || /^[a-zA-Z]+$/.test(trimmed)) {
-                        possibleNames.push(trimmed);
-                    }
+function extractNamesAlternative(text) {
+    const lines = text.split('\n');
+    const possibleNames = [];
+    
+    lines.forEach(line => {
+        const trimmed = line.trim();
+        
+        // 더 유연한 길이 제한 (1-15자)
+        if (trimmed.length >= 1 && trimmed.length <= 15) {
+            // 한글, 영문, 또는 혼합된 경우
+            if (/^[가-힣a-zA-Z0-9]+$/.test(trimmed)) {
+                // 숫자만 있는 경우는 제외
+                if (!/^\d+$/.test(trimmed)) {
+                    possibleNames.push(trimmed);
                 }
-            });
-            
-            return [...new Set(possibleNames)]; // 중복 제거
+            }
         }
+    });
+    
+    return [...new Set(possibleNames)];
+}
 
         // 수동 입력 옵션 표시
         function showManualInputOption() {
