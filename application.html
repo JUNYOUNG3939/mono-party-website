@@ -728,6 +728,10 @@
                 },
                 fields: [
                     {
+                                // 사진 추가 (큰 이미지로 표시)
+        image: applicationData.photo_url ? {
+            url: applicationData.photo_url
+        } : undefined,
                         name: "👤 이름",
                         value: applicationData.name,
                         inline: true
@@ -788,7 +792,12 @@
                         name: "🆔 신청 번호",
                         value: `#${applicationData.id || 'N/A'}`,
                         inline: true
-                    }
+                    },
+                                {
+                name: "📷 사진 링크",
+                value: applicationData.photo_url ? `[사진 보기](${applicationData.photo_url})` : '사진 없음',
+                inline: false
+            }
                 ]
             };
 
@@ -1040,54 +1049,98 @@
             document.getElementById('applicationForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
-                // Validate all required fields
-                const requiredFields = this.querySelectorAll('[required]');
-                let isValid = true;
-                
-                requiredFields.forEach(field => {
-                    if (!field.value && !field.checked) {
-                        isValid = false;
-                        field.classList.add('error');
-                    } else {
-                        field.classList.remove('error');
-                    }
+    // Validate all required fields
+    const requiredFields = this.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        if (!field.value && !field.checked) {
+            isValid = false;
+            field.classList.add('error');
+        } else {
+            field.classList.remove('error');
+        }
+    });
+    
+    if (!isValid) {
+        alert('모든 필수 항목을 입력해주세요.');
+        return;
+    }
+    
+    // Show loading
+    const submitButton = document.getElementById('submitButton');
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<div class="loading-spinner" style="display: block;"></div>';
+    
+    // Collect form data
+    const formData = new FormData(this);
+    
+    // ===== 사진 업로드 처리 추가 시작 =====
+    let photoUrl = null;
+    const photoFile = document.getElementById('photo').files[0];
+    
+    if (photoFile) {
+        try {
+            // 파일명 생성 (타임스탬프 + 랜덤 문자열)
+            const timestamp = Date.now();
+            const randomString = Math.random().toString(36).substring(7);
+            const fileExt = photoFile.name.split('.').pop();
+            const fileName = `${timestamp}_${randomString}.${fileExt}`;
+            
+            // Supabase Storage에 업로드
+            const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                .from('application-photos')
+                .upload(fileName, photoFile, {
+                    cacheControl: '3600',
+                    upsert: false
                 });
-                
-                if (!isValid) {
-                    alert('모든 필수 항목을 입력해주세요.');
-                    return;
-                }
-                
-                // Show loading
-                const submitButton = document.getElementById('submitButton');
-                submitButton.disabled = true;
-                submitButton.innerHTML = '<div class="loading-spinner" style="display: block;"></div>';
-                
-                // Collect form data
-                const formData = new FormData(this);
-                const applicationData = {
-                    // Basic info
-                    gender: formData.get('gender'),
-                    selected_date: formData.get('selectedDate'),
-                    ticket_type: formData.get('ticketType'),
-                    
-                    // Personal info
-                    name: formData.get('name'),
-                    height: parseInt(formData.get('height')),
-                    age: parseInt(formData.get('age')),
-                    phone: formData.get('phone'),
-                    job: formData.get('job'),
-                    instagram: formData.get('instagram'),
-                    companion: formData.get('companion'),
-                    companion_name: formData.get('companionName') || null,
-                    
-                    // Calculate price
-                    price: prices[formData.get('gender')][formData.get('ticketType')],
-                    
-                    // Party type is always 'provided' now
-                    party_type: 'provided'
-                };
-                
+            
+            if (uploadError) {
+                throw uploadError;
+            }
+            
+            // 업로드된 파일의 공개 URL 가져오기
+            const { data: { publicUrl } } = supabaseClient.storage
+                .from('application-photos')
+                .getPublicUrl(fileName);
+            
+            photoUrl = publicUrl;
+            
+        } catch (error) {
+            console.error('사진 업로드 실패:', error);
+            alert('사진 업로드에 실패했습니다. 다시 시도해주세요.');
+            submitButton.disabled = false;
+            submitButton.innerHTML = '참가 신청하기';
+            return;
+        }
+    }
+    // ===== 사진 업로드 처리 추가 끝 =====
+    
+    const applicationData = {
+        // Basic info
+        gender: formData.get('gender'),
+        selected_date: formData.get('selectedDate'),
+        ticket_type: formData.get('ticketType'),
+        
+        // Personal info
+        name: formData.get('name'),
+        height: parseInt(formData.get('height')),
+        age: parseInt(formData.get('age')),
+        phone: formData.get('phone'),
+        job: formData.get('job'),
+        instagram: formData.get('instagram'),
+        companion: formData.get('companion'),
+        companion_name: formData.get('companionName') || null,
+        
+        // Calculate price
+        price: prices[formData.get('gender')][formData.get('ticketType')],
+        
+        // Party type is always 'provided' now
+        party_type: 'provided',
+        
+        // ===== 사진 URL 추가 =====
+        photo_url: photoUrl
+    }; 
                 try {
                     // Save to Supabase
                     const { data, error } = await supabaseClient
