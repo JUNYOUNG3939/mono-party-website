@@ -825,11 +825,12 @@ fields: [
             }
         }
         
-        // Calendar functionality
-        let currentYear = new Date().getFullYear();
-        let currentMonth = new Date().getMonth();
-        const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
-        const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+// Calendar functionality
+let today = new Date();
+let currentYear = Math.max(2025, today.getFullYear());
+let currentMonth = today.getFullYear() >= 2025 ? today.getMonth() : 8; // 현재가 2025년 이후면 현재 월, 아니면 9월
+const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
         
         // Available party dates from database
         let availablePartyDates = [];
@@ -895,10 +896,14 @@ async function loadAvailablePartyDates() {
                 availablePartyDates = futurePartyDates.map(item => item.party_date);
                 document.getElementById('calendarContent').style.display = 'block';
                 
-                // Set calendar to the month of the first available date
-                const firstDate = new Date(availablePartyDates[0] + 'T00:00:00');
-                currentYear = firstDate.getFullYear();
-                currentMonth = firstDate.getMonth();
+// Set calendar to the month of the first available date
+if (availablePartyDates.length > 0) {
+    const firstDate = new Date(availablePartyDates[0] + 'T00:00:00');
+    currentYear = firstDate.getFullYear();
+    currentMonth = firstDate.getMonth();
+    console.log('캘린더 초기 설정:', currentYear + '년', (currentMonth + 1) + '월');
+}
+
                 
                 console.log('📆 달력 설정:', { 
                     year: currentYear, 
@@ -928,6 +933,7 @@ async function loadAvailablePartyDates() {
         
         // Generate calendar
         function generateCalendar() {
+            console.log('generateCalendar 호출됨:', currentYear + '년', (currentMonth + 1) + '월');  // ← 여기에 추가!
             const calendarGrid = document.getElementById('calendarGrid');
             const currentMonthElement = document.getElementById('currentMonth');
             
@@ -1060,24 +1066,26 @@ async function loadAvailablePartyDates() {
                 });
             });
             
-            // Calendar navigation
-            document.getElementById('prevMonth').addEventListener('click', function() {
-                currentMonth--;
-                if (currentMonth < 0) {
-                    currentMonth = 11;
-                    currentYear--;
-                }
-                generateCalendar();
-            });
-            
-            document.getElementById('nextMonth').addEventListener('click', function() {
-                currentMonth++;
-                if (currentMonth > 11) {
-                    currentMonth = 0;
-                    currentYear++;
-                }
-                generateCalendar();
-            });
+// Calendar navigation - preventDefault 추가
+document.getElementById('prevMonth').addEventListener('click', function(e) {
+    e.preventDefault();  // 추가
+    currentMonth--;
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+    }
+    generateCalendar();
+});
+
+document.getElementById('nextMonth').addEventListener('click', function(e) {
+    e.preventDefault();  // 추가
+    currentMonth++;
+    if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+    }
+    generateCalendar();
+});
             
             // File upload
             document.getElementById('photo').addEventListener('change', function(e) {
