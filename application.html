@@ -827,8 +827,8 @@ fields: [
         
 // Calendar functionality
 let today = new Date();
-let currentYear = Math.max(2025, today.getFullYear());
-let currentMonth = today.getFullYear() >= 2025 ? today.getMonth() : 8; // 현재가 2025년 이후면 현재 월, 아니면 9월
+let currentYear = 2025;
+let currentMonth = 8;  // 8 = 9월 (0부터 시작하므로)
 const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
 const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
         
@@ -869,7 +869,7 @@ async function loadAvailablePartyDates() {
         const { data, error } = await supabaseClient
             .from('party_schedules')
             .select('*')
-            .eq('is_active', true);  // gte 조건 제거하고 모든 활성 날짜 가져오기
+            .eq('is_active', true);
         
         console.log('📊 Supabase 응답:', { data, error });
         
@@ -880,6 +880,9 @@ async function loadAvailablePartyDates() {
         
         // Hide loading message
         document.getElementById('calendarLoading').style.display = 'none';
+        
+        // 캘린더는 무조건 표시
+        document.getElementById('calendarContent').style.display = 'block';
         
         if (data && data.length > 0) {
             console.log('✅ 전체 파티 날짜:', data);
@@ -894,33 +897,53 @@ async function loadAvailablePartyDates() {
             
             if (futurePartyDates.length > 0) {
                 availablePartyDates = futurePartyDates.map(item => item.party_date);
-                document.getElementById('calendarContent').style.display = 'block';
                 
-// Set calendar to the month of the first available date
-if (futurePartyDates.length > 0) {
-    availablePartyDates = futurePartyDates.map(item => item.party_date);
-    document.getElementById('calendarContent').style.display = 'block';
-    
-    // Set calendar to the month of the first available date
-    const firstDate = new Date(availablePartyDates[0] + 'T00:00:00');
-    currentYear = firstDate.getFullYear();
-    currentMonth = firstDate.getMonth();
-} else {
-    console.log('⚠️ 미래 날짜가 없습니다. 빈 캘린더를 표시합니다.');
-    availablePartyDates = [];
-    
-    // 파티 날짜가 없어도 캘린더는 표시
-    document.getElementById('calendarContent').style.display = 'block';
-    document.getElementById('noPartyDates').style.display = 'block';
-    
-    // 현재 날짜로 캘린더 설정
-    const today = new Date();
-    currentYear = today.getFullYear();
-    currentMonth = today.getMonth();
+                // Set calendar to the month of the first available date
+                const firstDate = new Date(availablePartyDates[0] + 'T00:00:00');
+                currentYear = firstDate.getFullYear();
+                currentMonth = firstDate.getMonth();
+                
+                console.log('📆 달력 설정:', { 
+                    year: currentYear, 
+                    month: currentMonth + 1,
+                    dates: availablePartyDates 
+                });
+            } else {
+                console.log('⚠️ 미래 날짜가 없습니다. 빈 캘린더를 표시합니다.');
+                availablePartyDates = [];
+                document.getElementById('noPartyDates').style.display = 'block';
+                
+                // 현재 날짜로 캘린더 설정
+                currentYear = 2025;
+                currentMonth = 8; // 9월
+            }
+        } else {
+            console.log('⚠️ 데이터베이스에 활성화된 파티 날짜가 없습니다');
+            availablePartyDates = [];
+            document.getElementById('noPartyDates').style.display = 'block';
+            
+            // 현재 날짜로 캘린더 설정
+            currentYear = 2025;
+            currentMonth = 8; // 9월
+        }
+        
+        // 캘린더 생성은 항상 실행
+        generateCalendar();
+        
+    } catch (error) {
+        console.error('❌ 파티 날짜 로드 실패:', error);
+        document.getElementById('calendarLoading').style.display = 'none';
+        document.getElementById('calendarContent').style.display = 'block';
+        document.getElementById('noPartyDates').style.display = 'block';
+        
+        // 에러가 나도 캘린더는 표시
+        availablePartyDates = [];
+        currentYear = 2025;
+        currentMonth = 8; // 9월
+        
+        generateCalendar();
+    }
 }
-
-// 캘린더 생성은 항상 실행
-generateCalendar();
                 
                 
         
