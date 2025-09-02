@@ -1181,13 +1181,21 @@ if (photoFile) {
     console.log('✅ Discord 알림 전송 완료');
                     
                     // Create payment info based on gender
-                    const paymentInfo = applicationData.gender === 'male' ? `
-                        <div style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink); padding: 25px; border-radius: 10px; margin-top: 30px;">
-                            <h4 style="color: var(--neon-pink); margin-bottom: 20px; text-align: center;">⚠️ 중요 안내 ⚠️</h4>
-                            <p style="margin-bottom: 15px; line-height: 1.8;">
-                                <strong>신청서 제출 후 (계좌번호)로 1시간 이내로 티켓 비용 입금하셔야 신청이 접수됩니다.</strong><br>
-                                <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
-                            </p>
+const paymentInfo = applicationData.gender === 'male' ? `
+    <div style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink); padding: 25px; border-radius: 10px; margin-top: 30px;">
+        <h4 style="color: var(--neon-pink); margin-bottom: 20px; text-align: center;">⚠️ 중요 안내 ⚠️</h4>
+        
+        <!-- 계좌 정보 추가 -->
+        <div style="background: var(--bg-primary); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center; border: 2px solid var(--neon-accent);">
+            <p style="color: var(--neon-accent); font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">💳 입금 계좌</p>
+            <p style="font-size: 1.3rem; font-weight: 900; color: var(--text-primary);">카카오뱅크 3333118316061</p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">예금주: (김동준)</p>
+        </div>
+        
+        <p style="margin-bottom: 15px; line-height: 1.8;">
+            <strong>신청서 제출 후 위 계좌로 1시간 이내로 티켓 비용 입금하셔야 신청이 접수됩니다.</strong><br>
+            <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
+        </p>
                             <div style="background: var(--bg-card); padding: 20px; border-radius: 5px; margin-top: 20px;">
                                 <h5 style="color: var(--neon-accent); margin-bottom: 15px;">티켓 비용 (남성)</h5>
                                 <p style="margin-bottom: 8px;">1부 + 2부 : <strong>57,000원</strong></p>
@@ -1195,14 +1203,35 @@ if (photoFile) {
                                 <p style="margin-bottom: 8px;">2부: <strong>25,000원</strong></p>
                                 <p style="color: var(--neon-accent);">동반인이 있을 경우 : 1부 + 2부 <strong>52,000원</strong></p>
                             </div>
+                            <!-- 인스타그램 DM 안내 추가 -->
+<div style="background: linear-gradient(135deg, #833AB4, #E1306C); padding: 20px; border-radius: 10px; margin-top: 20px;">
+    <h5 style="color: white; margin-bottom: 12px; text-align: center;">📸 인스타그램 확인 필수!</h5>
+    <p style="color: white; text-align: center; line-height: 1.6; font-size: 0.95rem;">
+        입금 완료 후 <strong style="font-size: 1.1rem;">@mono_party_</strong>로<br>
+        <strong>"${applicationData.selected_date} 파티 / ${applicationData.name} / 입금완료"</strong><br>
+        형식으로 DM 보내주세요!
+    </p>
+    <p style="color: rgba(255,255,255,0.8); text-align: center; font-size: 0.85rem; margin-top: 10px;">
+        예시: "1/15 파티 / 홍길동 / 입금완료"
+    </p>
+</div>
+
                         </div>
                     ` : `
-                        <div style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink); padding: 25px; border-radius: 10px; margin-top: 30px;">
-                            <h4 style="color: var(--neon-pink); margin-bottom: 20px; text-align: center;">⚠️ 중요 안내 ⚠️</h4>
-                            <p style="margin-bottom: 15px; line-height: 1.8;">
-                                <strong>신청서 제출 후 (계좌번호)로 1시간 이내로 티켓 비용 입금하셔야 신청이 접수됩니다.</strong><br>
-                                <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
-                            </p>
+    <div style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink); padding: 25px; border-radius: 10px; margin-top: 30px;">
+        <h4 style="color: var(--neon-pink); margin-bottom: 20px; text-align: center;">⚠️ 중요 안내 ⚠️</h4>
+        
+        <!-- 계좌 정보 추가 -->
+        <div style="background: var(--bg-primary); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center; border: 2px solid var(--neon-accent);">
+            <p style="color: var(--neon-accent); font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">💳 입금 계좌</p>
+            <p style="font-size: 1.3rem; font-weight: 900; color: var(--text-primary);">카카오뱅크 3333118316061</p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">예금주: (김동준)</p>
+        </div>
+        
+        <p style="margin-bottom: 15px; line-height: 1.8;">
+            <strong>신청서 제출 후 위 계좌로 1시간 이내로 티켓 비용 입금하셔야 신청이 접수됩니다.</strong><br>
+            <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
+        </p>
                             <div style="background: var(--bg-card); padding: 20px; border-radius: 5px; margin-top: 20px;">
                                 <h5 style="color: var(--neon-accent); margin-bottom: 15px;">티켓 비용 (여성)</h5>
                                 <p style="margin-bottom: 8px;">1부 + 2부 : <strong>47,000원</strong></p>
@@ -1210,6 +1239,19 @@ if (photoFile) {
                                 <p style="margin-bottom: 8px;">2부: <strong>25,000원</strong></p>
                                 <p style="color: var(--neon-accent);">동반인이 있을 경우 : 1부 + 2부 <strong>42,000원</strong></p>
                             </div>
+                            <!-- 인스타그램 DM 안내 추가 -->
+<div style="background: linear-gradient(135deg, #833AB4, #E1306C); padding: 20px; border-radius: 10px; margin-top: 20px;">
+    <h5 style="color: white; margin-bottom: 12px; text-align: center;">📸 인스타그램 확인 필수!</h5>
+    <p style="color: white; text-align: center; line-height: 1.6; font-size: 0.95rem;">
+        입금 완료 후 <strong style="font-size: 1.1rem;">@mono_party_</strong>로<br>
+        <strong>"${applicationData.selected_date} 파티 / ${applicationData.name} / 입금완료"</strong><br>
+        형식으로 DM 보내주세요!
+    </p>
+    <p style="color: rgba(255,255,255,0.8); text-align: center; font-size: 0.85rem; margin-top: 10px;">
+        예시: "1/15 파티 / 홍길동 / 입금완료"
+    </p>
+</div>
+
                         </div>
                     `;
                     
