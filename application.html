@@ -1181,16 +1181,14 @@ if (photoFile) {
     console.log('✅ Discord 알림 전송 완료');
                     
 // Create payment info based on gender
+const selectedPrice = applicationData.price.toLocaleString(); // 미리 변수로 만들기
+
 const paymentInfo = applicationData.gender === 'male' ? `
     <div style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink); padding: 25px; border-radius: 10px; margin-top: 30px;">
         <h4 style="color: var(--neon-pink); margin-bottom: 20px; text-align: center;">⚠️ 중요 안내 ⚠️</h4>
-        <p style="margin-bottom: 15px; line-height: 1.8;">
-            <strong>신청서 제출 후 아래 계좌로 1시간 이내로 티켓 비용을 입금하셔야 신청이 접수됩니다.</strong><br>
-            <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
-        </p>
         
-        <!-- 계좌 정보 추가 -->
-        <div style="background: rgba(0, 255, 136, 0.2); border: 2px solid var(--neon-accent); padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
+        <!-- 계좌 정보 박스 -->
+        <div style="background: rgba(0, 255, 136, 0.2); border: 2px solid var(--neon-accent); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
             <h5 style="color: var(--neon-accent); margin-bottom: 15px; font-size: 1.2rem;">💳 입금 계좌 정보</h5>
             <p style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">
                 카카오뱅크 3333118316061
@@ -1199,9 +1197,14 @@ const paymentInfo = applicationData.gender === 'male' ? `
                 예금주: <strong>김동준</strong>
             </p>
             <p style="margin-top: 15px; font-size: 0.95rem; color: var(--neon-pink);">
-                ⚡ 신청금액: <strong style="font-size: 1.2rem;">${applicationData.price.toLocaleString()}원</strong>
+                ⚡ 신청금액: <strong style="font-size: 1.2rem;">${selectedPrice}원</strong>
             </p>
         </div>
+        
+        <p style="margin-bottom: 15px; line-height: 1.8;">
+            <strong>위 계좌로 1시간 이내로 티켓 비용을 입금하셔야 신청이 접수됩니다.</strong><br>
+            <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
+        </p>
         
         <div style="background: var(--bg-card); padding: 20px; border-radius: 5px; margin-top: 20px;">
             <h5 style="color: var(--neon-accent); margin-bottom: 15px;">티켓 비용 (남성)</h5>
@@ -1214,13 +1217,9 @@ const paymentInfo = applicationData.gender === 'male' ? `
 ` : `
     <div style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink); padding: 25px; border-radius: 10px; margin-top: 30px;">
         <h4 style="color: var(--neon-pink); margin-bottom: 20px; text-align: center;">⚠️ 중요 안내 ⚠️</h4>
-        <p style="margin-bottom: 15px; line-height: 1.8;">
-            <strong>신청서 제출 후 아래 계좌로 1시간 이내로 티켓 비용을 입금하셔야 신청이 접수됩니다.</strong><br>
-            <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
-        </p>
         
-        <!-- 계좌 정보 추가 -->
-        <div style="background: rgba(0, 255, 136, 0.2); border: 2px solid var(--neon-accent); padding: 20px; border-radius: 10px; margin: 20px 0; text-align: center;">
+        <!-- 계좌 정보 박스 -->
+        <div style="background: rgba(0, 255, 136, 0.2); border: 2px solid var(--neon-accent); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
             <h5 style="color: var(--neon-accent); margin-bottom: 15px; font-size: 1.2rem;">💳 입금 계좌 정보</h5>
             <p style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">
                 카카오뱅크 3333118316061
@@ -1229,9 +1228,14 @@ const paymentInfo = applicationData.gender === 'male' ? `
                 예금주: <strong>김동준</strong>
             </p>
             <p style="margin-top: 15px; font-size: 0.95rem; color: var(--neon-pink);">
-                ⚡ 신청금액: <strong style="font-size: 1.2rem;">${applicationData.price.toLocaleString()}원</strong>
+                ⚡ 신청금액: <strong style="font-size: 1.2rem;">${selectedPrice}원</strong>
             </p>
         </div>
+        
+        <p style="margin-bottom: 15px; line-height: 1.8;">
+            <strong>위 계좌로 1시간 이내로 티켓 비용을 입금하셔야 신청이 접수됩니다.</strong><br>
+            <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
+        </p>
         
         <div style="background: var(--bg-card); padding: 20px; border-radius: 5px; margin-top: 20px;">
             <h5 style="color: var(--neon-accent); margin-bottom: 15px;">티켓 비용 (여성)</h5>
