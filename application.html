@@ -849,19 +849,59 @@ fields: [
         };
         
         // Load available party dates from database
-        async function loadAvailablePartyDates() {
-            try {
-                // Show loading message
-                document.getElementById('calendarLoading').style.display = 'block';
-                document.getElementById('calendarContent').style.display = 'none';
-                document.getElementById('noPartyDates').style.display = 'none';
-                
-                const { data, error } = await supabaseClient
-                    .from('party_schedules')
-                    .select('*')
-                    .eq('is_active', true)
-                    .gte('party_date', new Date().toISOString().split('T')[0])
-                    .order('party_date', { ascending: true });
+async function loadAvailablePartyDates() {
+    try {
+        console.log('📅 파티 날짜 로딩 시작...'); // 디버깅용
+        
+        // Show loading message
+        document.getElementById('calendarLoading').style.display = 'block';
+        document.getElementById('calendarContent').style.display = 'none';
+        document.getElementById('noPartyDates').style.display = 'none';
+        
+        const today = new Date().toISOString().split('T')[0];
+        console.log('오늘 날짜:', today); // 디버깅용
+        
+        const { data, error } = await supabaseClient
+            .from('party_schedules')
+            .select('*')
+            .eq('is_active', true)
+            .gte('party_date', today)
+            .order('party_date', { ascending: true });
+        
+        console.log('파티 날짜 데이터:', data); // 디버깅용
+        console.log('에러:', error); // 디버깅용
+        
+        if (error) {
+            console.error('❌ Supabase 에러:', error);
+            throw error;
+        }
+        
+        // Hide loading message
+        document.getElementById('calendarLoading').style.display = 'none';
+        
+        if (data && data.length > 0) {
+            console.log('✅ 파티 날짜 발견:', data.length + '개');
+            availablePartyDates = data.map(item => item.party_date);
+            document.getElementById('calendarContent').style.display = 'block';
+            
+            // Set calendar to the month of the first available date
+            const firstDate = new Date(availablePartyDates[0]);
+            currentYear = firstDate.getFullYear();
+            currentMonth = firstDate.getMonth();
+            
+            generateCalendar();
+        } else {
+            console.log('⚠️ 활성화된 파티 날짜가 없습니다');
+            // No party dates available
+            document.getElementById('noPartyDates').style.display = 'block';
+            document.getElementById('calendarContent').style.display = 'none';
+        }
+    } catch (error) {
+        console.error('❌ 파티 날짜 로드 실패:', error);
+        document.getElementById('calendarLoading').style.display = 'none';
+        document.getElementById('noPartyDates').style.display = 'block';
+    }
+}
                 
                 if (error) throw error;
                 
