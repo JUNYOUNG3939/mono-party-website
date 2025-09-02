@@ -924,32 +924,7 @@ async function loadAvailablePartyDates() {
     }
 }
                 
-                if (error) throw error;
                 
-                // Hide loading message
-                document.getElementById('calendarLoading').style.display = 'none';
-                
-                if (data && data.length > 0) {
-                    availablePartyDates = data.map(item => item.party_date);
-                    document.getElementById('calendarContent').style.display = 'block';
-                    
-                    // Set calendar to the month of the first available date
-                    const firstDate = new Date(availablePartyDates[0]);
-                    currentYear = firstDate.getFullYear();
-                    currentMonth = firstDate.getMonth();
-                    
-                    generateCalendar();
-                } else {
-                    // No party dates available
-                    document.getElementById('noPartyDates').style.display = 'block';
-                    document.getElementById('calendarContent').style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Error loading party dates:', error);
-                document.getElementById('calendarLoading').style.display = 'none';
-                document.getElementById('noPartyDates').style.display = 'block';
-            }
-        }
         
         // Generate calendar
         function generateCalendar() {
