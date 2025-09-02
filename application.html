@@ -726,12 +726,13 @@
                 footer: {
                     text: "MONO PARTY 신청 시스템"
                 },
-                fields: [
-                    {
-                                // 사진 추가 (큰 이미지로 표시)
+                                                // 사진 추가 (큰 이미지로 표시)
         image: applicationData.photo_url ? {
             url: applicationData.photo_url
         } : undefined,
+                fields: [
+                    {
+
                         name: "👤 이름",
                         value: applicationData.name,
                         inline: true
@@ -1076,45 +1077,55 @@
     const formData = new FormData(this);
     
     // ===== 사진 업로드 처리 추가 시작 =====
-    let photoUrl = null;
-    const photoFile = document.getElementById('photo').files[0];
+let photoUrl = null;
+const photoFile = document.getElementById('photo').files[0];
+
+if (photoFile) {
+    console.log('📸 파일 업로드 시작:', photoFile.name, '크기:', photoFile.size);
     
-    if (photoFile) {
-        try {
-            // 파일명 생성 (타임스탬프 + 랜덤 문자열)
-            const timestamp = Date.now();
-            const randomString = Math.random().toString(36).substring(7);
-            const fileExt = photoFile.name.split('.').pop();
-            const fileName = `${timestamp}_${randomString}.${fileExt}`;
-            
-            // Supabase Storage에 업로드
-            const { data: uploadData, error: uploadError } = await supabaseClient.storage
-                .from('application-photos')
-                .upload(fileName, photoFile, {
-                    cacheControl: '3600',
-                    upsert: false
-                });
-            
-            if (uploadError) {
-                throw uploadError;
-            }
-            
-            // 업로드된 파일의 공개 URL 가져오기
-            const { data: { publicUrl } } = supabaseClient.storage
-                .from('application-photos')
-                .getPublicUrl(fileName);
-            
-            photoUrl = publicUrl;
-            
-        } catch (error) {
-            console.error('사진 업로드 실패:', error);
-            alert('사진 업로드에 실패했습니다. 다시 시도해주세요.');
-            submitButton.disabled = false;
-            submitButton.innerHTML = '참가 신청하기';
-            return;
+    try {
+        // 파일명 생성 (타임스탬프 + 랜덤 문자열)
+        const timestamp = Date.now();
+        const randomString = Math.random().toString(36).substring(7);
+        const fileExt = photoFile.name.split('.').pop();
+        const fileName = `${timestamp}_${randomString}.${fileExt}`;
+        
+        console.log('📁 생성된 파일명:', fileName);
+        
+        // Supabase Storage에 업로드
+        const { data: uploadData, error: uploadError } = await supabaseClient.storage
+            .from('application-photos')
+            .upload(fileName, photoFile, {
+                cacheControl: '3600',
+                upsert: false
+            });
+        
+        if (uploadError) {
+            console.error('❌ Supabase 업로드 에러:', uploadError);
+            throw uploadError;
         }
+        
+        console.log('✅ 업로드 성공:', uploadData);
+        
+        // 업로드된 파일의 공개 URL 가져오기
+        const { data: { publicUrl } } = supabaseClient.storage
+            .from('application-photos')
+            .getPublicUrl(fileName);
+        
+        photoUrl = publicUrl;
+        console.log('🔗 생성된 공개 URL:', photoUrl);
+        
+    } catch (error) {
+        console.error('❌ 사진 업로드 실패 상세:', error);
+        alert('사진 업로드에 실패했습니다. 다시 시도해주세요.');
+        submitButton.disabled = false;
+        submitButton.innerHTML = '참가 신청하기';
+        return;
     }
-    // ===== 사진 업로드 처리 추가 끝 =====
+} else {
+    console.log('⚠️ 사진 파일이 선택되지 않음');
+}
+// ===== 사진 업로드 처리 추가 끝 =====
     
     const applicationData = {
         // Basic info
@@ -1142,21 +1153,29 @@
         photo_url: photoUrl
     }; 
                 try {
+                        // 저장할 데이터 확인
+    console.log('📤 데이터베이스 저장 데이터:', applicationData);
                     // Save to Supabase
                     const { data, error } = await supabaseClient
                         .from('applications')
                         .insert([applicationData])
                         .select();
                     
-                    if (error) throw error;
+ if (error) {
+        console.error('❌ DB 저장 에러:', error);
+        throw error;
+    }
+    
+    console.log('✅ DB 저장 성공:', data);
+    console.log('신청 완료:', data);
                     
-                    console.log('신청 완료:', data);
-                    
-                    // Discord 알림 전송 (신청 ID 포함)
-                    await sendDiscordNotification({
-                        ...applicationData,
-                        id: data[0].id
-                    });
+  // Discord 알림 전송 (신청 ID 포함)
+    console.log('📨 Discord 알림 전송 시작');
+    await sendDiscordNotification({
+        ...applicationData,
+        id: data[0].id
+    });
+    console.log('✅ Discord 알림 전송 완료');
                     
                     // Create payment info based on gender
                     const paymentInfo = applicationData.gender === 'male' ? `
