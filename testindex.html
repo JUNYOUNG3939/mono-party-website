@@ -1,0 +1,4322 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>MONO PARTY | 감정이 흐르는 무드 파티</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Playfair+Display:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --neon-accent: #00ff88;
+            --neon-pink: #ff0066;
+            --neon-blue: #00e5ff;
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-card: #111111;
+            --safe-area-top: env(safe-area-inset-top);
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            padding-top: var(--safe-area-top);
+        }
+        
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        /* Neon Glow Effect */
+        .neon-glow {
+            text-shadow: 0 0 20px var(--neon-accent), 0 0 40px var(--neon-accent);
+        }
+        
+        .neon-border {
+            border: 1px solid var(--neon-accent);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5), inset 0 0 20px rgba(0, 255, 136, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        /* 실시간 알림 스타일 */
+        .live-viewer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--neon-accent);
+            border-radius: 10px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-accent);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .notification-item {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid var(--neon-pink);
+            border-radius: 10px;
+            padding: 15px;
+            backdrop-filter: blur(10px);
+            animation: slideIn 0.5s ease;
+            margin-top: 10px;
+        }
+        
+        /* Hero Section - Mobile Optimized */
+        .hero {
+            min-height: 100vh;
+            min-height: calc(100vh - var(--safe-area-top));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle at center, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            padding: 20px;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg"><filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noiseFilter)" opacity="0.02"/></svg>');
+            pointer-events: none;
+        }
+        
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            max-width: 800px;
+            width: 100%;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 10vw, 6rem);
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            line-height: 1;
+        }
+        
+        .logo::after {
+            content: 'MONO PARTY';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            z-index: -1;
+            color: var(--neon-accent);
+            opacity: 0.5;
+            filter: blur(3px);
+        }
+        
+        .tagline {
+            font-size: clamp(0.9rem, 3vw, 1.5rem);
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+        }
+        
+        .hero-subtitle {
+            font-size: clamp(1.3rem, 5vw, 2.5rem);
+            margin-bottom: 30px;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--text-primary) 30%, var(--neon-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.3;
+        }
+        
+        .hero-description {
+            font-size: clamp(1rem, 3vw, 1.1rem);
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            font-weight: 300;
+            padding: 0 10px;
+        }
+        
+        /* CTA Button - Mobile Optimized */
+        .cta-button {
+            display: inline-block;
+            padding: 18px 50px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: var(--bg-primary);
+            background: var(--neon-accent);
+            border: none;
+            border-radius: 50px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            touch-action: manipulation;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent; /* 추가 */
+            z-index: 10; /* 추가 */
+        }
+        
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        @media (hover: hover) {
+            .cta-button:hover::before {
+                left: 100%;
+            }
+            
+            .cta-button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 40px rgba(0, 255, 136, 0.5);
+            }
+        }
+        
+        /* Touch feedback for mobile */
+        .cta-button:active {
+            transform: scale(0.95);
+            background: rgba(0, 255, 136, 0.9); /* 추가: 색상 변화로 피드백 강화 */
+        }
+        
+        /* Section Styles - Mobile Optimized */
+        .section {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-size: clamp(1.8rem, 6vw, 3rem);
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            line-height: 1.3;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 2px;
+            background: var(--neon-accent);
+            box-shadow: 0 0 20px var(--neon-accent);
+        }
+        
+        /* Concept Cards - Mobile Optimized */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 60px;
+        }
+        
+        @media (min-width: 768px) {
+            .concept-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 30px;
+            }
+        }
+        
+        .concept-card {
+            background: var(--bg-card);
+            padding: 30px 25px;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .concept-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 30%, rgba(0, 255, 136, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        @media (hover: hover) {
+            .concept-card:hover::before {
+                opacity: 1;
+            }
+            
+            .concept-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            }
+        }
+        
+        .concept-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .concept-title {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+        
+        .concept-subtitle {
+            font-size: 0.95rem;
+            color: var(--neon-accent);
+            margin-bottom: 18px;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+        
+        .concept-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-weight: 300;
+            font-size: 0.95rem;
+        }
+        
+        /* Flow Section - Mobile Optimized */
+        .flow-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        @media (min-width: 768px) {
+            .flow-container {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 40px;
+            }
+        }
+        
+        .flow-item {
+            text-align: center;
+            position: relative;
+            padding: 0 10px;
+        }
+        
+        .flow-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            border: 2px solid var(--neon-accent);
+            border-radius: 50%;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            background: var(--bg-primary);
+        }
+        
+        /* Remove connecting lines on mobile */
+        .flow-item:not(:last-child)::after {
+            display: none;
+        }
+        
+        @media (min-width: 768px) {
+            .flow-item:not(:last-child)::after {
+                content: '';
+                position: absolute;
+                top: 25px;
+                left: 60%;
+                width: calc(100% - 60%);
+                height: 2px;
+                background: var(--text-secondary);
+                opacity: 0.3;
+                display: block;
+            }
+        }
+        
+        /* Features - Mobile Optimized */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 50px;
+        }
+        
+        @media (min-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 30px;
+            }
+        }
+        
+        .feature-item {
+            text-align: center;
+            padding: 20px 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item h3 {
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+        
+        .feature-item p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+        
+        @media (hover: hover) {
+            .feature-item:hover {
+                background: rgba(0, 255, 136, 0.05);
+                border-color: rgba(0, 255, 136, 0.3);
+                transform: translateY(-5px);
+            }
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--neon-accent);
+        }
+        
+        /* Testimonials - Mobile Optimized */
+        .testimonials-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 50px;
+        }
+        
+        @media (min-width: 768px) {
+            .testimonials-container {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 30px;
+            }
+        }
+        
+        .testimonial {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 25px;
+            border-left: 3px solid var(--neon-accent);
+            border-radius: 10px;
+            position: relative;
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+        
+        .testimonial::before {
+            content: '"';
+            position: absolute;
+            top: -5px;
+            left: 15px;
+            font-size: 3rem;
+            color: var(--neon-accent);
+            opacity: 0.3;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        /* Video Section - Mobile Optimized */
+        .video-container {
+            position: relative;
+            background: var(--bg-card);
+            border: 2px solid var(--neon-accent);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3);
+            margin-bottom: 40px;
+        }
+        
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+        
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        /* Gallery Grid - Mobile Optimized */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 60px;
+        }
+        
+        @media (min-width: 768px) {
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 30px;
+            }
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-card);
+            height: 350px;
+            border-radius: 15px;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+            z-index: 1;
+        }
+        
+        .gallery-content {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            right: 25px;
+            z-index: 2;
+        }
+        
+        .gallery-content h3 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: var(--neon-accent);
+        }
+        
+        .gallery-content p {
+            color: var(--text-primary);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+        
+        /* Info Grid - Mobile Optimized */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 50px;
+            background: var(--bg-card);
+            padding: 30px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .info-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 40px;
+                padding: 50px;
+            }
+        }
+        
+        .info-item {
+            text-align: center;
+        }
+        
+        .info-icon {
+            font-size: 1.8rem;
+            color: var(--neon-accent);
+            margin-bottom: 10px;
+        }
+        
+        .info-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .info-value {
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        
+        /* Footer - Mobile Optimized */
+        .footer {
+            text-align: center;
+            padding: 50px 20px;
+            padding-bottom: calc(50px + var(--safe-area-bottom));
+            background: var(--bg-secondary);
+            margin-top: 60px;
+        }
+        
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 0.15em;
+            margin-bottom: 15px;
+            color: var(--neon-accent);
+        }
+        
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Special Sections - Mobile Optimized */
+        .dopamine-banner {
+            background: linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%);
+            padding: 40px 20px;
+            text-align: center;
+            margin: 40px -20px;
+        }
+        
+        .dopamine-banner h3 {
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            color: var(--bg-primary);
+            font-weight: 900;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+        
+        .dopamine-banner p {
+            font-size: 1.1rem;
+            color: var(--bg-primary);
+            opacity: 0.9;
+        }
+        
+        /* Party Schedule Cards */
+        .party-card {
+            background: var(--bg-card);
+            border: 2px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .party-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+        
+        .party-card.saturday {
+            border-color: var(--neon-pink);
+        }
+        
+        .floating-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            padding: 8px 16px;
+            font-weight: 700;
+            z-index: 2;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        
+        /* Mobile Specific Optimizations */
+        @media (max-width: 768px) {
+            /* 실시간 알림을 하단에 표시 */
+            .live-viewer {
+                bottom: 20px;
+                top: auto;
+                right: 20px;
+                left: 20px;
+                max-width: none;
+                pointer-events: none; /* 추가: 클릭 이벤트 통과 */
+            }
+
+                .live-viewer > * {
+        pointer-events: auto; /* 추가: 자식 요소는 클릭 가능 */
+    }
+    
+            
+            
+            #notificationContainer {
+                position: fixed;
+                bottom: 80px;
+                right: 20px;
+                left: 20px;
+                max-width: none !important;
+                pointer-events: none; /* 추가: 컨테이너는 클릭 통과 */
+            }
+                .notification-item {
+        pointer-events: auto; /* 추가: 알림 아이템은 클릭 가능 */
+    }
+    
+    /* CTA 버튼 z-index 우선순위 높이기 */
+    .cta-button {
+        position: relative;
+        z-index: 1001; /* 추가: 알림보다 위에 표시 */
+    }
+
+            
+            
+            /* Reduce padding on mobile */
+            .section {
+                padding: 50px 15px;
+            }
+            
+            /* Stack content better on mobile */
+            .concept-card {
+                padding: 25px 20px;
+            }
+            
+            /* Improve readability on small screens */
+            body {
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+            
+            /* Better touch targets */
+            .action-button,
+            .filter-select,
+            .filter-input {
+                min-height: 44px; /* iOS touch target size */
+            }
+            
+            /* Optimize images for mobile */
+            .gallery-item {
+                height: 280px;
+            }
+            
+            /* Simplify animations on mobile for better performance */
+            * {
+                animation-duration: 0s !important;
+                animation-delay: 0s !important;
+            }
+            
+            /* Better spacing for mobile */
+            .section-title {
+                margin-bottom: 40px;
+            }
+            
+            /* Optimize FAQ for mobile */
+            .faq-item {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .faq-item h3 {
+                font-size: 1.1rem;
+                margin-bottom: 12px;
+            }
+            
+            .faq-item p {
+                font-size: 0.95rem;
+                line-height: 1.6;
+            }
+        }
+        
+        /* Animations - Performance optimized */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes neonFlicker {
+            0%, 100% { opacity: 1; text-shadow: 0 0 20px var(--neon-accent), 0 0 40px var(--neon-accent); }
+            50% { opacity: 0.8; text-shadow: 0 0 10px var(--neon-accent), 0 0 20px var(--neon-accent); }
+        }
+        @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+      /* ===== 새로운 메가 애니메이션 스타일 ===== */
+
+/* 메가 애니메이션 로고 */
+.mega-animation {
+    font-size: clamp(3rem, 12vw, 8rem);
+    position: relative;
+    display: inline-block;
+    text-shadow: 
+        0 0 10px var(--neon-accent),
+        0 0 20px var(--neon-accent),
+        0 0 30px var(--neon-accent),
+        0 0 40px var(--neon-accent);
+}
+
+.mega-animation span {
+    display: inline-block;
+    animation: letterFloat 3s ease-in-out infinite;
+}
+
+.letter-m { animation-delay: 0s; }
+.letter-o1 { animation-delay: 0.1s; }
+.letter-n { animation-delay: 0.2s; }
+.letter-o2 { animation-delay: 0.3s; }
+.letter-p { animation-delay: 0.5s; }
+.letter-a { animation-delay: 0.6s; }
+.letter-r { animation-delay: 0.7s; }
+.letter-t { animation-delay: 0.8s; }
+.letter-y { animation-delay: 0.9s; }
+
+@keyframes letterFloat {
+    0%, 100% { 
+        transform: translateY(0) rotateZ(0deg) scale(1);
+        color: var(--text-primary);
+        filter: brightness(1);
+    }
+    25% { 
+        transform: translateY(-20px) rotateZ(-5deg) scale(1.1);
+        color: var(--neon-accent);
+        filter: brightness(1.5);
+    }
+    50% { 
+        transform: translateY(-10px) rotateZ(5deg) scale(1.05);
+        color: var(--neon-pink);
+        filter: brightness(1.3);
+    }
+    75% { 
+        transform: translateY(-15px) rotateZ(-3deg) scale(1.08);
+        color: var(--neon-blue);
+        filter: brightness(1.4);
+    }
+}
+
+/* 탐색 버튼 */
+.explore-button {
+    margin-top: 40px;
+    padding: 18px 50px;
+    background: linear-gradient(135deg, var(--neon-accent), var(--neon-pink));
+    border: none;
+    border-radius: 50px;
+    color: var(--bg-primary);
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    animation: pulse 2s infinite;
+    transition: all 0.3s ease;
+}
+
+.explore-button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 10px 40px rgba(0, 255, 136, 0.5);
+}
+
+.arrow-down {
+    display: inline-block;
+    animation: bounceArrow 1.5s infinite;
+}
+
+@keyframes bounceArrow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(5px); }
+}
+
+/* 카테고리 메뉴 */
+.category-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    margin-top: 50px;
+}
+
+.category-btn {
+    padding: 30px 20px;
+    background: var(--bg-card);
+    border: 2px solid var(--neon-accent);
+    border-radius: 15px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.category-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+    background: rgba(0, 255, 136, 0.1);
+}
+
+.category-btn .icon {
+    font-size: 2.5rem;
+}
+
+/* 뒤로가기 버튼 */
+.back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 12px 24px;
+    background: var(--bg-card);
+    border: 2px solid var(--neon-accent);
+    color: var(--neon-accent);
+    border-radius: 25px;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.back-button:hover {
+    background: var(--neon-accent);
+    color: var(--bg-primary);
+    transform: translateX(-5px);
+}
+
+/* fade 애니메이션 */
+.fade-in-up {
+    animation: fadeInUp 1s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .category-menu {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .category-btn {
+        padding: 20px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .category-btn .icon {
+        font-size: 2rem;
+    }
+    
+    .back-button {
+        top: 10px;
+        left: 10px;
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}
+        /* Only apply animations on desktop */
+        @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+            .floating {
+                animation: float 3s ease-in-out infinite;
+            }
+            
+            .pulsing {
+                animation: pulse 2s ease-in-out infinite;
+            }
+            
+            .neon-flicker {
+                animation: neonFlicker 3s ease-in-out infinite;
+            }
+        }
+        
+        /* Particles - Disable on mobile for performance */
+        .particles {
+            display: none;
+        }
+        
+        @media (min-width: 768px) {
+            .particles {
+                display: block;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: -1;
+            }
+            
+            .particle {
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                background: var(--neon-accent);
+                border-radius: 50%;
+                opacity: 0.3;
+                animation: drift 20s infinite linear;
+            }
+        }
+        
+        @keyframes drift {
+            from {
+                transform: translateY(100vh) translateX(0);
+            }
+            to {
+                transform: translateY(-100px) translateX(100px);
+            }
+        }
+        
+        /* FAQ Section - Mobile Optimized */
+        .faq-container {
+            max-width: 800px;
+            margin: 50px auto;
+        }
+        
+        .faq-item {
+            margin-bottom: 25px;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 3px solid var(--neon-accent);
+            border-radius: 10px;
+        }
+        
+        /* Instagram Link Button */
+        .instagram-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #E1306C, #C13584, #833AB4, #5851DB, #405DE6);
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        @media (hover: hover) {
+            .instagram-link:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 30px rgba(193, 53, 132, 0.4);
+            }
+        }
+        
+        /* Optimize images loading */
+        img {
+            loading: lazy;
+        }
+        
+        /* Improve text readability on mobile */
+        @media (max-width: 768px) {
+            p {
+                font-size: 0.95rem;
+                line-height: 1.7;
+            }
+            
+            h2 {
+                word-break: keep-all;
+            }
+            
+            h3 {
+                font-size: 1.3rem;
+            }
+        }
+        
+        /* Touch-friendly hover states */
+        @media (hover: none) {
+            .neon-border:active {
+                box-shadow: 0 0 30px rgba(0, 255, 136, 0.7);
+            }
+            
+            .concept-card:active {
+                transform: scale(0.98);
+            }
+            
+            .feature-item:active {
+                background: rgba(0, 255, 136, 0.1);
+            }
+        }
+        
+        /* Optimize for iPhone X and newer */
+        @supports (padding: max(0px)) {
+            .hero {
+                padding-bottom: max(20px, env(safe-area-inset-bottom));
+            }
+            
+            .footer {
+                padding-bottom: max(50px, env(safe-area-inset-bottom));
+            }
+        }
+        
+        /* Performance optimizations */
+        .gallery-item img,
+        .video-wrapper iframe {
+            will-change: transform;
+        }
+        
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+    <style>
+       <style>
+    /* 음악 바 애니메이션 */
+    @keyframes musicWave {
+        0% { height: 5px; }
+        50% { height: 20px; }
+        100% { height: 5px; }
+    }
+/* 버튼 호버 효과 */
+#playBtn:hover, #miniPlayBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+}
+
+#pauseBtn:hover, #miniPauseBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(255, 0, 102, 0.5);
+}
+
+#playBtn:active, #pauseBtn:active,
+#miniPlayBtn:active, #miniPauseBtn:active {
+    transform: scale(0.95);
+}
+
+/* 음악바 애니메이션 클래스 */
+#musicBars.playing > div {
+    animation-play-state: running !important;
+}
+
+#musicBars:not(.playing) > div {
+    animation-play-state: paused !important;
+}
+
+/* 페이드 애니메이션 */
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+    
+    /* 모바일 반응형 - 겹침 문제 해결 */
+    @media (max-width: 768px) {
+        /* 실시간 조회 인원을 상단으로 이동 */
+        .live-viewer {
+            bottom: auto !important;
+            top: 20px !important;
+            right: 20px !important;
+            left: auto !important;
+            max-width: 200px;
+        }
+        /* 재생 버튼 호버 효과 */
+    #playPauseBtn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 5px 20px rgba(0, 255, 136, 0.5);
+    }
+    
+    #playPauseBtn:active {
+        transform: scale(0.95);
+    }
+    
+    #miniPlayBtn:hover {
+        transform: scale(1.1);
+    }
+    
+    /* 음악바 애니메이션 일시정지 기본값 */
+    #musicBars > div {
+        animation-play-state: paused;
+    }
+    
+    #musicBars.playing > div {
+        animation-play-state: running !important;
+    }
+        
+        /* YouTube 플레이어 위치 조정 */
+        #youtubePlayer {
+            bottom: 20px !important;
+            left: 50% !important;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 350px;
+            min-width: auto;
+        }
+        
+        #miniYoutubePlayer {
+            bottom: 20px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            max-width: 90%;
+        }
+        
+        /* 실시간 알림 위치 조정 */
+        #notificationContainer {
+            top: 80px !important;
+            right: 10px !important;
+            left: 10px !important;
+            max-width: none !important;
+        }
+    }
+    
+    /* 태블릿 대응 */
+    @media (min-width: 769px) and (max-width: 1024px) {
+        #youtubePlayer {
+            bottom: 30px !important;
+            left: 30px !important;
+        }
+        
+        .live-viewer {
+            bottom: auto !important;
+            top: 30px !important;
+            right: 30px !important;
+        }
+    }
+</style>
+
+
+</head>
+<body>
+    <!-- Particles Background - Desktop Only -->
+    <div class="particles" id="particles"></div>
+    
+<!-- 실시간 조회 인원 및 알림 -->
+    <div class="live-viewer" id="liveViewer">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="live-dot"></div>
+            <span style="color: var(--neon-accent); font-size: 0.9rem;">
+                <span class="desktop-text">현재 <span id="viewerCount">23</span>명이 보고 있어요</span>
+                <span class="mobile-text" style="display: none;"><span id="viewerCountMobile">23</span>명 접속중</span>
+            </span>
+        </div>
+    </div>
+    
+    <style>
+        /* 모바일에서 텍스트 간소화 */
+        @media (max-width: 768px) {
+            .desktop-text { display: none !important; }
+            .mobile-text { display: inline !important; }
+        }
+    </style>
+
+    <!-- 실시간 참여 알림 컨테이너 -->
+    <div id="notificationContainer" style="position: fixed; top: 70px; right: 20px; z-index: 1000; max-width: 300px;">
+        <!-- 알림이 여기에 추가됩니다 -->
+    </div>
+<!-- YouTube 음악 플레이어 시작 -->
+    <div id="youtubePlayer" style="
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        z-index: 999;
+        background: rgba(0, 0, 0, 0.95);
+        border: 1px solid var(--neon-accent);
+        border-radius: 15px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        transition: all 0.3s ease;
+        min-width: 320px;
+    ">
+        <div style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        ">
+            <span style="
+                color: var(--neon-accent);
+                font-size: 0.9rem;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            ">
+                🎵 NOW PLAYING
+            </span>
+            <button onclick="toggleYoutubePlayer()" style="
+                background: none;
+                border: none;
+                color: var(--text-secondary);
+                cursor: pointer;
+                font-size: 1.2rem;
+                padding: 0;
+                width: 25px;
+                height: 25px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            ">▼</button>
+        </div>
+        
+        <!-- 노래 정보 표시 -->
+        <div style="
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        ">
+ <!-- 재생/일시정지 버튼 영역 -->
+<div style="display: flex; gap: 10px; align-items: center;">
+    <!-- 재생 버튼 -->
+    <button id="playBtn" onclick="playMusic()" title="음악 재생" style="
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #00ff88 0%, #00cc70 100%);
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+    ">
+        ▶️
+    </button>
+    
+    <!-- 일시정지 버튼 -->
+    <button id="pauseBtn" onclick="pauseMusic()" title="일시정지" style="
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #ff0066 0%, #cc0044 100%);
+        border: none;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(255, 0, 102, 0.3);
+    ">
+        ⏸️
+    </button>
+</div>
+            
+            <div style="flex: 1;">
+                <div style="
+                    color: var(--text-primary);
+                    font-size: 1rem;
+                    font-weight: 600;
+                    margin-bottom: 5px;
+                ">MONO PARTY MIX(Youtube)</div>
+                <div style="
+                    color: var(--text-secondary);
+                    font-size: 0.85rem;
+                ">플리메이커(Youtube)</div>
+                <!-- 음악 바 애니메이션 -->
+                <div id="musicBars" style="
+                    display: flex;
+                    gap: 3px;
+                    margin-top: 10px;
+                    align-items: flex-end;
+                    height: 20px;
+                ">
+                    <div class="music-bar" style="width: 3px; background: var(--neon-accent); height: 10px; animation: musicWave 0.5s ease infinite alternate;"></div>
+                    <div class="music-bar" style="width: 3px; background: var(--neon-accent); height: 15px; animation: musicWave 0.5s ease infinite alternate 0.1s;"></div>
+                    <div class="music-bar" style="width: 3px; background: var(--neon-accent); height: 8px; animation: musicWave 0.5s ease infinite alternate 0.2s;"></div>
+                    <div class="music-bar" style="width: 3px; background: var(--neon-accent); height: 18px; animation: musicWave 0.5s ease infinite alternate 0.3s;"></div>
+                    <div class="music-bar" style="width: 3px; background: var(--neon-accent); height: 12px; animation: musicWave 0.5s ease infinite alternate 0.4s;"></div>
+                </div>
+            </div>
+        </div>
+        
+<!-- 숨겨진 YouTube iframe (오디오만) -->
+<div style="position: absolute; left: -9999px; top: -9999px;">
+    <iframe 
+        id="youtubeIframe"
+        width="1" 
+        height="1" 
+        src="https://www.youtube.com/embed/CY3ZzFmCCd0?autoplay=1&loop=1&playlist=CY3ZzFmCCd0&controls=0&enablejsapi=1&mute=0" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+    </iframe>
+</div>
+    </div>
+
+    <div id="miniYoutubePlayer" style="
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+        z-index: 999;
+        background: rgba(0, 0, 0, 0.95);
+        border: 1px solid var(--neon-accent);
+        border-radius: 50px;
+        padding: 12px 20px;
+        backdrop-filter: blur(10px);
+        display: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(0, 255, 136, 0.2);
+    " onclick="toggleYoutubePlayer()">
+        <div style="display: flex; align-items: center; gap: 12px;">
+<!-- 미니 플레이어 버튼들 -->
+<div style="display: flex; gap: 8px; align-items: center;">
+    <!-- 미니 재생 버튼 -->
+    <button id="miniPlayBtn" onclick="event.stopPropagation(); playMusic();" title="재생" style="
+        background: #00ff88;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    ">
+        ▶️
+    </button>
+    
+    <!-- 미니 일시정지 버튼 -->
+    <button id="miniPauseBtn" onclick="event.stopPropagation(); pauseMusic();" title="일시정지" style="
+        background: #ff0066;
+        border: none;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+    ">
+        ⏸️
+    </button>
+</div>
+            <span style="color: var(--text-primary); font-size: 0.85rem; font-weight: 500;">
+                🎵 MONO PARTY MIX - 플리메이커(Youtube)
+            </span>
+        </div>
+    </div>
+    <!-- YouTube 음악 플레이어 끝 -->
+
+    <!-- Hero Section -->
+<section class="hero" id="mainHero">
+    <div class="hero-content">
+        <!-- 화려한 애니메이션 로고 -->
+        <h1 class="logo mega-animation">
+            <span class="letter-m">M</span>
+            <span class="letter-o1">O</span>
+            <span class="letter-n">N</span>
+            <span class="letter-o2">O</span>
+            <span class="space"> </span>
+            <span class="letter-p">P</span>
+            <span class="letter-a">A</span>
+            <span class="letter-r">R</span>
+            <span class="letter-t">T</span>
+            <span class="letter-y">Y</span>
+        </h1>
+        <p class="tagline fade-in-up" style="animation-delay: 0.5s;">Black or White</p>
+        <h2 class="hero-subtitle fade-in-up" style="animation-delay: 0.7s;">감정이 흐르는 무드 파티</h2>
+        
+        <!-- 더 알아보기 버튼 -->
+        <button onclick="showIntro()" class="explore-button pulse-glow">
+            더 알아보기 <span class="arrow-down">↓</span>
+        </button>
+    </div>
+</section>
+
+<!-- 인트로 섹션 (처음엔 숨김) -->
+<section id="introSection" style="display: none; min-height: 100vh; padding: 60px 20px;">
+    <div class="intro-container" style="max-width: 1200px; margin: 0 auto;">
+        <button onclick="backToMain()" class="back-button">← 메인으로</button>
+        
+        <!-- 파티 인트로 -->
+        <div class="intro-content" style="text-align: center; margin-top: 80px;">
+            <h2 style="font-size: 3rem; color: var(--neon-accent); margin-bottom: 30px;">당신의 설렘을 디자인합니다</h2>
+            <p style="font-size: 1.3rem; color: var(--text-secondary); margin-bottom: 40px;">
+                "혼자였던 밤, 오늘은 설레일 거예요."<br>
+                소개팅도, 클럽도, 어설픈 술자리가 아닌<br>
+                <strong style="color: var(--text-primary);">감정이 흐르는 대로 스며드는 '무드 기반 소셜링 파티'</strong>
+            </p>
+            
+            <!-- 참가 신청 버튼 -->
+            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow" style="margin-bottom: 50px;">
+                지금 참가 신청하기
+            </a>
+            
+            <!-- 다가오는 파티 일정 -->
+            <h3 style="font-size: 2rem; margin-bottom: 30px; color: var(--text-primary);">🗓️ 다가오는 파티 일정</h3>
+            <div id="upcomingPartiesIntro" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 50px;">
+                <!-- 파티 일정이 여기 표시됨 -->
+            </div>
+        </div>
+        
+        <!-- 카테고리 메뉴 -->
+        <div class="category-menu">
+            <button onclick="showCategory('party-info')" class="category-btn">
+                <span class="icon">🎯</span>
+                <span>파티소개/컨텐츠</span>
+            </button>
+            <button onclick="showCategory('host')" class="category-btn">
+                <span class="icon">👑</span>
+                <span>호스트 소개</span>
+            </button>
+            <button onclick="showCategory('reviews')" class="category-btn">
+                <span class="icon">💬</span>
+                <span>참가자 후기</span>
+            </button>
+            <button onclick="showCategory('gallery')" class="category-btn">
+                <span class="icon">📸</span>
+                <span>파티 사진/영상</span>
+            </button>
+            <button onclick="showCategory('seats')" class="category-btn">
+                <span class="icon">🎫</span>
+                <span>잔여석 확인</span>
+            </button>
+            <button onclick="showCategory('qna')" class="category-btn">
+                <span class="icon">❓</span>
+                <span>Q&A</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- 카테고리별 컨텐츠 섹션 -->
+<section id="categoryContent" style="display: none; min-height: 100vh; padding: 60px 20px;">
+    <button onclick="backToIntro()" class="back-button">← 뒤로가기</button>
+    <div id="contentArea" style="max-width: 1200px; margin: 80px auto 0;">
+        <!-- 선택된 카테고리 내용이 여기 표시됨 -->
+    </div>
+</section>
+    
+    <!-- Why MONO PARTY Section -->
+    <section class="section" style="display: none; background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);">
+        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+            <h2 style="font-size: clamp(2rem, 6vw, 4rem); margin-bottom: 30px; font-weight: 900; line-height: 1.3;">
+                다른 파티는 잊어라.<br>
+                <span class="neon-glow">이런 설렘은 처음일 거야.</span>
+            </h2>
+            
+            <div style="font-size: clamp(1.1rem, 3vw, 1.3rem); line-height: 2; color: var(--text-secondary); margin-bottom: 40px;">
+                <p style="margin-bottom: 25px;">
+                    <strong style="color: var(--text-primary);">매칭앱?</strong> 프로필 사진과 실물의 괴리감.<br>
+                    <strong style="color: var(--text-primary);">소개팅?</strong> 부담스러운 1:1 침묵.<br>
+                    <strong style="color: var(--text-primary);">클럽?</strong> 시끄러운 음악. 대화는 불가능.
+                </p>
+                
+                <p style="font-size: clamp(1.3rem, 4vw, 1.5rem); font-weight: 700; color: var(--text-primary); margin: 35px 0;">
+                    MONO PARTY는 다르다.
+                </p>
+                
+                <p style="font-size: clamp(1rem, 3vw, 1.2rem); line-height: 2;">
+                    <span style="color: var(--neon-accent);">✓</span> 70명이 함께하는 자연스러운 분위기<br>
+                    <span style="color: var(--neon-accent);">✓</span> 게임과 미션으로 어색함 제로<br>
+                    <span style="color: var(--neon-accent);">✓</span> 도파민 폭발하는 감정 설계<br>
+                    <span style="color: var(--neon-accent);">✓</span> 인스타 감성 미친 공간<br>
+                    <span style="color: var(--neon-accent);">✓</span> 끝나고도 연락할 수 있는 자연스러운 연결
+                </p>
+            </div>
+            
+            <div style="background: rgba(0, 255, 136, 0.1); border: 1px solid var(--neon-accent); padding: 30px 20px; margin: 40px 0; border-radius: 15px;">
+                <h3 style="font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 15px; color: var(--neon-accent);">
+                    "첫 파티에서 번호 5개 받았어요"
+                </h3>
+                <p style="font-size: clamp(1rem, 3vw, 1.1rem); color: var(--text-secondary); line-height: 1.8;">
+                    억지로 연락처 달라고 할 필요 없어요.<br>
+                    게임하다 보면 자연스럽게<br>
+                    "이 사람이랑 더 얘기하고 싶다"<br>
+                    <strong style="color: var(--text-primary);">그래서 매주 커플이 탄생해요.</strong>
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Visual Experience Section -->
+    <section class="section" style="display: none;">
+        <h2 class="section-title">무채색 속에서 빛나는<br>네온의 유혹</h2>
+        
+        <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 50px;">
+            <div style="position: relative; height: 300px; background: var(--bg-card); overflow: hidden; border-radius: 15px;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(135deg, transparent 0%, rgba(0, 255, 136, 0.2) 100%);"></div>
+                <div style="position: absolute; bottom: 25px; left: 25px; right: 25px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 10px;">Black & White Dress Code</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem;">검정색 또는 흰색의 무채색 계열. 어두운 조명 아래서 당신의 실루엣이 빛납니다.</p>
+                </div>
+            </div>
+            
+            <div style="position: relative; height: 300px; background: var(--bg-card); overflow: hidden; border-radius: 15px;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(135deg, transparent 0%, rgba(255, 0, 102, 0.2) 100%);"></div>
+                <div style="position: absolute; bottom: 25px; left: 25px; right: 25px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 10px;">Mood Lighting</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem;">어둡지만 감각적인 조명이 만들어내는 몽환적 분위기. 평소보다 더 매력적으로.</p>
+                </div>
+            </div>
+            
+            <div style="position: relative; height: 300px; background: var(--bg-card); overflow: hidden; border-radius: 15px;">
+                <div style="position: absolute; inset: 0; background: linear-gradient(135deg, transparent 0%, rgba(0, 229, 255, 0.2) 100%);"></div>
+                <div style="position: absolute; bottom: 25px; left: 25px; right: 25px;">
+                    <h3 style="font-size: 1.3rem; margin-bottom: 10px;">넓고 쾌적한 공간</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem;">60평 단독 공간에서 펼쳐지는 프라이빗 파티. 넓고 쾌적한 환경.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Dopamine Rush Section -->
+    <section class="section" style="display: none; background: var(--bg-secondary); position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 50%, rgba(255, 0, 102, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0, 229, 255, 0.1) 0%, transparent 50%);"></div>
+        
+        <div style="position: relative; z-index: 1;">
+            <h2 class="section-title">도파민이 미친듯이<br>터지는 순간들</h2>
+            
+            <div style="max-width: 1000px; margin: 50px auto;">
+                <div style="display: grid; gap: 35px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">🎯</div>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 12px; color: var(--neon-accent);">익명 감정 피드백</h3>
+                        <p style="font-size: 1rem; color: var(--text-secondary); line-height: 1.7;">
+                            "방금 그 사람, 나 보고 있었나?"<br>
+                            눈빛으로 교감하고, 익명으로 감정을 전달하는 짜릿함.<br>
+                            당신을 향한 관심을 실시간으로 느껴보세요.
+                        </p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">💫</div>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 12px; color: var(--neon-accent);">도파민 부스팅 미션</h3>
+                        <p style="font-size: 1rem; color: var(--text-secondary); line-height: 1.7;">
+                            "이런 미션은 처음이야!"<br>
+                            심장이 쿵쾅거리는 특별한 미션들.<br>
+                            자연스럽게 거리가 좁혀지는 마법의 순간.
+                        </p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 15px;">✨</div>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 12px; color: var(--neon-accent);">다양한 사람들과의 네트워킹</h3>
+                        <p style="font-size: 1rem; color: var(--text-secondary); line-height: 1.7;">
+                            "오늘만 20명은 새로 알게 된 것 같아요!"<br>
+                            한 사람에게 매달리지 않고<br>
+                            여러 사람을 만날 수 있는 구조.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: rgba(255, 255, 255, 0.03); border: 2px solid var(--neon-accent); padding: 35px 25px; margin: 60px auto; max-width: 800px; text-align: center; position: relative; border-radius: 15px;">
+                <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--bg-secondary); padding: 0 20px;">
+                    <span style="font-size: 1.3rem; color: var(--neon-accent); font-weight: 700;">REAL TALK</span>
+                </div>
+                
+                <p style="font-size: clamp(1.1rem, 3vw, 1.3rem); line-height: 1.8; margin-bottom: 20px;">
+                    "솔직히 처음엔 그냥 친구 따라왔어요.<br>
+                    근데 게임하다 보니 진짜 재밌고,<br>
+                    <span style="color: var(--neon-accent); font-weight: 700;">어느새 핸드폰 번호 주고받고 있더라고요.</span><br>
+                    다음 주도 또 올 거예요."
+                </p>
+                
+                <p style="font-size: 0.95rem; color: var(--text-secondary);">- 실제 참가자 후기</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Concept Section -->
+    <section class="section" style="display: none;">
+        <h2 class="section-title">우리는 사람을 소개하지 않아요.<br><span class="neon-glow">감정</span>을 소개합니다.</h2>
+        
+        <div class="concept-grid">
+            <div class="concept-card neon-border">
+                <span class="concept-icon">🌙</span>
+                <h3 class="concept-title">FIRST TOUCH</h3>
+                <p class="concept-subtitle">첫 만남의 설렘, 그 순간의 전율</p>
+                <p class="concept-description">
+                    처음 만나는 사람과의 자연스러운 스킨십. 게임과 미션을 통해 어색함은 사라지고 설렘만 남는 첫 만남의 순간
+                </p>
+            </div>
+            
+            <div class="concept-card neon-border">
+                <span class="concept-icon">⚡</span>
+                <h3 class="concept-title">DOPAMINE RUSH</h3>
+                <p class="concept-subtitle">도파민이 폭발하는 짜릿한 순간</p>
+                <p class="concept-description">
+                    예측 불가능한 미션과 익명 피드백. 심장이 터질 것 같은 긴장감과 함께 찾아오는 도파민의 쾌감
+                </p>
+            </div>
+            
+            <div class="concept-card neon-border">
+                <span class="concept-icon">🔥</span>
+                <h3 class="concept-title">AFTER GLOW</h3>
+                <p class="concept-subtitle">파티 후에도 계속되는 여운</p>
+                <p class="concept-description">
+                    끝나도 끝난 게 아닌 파티. 2부의 깊은 대화부터 파티 후 이어지는 연락까지, 계속되는 설렘의 여운
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Flow Section -->
+    <section class="section" style="display: none; background: var(--bg-secondary);">
+        <h2 class="section-title">감정의 흐름에 맞춘 플로우</h2>
+        
+        <div class="flow-container">
+            <div class="flow-item">
+                <div class="flow-number neon-glow">1</div>
+                <h3>무드 셋업</h3>
+                <p>도파민 미션과 함께<br>자연스럽게 시작되는 첫 만남</p>
+            </div>
+            
+            <div class="flow-item">
+                <div class="flow-number neon-glow">2</div>
+                <h3>감정 교류</h3>
+                <p>익명 피드백으로<br>진짜 감정을 나누는 시간</p>
+            </div>
+            
+            <div class="flow-item">
+                <div class="flow-number neon-glow">3</div>
+                <h3>연결의 순간</h3>
+                <p>테이블 로테이션으로<br>더 깊은 대화로 이어지는 흐름</p>
+            </div>
+            
+            <div class="flow-item">
+                <div class="flow-number neon-glow">4</div>
+                <h3>선택의 시간</h3>
+                <p>2부에서 만나는<br>진짜 연결의 가능성</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="section" style="display: none;">
+        <h2 class="section-title">왜 사람들이 다시 오는가?</h2>
+        
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">🎯</div>
+                <h3>도파민 자극</h3>
+                <p>지루할 틈 없는 감정 미션</p>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">👁️</div>
+                <h3>눈빛 교감</h3>
+                <p>익명 피드백으로 진짜 만남</p>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">🌙</div>
+                <h3>몰입형 무드</h3>
+                <p>조명·음악·공기까지 완벽</p>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">💫</div>
+                <h3>자연스러운 흐름</h3>
+                <p>억지스럽지 않은 대화 구조</p>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">✨</div>
+                <h3>정교한 설계</h3>
+                <p>설렘에서 확신으로</p>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">🎭</div>
+                <h3>감성 중심</h3>
+                <p>내향인도 편안한 구조</p>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">🌟</div>
+                <h3>프리미엄 경험</h3>
+                <p>고퀄리티 진행과 케어</p>
+            </div>
+            
+            <div class="feature-item">
+                <div class="feature-icon">🔄</div>
+                <h3>지속적인 커뮤니티</h3>
+                <p>파티 후에도 이어지는 인연</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section class="section" style="display: none; background: var(--bg-secondary);">
+        <h2 class="section-title">실참여자 생생 리뷰</h2>
+        
+        <div class="testimonials-container">
+            <div class="testimonial">
+                <p>첫 파티인데 이 퀄리티 실화인가요? 도파민이 미쳤어요. 재방문 예약 완료.</p>
+            </div>
+            
+            <div class="testimonial">
+                <p>내향인인데도 말이 트였어요. 히터, 담요까지 센스 최고. 편안하면서도 설레는 밤이었습니다.</p>
+            </div>
+            
+            <div class="testimonial">
+                <p>게임 구성 재밌고, 지루할 틈이 없이 놀았어요 💗 진행 퀄리티가 탑티어예요.</p>
+            </div>
+            
+            <div class="testimonial">
+                <p>안주도 바로바로 준비되고, 술 무제한. 이건 진심입니다. 가성비 최고!</p>
+            </div>
+            
+            <div class="testimonial">
+                <p>눈 마주치며 자연스레 대화하고, 감정이 연결되는 경험이었어요. 또 오고 싶어요.</p>
+            </div>
+            
+            <div class="testimonial">
+                <p>소개팅은 부담스럽고 클럽은 시끄러운데, 여기는 딱 제가 원하던 분위기예요!</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Video Section with TOP 3 -->
+    <section class="section" style="display: none; background: var(--bg-primary); position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 30% 50%, rgba(255, 0, 102, 0.1) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(0, 229, 255, 0.1) 0%, transparent 50%);"></div>
+        
+        <div style="position: relative; z-index: 1;">
+            <h2 class="section-title">
+                <span style="font-size: 1.5rem; display: block; margin-bottom: 10px;">🎬</span>
+                파티의 열기를<br><span class="neon-glow">직접 느껴보세요</span>
+            </h2>
+            
+            <div style="max-width: 800px; margin: 50px auto;">
+                <!-- Main Promo Video -->
+                <div class="video-container">
+                    <div class="video-wrapper">
+                        <iframe 
+                            src="https://drive.google.com/file/d/1fDGzePRinMuNTXfEU8f7JYlMqtou3Lki/preview" 
+                            allow="autoplay">
+                        </iframe>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 35px 0;">
+                    <p style="font-size: 1.3rem; color: var(--neon-accent); font-weight: 700;">
+                        매주 이런 열기가 계속됩니다
+                    </p>
+                </div>
+            </div>
+            
+            <!-- TOP 3 Videos -->
+            <div style="max-width: 1200px; margin: 60px auto 0;">
+                <h3 style="text-align: center; font-size: 1.8rem; margin-bottom: 40px;">
+                    🔥 <span class="neon-glow">TOP 3</span> 인기 영상 🔥
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr; gap: 25px;">
+                    <!-- TOP 1 -->
+                    <div style="position: relative;">
+                        <div style="position: absolute; top: -15px; left: -15px; background: var(--neon-accent); color: var(--bg-primary); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.3rem; z-index: 10; box-shadow: 0 10px 30px rgba(0, 255, 136, 0.5);">
+                            1
+                        </div>
+                        <div style="background: var(--bg-card); border: 1px solid var(--input-border); border-radius: 15px; overflow: hidden; transition: all 0.3s ease; position: relative;">
+                            <div style="position: absolute; top: 10px; right: 10px; background: rgba(255, 0, 102, 0.9); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 5;">
+                                🔥 HOT
+                            </div>
+                            <div class="video-wrapper" style="padding-bottom: 56.25%; background: #000;">
+                                <iframe 
+                                    src="https://drive.google.com/file/d/1nuaeyQ7sWFfCNoZHNKE0_DHL74gfsIxd/preview" 
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                                    allow="autoplay">
+                                </iframe>
+                            </div>
+                            <div style="padding: 20px;">
+                                <h4 style="font-size: 1.2rem; margin-bottom: 8px; color: var(--neon-accent);">
+                                    💃 "존예녀의 섹시댄스 터미널"
+                                </h4>
+                                <p style="color: var(--text-primary); font-size: 0.95rem; line-height: 1.5;">
+                                    모두가 숨죽인 그 순간,<br>
+                                    <span style="color: var(--neon-pink);">파티장이 클럽으로 변했다</span>
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 8px; font-style: italic;">
+                                    "이런 분위기는 처음이에요..." - 참가자 전원
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- TOP 2 -->
+                    <div style="position: relative;">
+                        <div style="position: absolute; top: -15px; left: -15px; background: var(--neon-pink); color: var(--bg-primary); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.3rem; z-index: 10; box-shadow: 0 10px 30px rgba(255, 0, 102, 0.5);">
+                            2
+                        </div>
+                        <div style="background: var(--bg-card); border: 1px solid var(--input-border); border-radius: 15px; overflow: hidden; transition: all 0.3s ease; position: relative;">
+                            <div style="position: absolute; top: 10px; right: 10px; background: rgba(0, 229, 255, 0.9); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 5;">
+                                💯 완벽
+                            </div>
+                            <div class="video-wrapper" style="padding-bottom: 56.25%; background: #000;">
+                                <iframe 
+                                    src="https://drive.google.com/file/d/1U2IyShHzjQHcqxHf8XfWTTlaQY3O84Ro/preview" 
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                                    allow="autoplay">
+                                </iframe>
+                            </div>
+                            <div style="padding: 20px;">
+                                <h4 style="font-size: 1.2rem; margin-bottom: 8px; color: var(--neon-pink);">
+                                    🔥 "물러날 수 밖에 없었던 이유"
+                                </h4>
+                                <p style="color: var(--text-primary); font-size: 0.95rem; line-height: 1.5;">
+                                    장점이 너무 확실한 남자 등장<br>
+                                    <span style="color: var(--neon-accent);">여심 저격 100% 성공</span>
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 8px; font-style: italic;">
+                                    "오빠 번호 좀..." - 익명의 여성 참가자들
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- TOP 3 -->
+                    <div style="position: relative;">
+                        <div style="position: absolute; top: -15px; left: -15px; background: var(--neon-blue); color: var(--bg-primary); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.3rem; z-index: 10; box-shadow: 0 10px 30px rgba(0, 229, 255, 0.5);">
+                            3
+                        </div>
+                        <div style="background: var(--bg-card); border: 1px solid var(--input-border); border-radius: 15px; overflow: hidden; transition: all 0.3s ease; position: relative;">
+                            <div style="position: absolute; top: 10px; right: 10px; background: rgba(0, 255, 136, 0.9); color: var(--bg-primary); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 5;">
+                                🎯 미션
+                            </div>
+                            <div class="video-wrapper" style="padding-bottom: 56.25%; background: #000;">
+                                <iframe 
+                                    src="https://drive.google.com/file/d/1TIGBVnFB8WxIad6DhTg4ZMecPTH1nFWQ/preview" 
+                                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                                    allow="autoplay">
+                                </iframe>
+                            </div>
+                            <div style="padding: 20px;">
+                                <h4 style="font-size: 1.2rem; margin-bottom: 8px; color: var(--neon-blue);">
+                                    🍷 "미션 중 안주를 준 이유는?"
+                                </h4>
+                                <p style="color: var(--text-primary); font-size: 0.95rem; line-height: 1.5;">
+                                    달콤한 유혹의 순간<br>
+                                    <span style="color: var(--neon-accent);">술과 안주가 만든 케미스트리</span>
+                                </p>
+                                <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 8px; font-style: italic;">
+                                    "심장이 터질 것 같았어요" - 미션 도전자
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(0, 255, 136, 0.1); border: 2px solid var(--neon-accent); padding: 25px; margin: 40px auto; max-width: 800px; text-align: center; border-radius: 15px;">
+                    <p style="font-size: 1.3rem; font-weight: 700; margin-bottom: 12px;">
+                        ⚡ 매주 이런 <span class="neon-glow">레전드 순간</span>들이 탄생합니다 ⚡
+                    </p>
+                    <p style="font-size: 1rem; color: var(--text-secondary);">
+                        다음 주인공은 당신이 될 수도...
+                    </p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px;">
+                    <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 20px;">
+                        더 많은 파티 영상이 궁금하다면?
+                    </p>
+                    <a href="https://www.instagram.com/mono_party_?igsh=ZWlqYWI5eHF5bGEz" target="_blank" class="instagram-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                        @mono_party_ 팔로우하고 더 보기
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Host Introduction Section -->
+    <section class="section" style="display: none;background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 70% 30%, rgba(255, 0, 102, 0.1) 0%, transparent 50%);"></div>
+        
+        <div style="position: relative; z-index: 1;">
+            <h2 class="section-title">
+                파티계의 끝판왕,<br><span class="neon-glow">느좋남의 정석</span>
+            </h2>
+            
+            <div style="max-width: 1200px; margin: 50px auto;">
+                <!-- Mobile: Stack vertically -->
+                <div style="display: grid; grid-template-columns: 1fr; gap: 40px; align-items: center;">
+                    <!-- Host Image -->
+                    <div style="position: relative;">
+                        <div style="position: relative; overflow: hidden; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); max-width: 400px; margin: 0 auto;">
+                            <img src="https://ifh.cc/g/cg9lOf.jpg" 
+                                 alt="MONO PARTY 호스트 BLACK" 
+                                 style="width: 100%; height: auto; display: block;"
+                                 loading="lazy">
+                            <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.7) 100%);"></div>
+                            <div style="position: absolute; bottom: 20px; left: 20px; right: 20px;">
+                                <h3 style="font-size: 1.8rem; margin-bottom: 8px; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);">
+                                    HOST <span style="color: var(--neon-accent);">MOOD</span>
+                                </h3>
+                                <p style="color: var(--text-secondary); text-shadow: 0 1px 5px rgba(0, 0, 0, 0.8); font-size: 0.95rem;">
+                                    자칭 타칭 "블랙 성애자" ⚫
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Stats -->
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 25px; max-width: 400px; margin-left: auto; margin-right: auto;">
+                            <div style="text-align: center; padding: 12px; background: rgba(0, 255, 136, 0.1); border: 1px solid var(--neon-accent); border-radius: 10px;">
+                                <p style="font-size: 1.3rem; font-weight: 700; color: var(--neon-accent);">500+</p>
+                                <p style="font-size: 0.75rem; color: var(--text-secondary);">레전드 파티</p>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: rgba(255, 0, 102, 0.1); border: 1px solid var(--neon-pink); border-radius: 10px;">
+                                <p style="font-size: 1.3rem; font-weight: 700; color: var(--neon-pink);">99%</p>
+                                <p style="font-size: 0.75rem; color: var(--text-secondary);">재방문율</p>
+                            </div>
+                            <div style="text-align: center; padding: 12px; background: rgba(0, 229, 255, 0.1); border: 1px solid var(--neon-blue); border-radius: 10px;">
+                                <p style="font-size: 1.3rem; font-weight: 700; color: var(--neon-blue);">24/7</p>
+                                <p style="font-size: 0.75rem; color: var(--text-secondary);">파티 모드</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Host Info & Interview -->
+                    <div>
+                        <div style="margin-bottom: 35px;">
+                            <h3 style="font-size: 1.5rem; margin-bottom: 18px; color: var(--neon-accent);">
+                                느낌 좋은 남자? 이 정도는 돼야지 👑
+                            </h3>
+                            <p style="font-size: 1rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 18px;">
+                                <span style="color: var(--text-primary); font-weight: 500;">헬스로 만든 피지컬</span>에 
+                                <span style="color: var(--text-primary); font-weight: 500;">여유로운 마인드</span>까지. 
+                                그냥 서있기만 해도 "아 저 사람이 호스트구나" 싶은 
+                                <span style="color: var(--neon-accent);">천상 파티 피플</span>.
+                            </p>
+                            
+                            <p style="font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary); margin-bottom: 18px;">
+                                검정색을 사랑하는 남자. 365일 올블랙이지만 절대 지루하지 않다. 
+                                왜냐고? <span style="color: var(--text-primary);">검정색처럼 그도 모든 것을 품는 사람이니까.</span> 
+                                시끄러운 사람은 조용하게, 조용한 사람은 신나게 만드는 그의 능력은 
+                                솔직히 과학으로는 설명 불가.
+                            </p>
+                            
+                            <div style="background: rgba(0, 255, 136, 0.05); border-left: 3px solid var(--neon-accent); padding: 18px; margin-bottom: 18px; border-radius: 10px;">
+                                <p style="font-size: 0.95rem; font-style: italic;">
+                                    💭 "파티장에 들어서면 MOOD가 먼저 다가와요. 
+                                    <span style="color: var(--neon-accent);">'어? 나 아는 사람이었나?'</span> 
+                                    싶을 정도로 편하게. 그게 시작이죠."
+                                </p>
+                            </div>
+                            
+                            <p style="font-size: 0.95rem; line-height: 1.7; color: var(--text-secondary);">
+                                처음 온 사람은 친구로, 친구는 베프로 만드는 그의 스킬은 
+                                <span style="color: var(--neon-pink);">거의 마법 수준</span>. 
+                                적절한 드립과 센스로 분위기를 이끌면서도, 
+                                누구 하나 소외되지 않게 케어하는 디테일까지.
+                            </p>
+                        </div>
+                        
+                        <!-- Interview Section -->
+                        <div style="background: rgba(255, 255, 255, 0.03); border-left: 3px solid var(--neon-accent); padding: 25px 20px; margin-top: 35px; border-radius: 10px;">
+                            <h4 style="font-size: 1.3rem; margin-bottom: 20px; color: var(--neon-accent);">
+                                🎤 HOST MOOD 단독 인터뷰
+                            </h4>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <p style="color: var(--text-secondary); font-style: italic; margin-bottom: 10px; font-size: 0.9rem;">
+                                    Q. 왜 '블랙 성애자'라고 부르시나요?
+                                </p>
+                                <p style="color: var(--text-primary); line-height: 1.6; font-size: 0.95rem;">
+                                    "검정색은 모든 색을 품는 색이잖아요. 파티도 마찬가지예요. 
+                                    모든 사람의 개성과 매력을 품고 하나로 만드는 것. 그게 제 역할이죠."
+                                </p>
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <p style="color: var(--text-secondary); font-style: italic; margin-bottom: 10px; font-size: 0.9rem;">
+                                    Q. 파티를 주최하는 이유는?
+                                </p>
+                                <p style="color: var(--text-primary); line-height: 1.6; font-size: 0.95rem;">
+                                    <span style="color: var(--neon-accent); font-weight: 700;">
+                                    "사람들이 진짜 행복한 하루를 보냈으면 좋겠어요."
+                                    </span>
+                                    일상에서 벗어나 새로운 사람을 만나고, 설레고, 웃고... 
+                                    그런 순간들이 쌓여서 인생이 더 풍요로워지거든요."
+                                </p>
+                            </div>
+                            
+                            <div>
+                                <p style="color: var(--text-secondary); font-style: italic; margin-bottom: 10px; font-size: 0.9rem;">
+                                    Q. 참가자들에게 한 마디?
+                                </p>
+                                <p style="color: var(--text-primary); line-height: 1.6; font-size: 0.95rem;">
+                                    "걱정하지 마세요. 제가 다 알아서 할게요. 
+                                    그냥 오셔서 <span style="color: var(--neon-pink);">마음껏 즐기기만 하세요.</span> 
+                                    돌아갈 때는 분명 '또 오고 싶다'고 생각하실 거예요."
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Quote -->
+                        <div style="text-align: center; margin-top: 35px; padding: 25px; background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(255, 0, 102, 0.1) 100%); border-radius: 15px;">
+                            <p style="font-size: 1.3rem; font-weight: 700; line-height: 1.4;">
+                                "파티는 단순한 모임이 아니에요.<br>
+                                <span style="color: var(--neon-accent);">인생의 터닝 포인트</span>가 될 수 있죠."
+                            </p>
+                            <p style="color: var(--text-secondary); margin-top: 12px; font-size: 0.9rem;">- HOST MOOD</p>
+                        </div>
+                        
+                        <!-- Fun Facts -->
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 25px;">
+                            <div style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, transparent 100%); padding: 18px; border-radius: 10px; text-align: center;">
+                                <p style="font-size: 1.8rem; margin-bottom: 5px;">🎧</p>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary);">음악 선곡 마스터</p>
+                                <p style="font-size: 0.75rem; color: var(--neon-accent);">"무드는 음악이 만든다"</p>
+                            </div>
+                            <div style="background: linear-gradient(135deg, rgba(255, 0, 102, 0.1) 0%, transparent 100%); padding: 18px; border-radius: 10px; text-align: center;">
+                                <p style="font-size: 1.8rem; margin-bottom: 5px;">🖤</p>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary);">365일 올블랙</p>
+                                <p style="font-size: 0.75rem; color: var(--neon-pink);">"검정이 답이다"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Real Party Gallery Section -->
+    <section class="section" style="display: none; background: var(--bg-secondary); padding-bottom: 0; overflow: hidden;">
+        <h2 class="section-title">실제 파티 현장,<br><span class="neon-glow">도파민이 터지는 순간들</span></h2>
+        
+        <div class="party-gallery" style="margin-top: 50px;">
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://ifh.cc/g/DtMZ8p.webp" alt="MONO PARTY 파티 현장" loading="lazy">
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-content">
+                        <h3>70명이 만드는 에너지</h3>
+                        <p>
+                            "이렇게 많은 사람들이 한 공간에서<br>
+                            자연스럽게 섞이는게 신기해요!"
+                        </p>
+                    </div>
+                    <div class="floating-badge">
+                        매회차 마감
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://ifh.cc/g/xxbXJt.webp" alt="올블랙 드레스코드" loading="lazy">
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-content">
+                        <h3>올블랙의 시크한 매력</h3>
+                        <p>
+                            "드레스코드 맞춰오니까<br>
+                            다들 10배는 더 매력적으로 보여요"
+                        </p>
+                    </div>
+                    <div class="pulsing" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; z-index: 2;">
+                        🖤
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dopamine-banner">
+                <h3>"여기 오는 사람들 진짜 물 좋아요"</h3>
+                <p>훈남 훈녀들의 성지, 서울에서 가장 핫한 감성 파티</p>
+            </div>
+            
+            <div class="gallery-grid" style="margin-top: 60px; margin-bottom: 60px;">
+                <div class="gallery-item">
+                    <img src="https://ifh.cc/g/tx7rBO.webp" alt="자연스러운 대화" loading="lazy">
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-content">
+                        <h3>자연스러운 스킨십</h3>
+                        <p>
+                            "게임하면서 자연스럽게 가까워져요<br>
+                            억지스럽지 않아서 너무 좋아요"
+                        </p>
+                    </div>
+                    <div class="floating" style="position: absolute; top: 30px; left: 30px; font-size: 2.5rem; z-index: 2;">
+                        💫
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="https://ifh.cc/g/cD8hQq.webp" alt="프로 MC 진행" loading="lazy">
+                    <div class="gallery-overlay"></div>
+                    <div class="gallery-content">
+                        <h3>프로 MC의 진행</h3>
+                        <p>
+                            "지루할 틈이 1초도 없어요<br>
+                            도파민이 계속 터져요!"
+                        </p>
+                    </div>
+                    <div style="position: absolute; top: 50%; right: 30px; transform: translateY(-50%); font-size: 1.8rem; z-index: 2; color: var(--neon-accent);">
+                        ⚡⚡⚡
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 추가 이미지 섹션 -->
+            <div style="position: relative; height: 400px; margin: 0 -15px; overflow: hidden;">
+                <img src="https://ifh.cc/g/kJCb3L.webp" alt="파티 전체 분위기" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
+                <div style="position: absolute; inset: 0; background: rgba(0, 0, 0, 0.5);"></div>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; z-index: 1; padding: 0 20px;">
+                    <h3 style="font-size: clamp(1.8rem, 5vw, 3rem); margin-bottom: 15px; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);">
+                        매주 새로운 인연이 시작되는 곳
+                    </h3>
+                    <p style="font-size: 1.3rem; color: var(--neon-accent); font-weight: 700; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);">
+                        MONO PARTY
+                    </p>
+                </div>
+            </div>
+            
+            <div style="text-align: center; padding: 50px 20px;">
+                <p class="dopamine-text" style="font-size: clamp(1.3rem, 4vw, 2.5rem); font-weight: 700; line-height: 1.4; margin-bottom: 35px;">
+                    보통 <span class="neon-glow">주말 & 공휴일</span><br>
+                    <span style="color: var(--text-secondary); font-size: 0.8em; font-weight: 400;">당신의 설렘이 시작되는 곳</span>
+                </p>
+                <a href="application.html" class="cta-button neon-glow">지금 바로 참가 신청하기</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Space Gallery Section -->
+    <section class="section" style="display: none;">
+        <h2 class="section-title">프라이빗한 감성 공간</h2>
+        
+        <div style="position: relative; height: 400px; margin: 0 -15px; overflow: hidden; margin-bottom: 30px; border-radius: 15px;">
+            <img src="https://ifh.cc/g/2cnQOA.jpg" alt="MONO PARTY 파티 공간" style="width: 100%; height: 100%; object-fit: cover;" loading="lazy">
+            <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.6) 100%);"></div>
+            <div style="position: absolute; bottom: 25px; left: 25px; right: 25px; text-align: center;">
+                <h3 style="font-size: 1.8rem; margin-bottom: 10px; text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);">60평 단독 공간</h3>
+                <p style="font-size: 1.1rem; color: var(--text-primary); text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);">
+                    넓고 쾌적한 환경에서 펼쳐지는 프라이빗 파티
+                </p>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="https://www.instagram.com/mono_party_?igsh=ZWlqYWI5eHF5bGEz" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 30px; background: var(--bg-card); border: 1px solid var(--neon-accent); color: var(--neon-accent); text-decoration: none; font-weight: 500; transition: all 0.3s ease; border-radius: 50px; font-size: 0.95rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+                @mono_party_ 인스타그램 보기
+            </a>
+        </div>
+    </section>
+    
+    <!-- 파티 일정 섹션 (새로 추가) -->
+    <section class="section" style="display: none; background: var(--bg-secondary);">
+        <h2 class="section-title">🗓️ 다가오는 파티 일정</h2>
+        
+        <div id="upcomingParties" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px;">
+            <!-- 파티 날짜가 여기에 동적으로 추가됩니다 -->
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">선착순 마감! 서둘러 신청하세요</p>
+            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">지금 참가 신청하기</a>
+
+        </div>
+    </section>
+    
+    <!-- FAQ Section -->
+    <section class="section" style="display: none; background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);">
+        <h2 class="section-title">자주 묻는 질문</h2>
+        
+        <div class="faq-container">
+            <div class="faq-item">
+                <h3>혼자 가도 괜찮나요?</h3>
+                <p>
+                    참가자의 60%가 혼자 오세요. 오히려 혼자 오시는 분들이 더 적극적이고 재밌게 즐기십니다. 
+                    도착하자마자 시작되는 아이스브레이킹으로 5분 안에 친해질 수 있어요.
+                </p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>정말로 연락처 교환이 자연스럽게 되나요?</h3>
+                <p>
+                    강제로 연락처를 교환하는 시간은 없어요. 하지만 게임과 미션을 통해 자연스럽게 대화하다 보면 
+                    "이 사람이랑 더 얘기하고 싶다"는 생각이 들 때 자연스럽게 연락처를 주고받게 됩니다. 
+                    평균적으로 3-5명과 연락처를 교환한다고 해요.
+                </p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>드레스코드를 꼭 지켜야 하나요?</h3>
+                <p>
+                    올블랙 무채색 드레스코드를 권장합니다. 필수는 아니지만 
+                    대부분의 참가자들이 드레스코드를 맞춰오시면서 통일감 있고 세련된 분위기를 만들어요. 
+                    검정색 위주의 무채색 톤으로 오시면 완벽해요!
+                </p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>언제 파티가 열리나요?</h3>
+                <p>
+                    파티 일정은 유동적으로 운영됩니다. 위의 파티 일정을 확인해주세요!
+                    보통 주말 위주로 진행되며, 특별한 날에는 스페셜 파티도 열립니다.
+                </p>
+            </div>
+            
+            <div class="faq-item">
+                <h3>2부는 꼭 참여해야 하나요?</h3>
+                <p>
+                    2부는 선택사항이에요. 1부에서 마음에 드는 사람을 만났거나, 
+                    더 깊은 대화를 나누고 싶은 분들만 남아서 참여합니다. 
+                    보통 전체 인원의 50-60%가 2부까지 함께해요.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Special Offer Section -->
+    <section class="section" style="display: none; position: relative; overflow: hidden;">
+        <div style="position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(0, 255, 136, 0.2) 0%, transparent 70%);"></div>
+        
+        <div style="position: relative; z-index: 1; text-align: center; max-width: 800px; margin: 0 auto;">
+            <h2 style="font-size: clamp(1.8rem, 5vw, 3rem); margin-bottom: 25px; font-weight: 900; line-height: 1.3;">
+                <span class="pulsing" style="color: var(--neon-accent);">⚡ 매회차 조기 마감 ⚡</span><br>
+                서두르세요, 물 좋은 사람들이<br>먼저 찜합니다
+            </h2>
+            
+            <div style="background: rgba(0, 255, 136, 0.1); border: 2px solid var(--neon-accent); padding: 30px 20px; margin-bottom: 35px; border-radius: 15px;">
+                <p style="font-size: 1.3rem; margin-bottom: 18px; font-weight: 700;">
+                    매주 <span style="color: var(--neon-accent);">스페셜 파티</span>
+                </p>
+                <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6;">
+                    선착순 70명만 받습니다.<br>
+                    지난 파티는 3일 만에 조기 마감되었어요.<br>
+                    <strong style="color: var(--text-primary);">1부 + 2부 함께 구매시 특별 할인!</strong>
+                </p>
+                
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 35px;">
+                    <div>
+                        <p style="font-size: 2.2rem; font-weight: 900; color: var(--neon-accent); margin-bottom: 5px;">99%</p>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">만족도</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 2.2rem; font-weight: 900; color: var(--neon-accent); margin-bottom: 5px;">87%</p>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">재참가율</p>
+                    </div>
+                    <div>
+                        <p style="font-size: 2.2rem; font-weight: 900; color: var(--neon-accent); margin-bottom: 5px;">5.0</p>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">호스트 평점</p>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="font-size: 1.2rem; line-height: 1.7; margin-bottom: 35px;">
+                <strong>"훈남 훈녀들이 모이는 서울 최고의 감성 파티"</strong><br>
+                <span style="color: var(--text-secondary);">매회차 마감되니 서둘러 신청하세요!</span>
+            </p>
+        </div>
+    </section>
+    
+    <!-- Info Section -->
+    <section class="section" id="register"style="display: none;">
+        <h2 class="section-title">파티 정보</h2>
+        
+        <div class="info-grid neon-border">
+            <div class="info-item">
+                <div class="info-icon">🕗</div>
+                <p class="info-label">시간</p>
+                <p class="info-value">8PM - 11PM (1부)<br>11PM - 1:30AM (2부)</p>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">📍</div>
+                <p class="info-label">장소</p>
+                <p class="info-value">양재역 도보 5분<br>60평 감성 파티룸</p>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">👥</div>
+                <p class="info-label">정원</p>
+                <p class="info-value">약 70명<br>(선착순 마감)</p>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">🎟️</div>
+                <p class="info-label">참가비</p>
+                <p class="info-value">1부+2부 패키지<br><span style="color: var(--neon-accent);">특별할인 적용</span></p>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">👔</div>
+                <p class="info-label">드레스코드</p>
+                <p class="info-value">Black 무채색<br>올블랙 권장</p>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-icon">🔞</div>
+                <p class="info-label">연령</p>
+                <p class="info-value">남 25-36세<br>여 20-37세</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 50px;">
+            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">지금 참가 신청하기</a>
+        </div>
+    </section>
+    <!-- AI 챗봇 시작 -->
+<div id="chatbotContainer" style="
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+">
+    <!-- 챗봇 버튼 -->
+    <button id="chatbotToggle" onclick="toggleChatbot()" style="
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        box-shadow: 0 5px 20px rgba(0, 255, 136, 0.4);
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+    " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        💬
+    </button>
+    
+    <!-- 챗봇 윈도우 -->
+    <div id="chatbotWindow" style="
+        position: absolute;
+        bottom: 70px;
+        right: 0;
+        width: 350px;
+        height: 500px;
+        background: var(--bg-primary);
+        border: 2px solid var(--neon-accent);
+        border-radius: 20px;
+        display: none;
+        flex-direction: column;
+        box-shadow: 0 20px 60px rgba(0, 255, 136, 0.3);
+        overflow: hidden;
+        animation: slideUp 0.3s ease;
+    ">
+        <!-- 헤더 -->
+        <div style="
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(255, 0, 102, 0.1) 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        ">
+            <div>
+                <h3 style="
+                    margin: 0;
+                    font-size: 1.2rem;
+                    color: var(--neon-accent);
+                    font-weight: 700;
+                    margin-bottom: 5px;
+                ">MOOD AI ✨</h3>
+                <p style="
+                    margin: 0;
+                    font-size: 0.8rem;
+                    color: var(--text-secondary);
+                ">무엇이든 물어보세요!</p>
+            </div>
+            <button onclick="toggleChatbot()" style="
+                background: none;
+                border: none;
+                color: var(--text-secondary);
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.color='var(--neon-pink)'" onmouseout="this.style.color='var(--text-secondary)'">×</button>
+        </div>
+        
+        <!-- 채팅 영역 -->
+        <div id="chatMessages" style="
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        ">
+            <!-- 웰컴 메시지 -->
+            <div class="bot-message" style="
+                align-self: flex-start;
+                max-width: 80%;
+                background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
+                padding: 15px;
+                border-radius: 18px 18px 18px 5px;
+                border: 1px solid rgba(0, 255, 136, 0.3);
+            ">
+                <p style="margin: 0; font-size: 0.95rem; line-height: 1.5;">
+                    안녕하세요! 🎉 MONO PARTY AI 도우미 MOOD입니다.<br><br>
+                    파티 일정, 드레스코드, 티켓 구매 등 무엇이든 물어보세요!<br><br>
+                    <span style="color: var(--neon-accent);">오늘의 파티 운세</span>도 확인해보세요 ✨
+                </p>
+            </div>
+        </div>
+        
+        <!-- 빠른 질문 버튼들 -->
+        <div id="quickQuestions" style="
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            max-height: 100px;
+            overflow-y: auto;
+        ">
+            <button class="quick-btn" onclick="sendQuickMessage('파티는 언제 열리나요?')">📅 파티 일정</button>
+            <button class="quick-btn" onclick="sendQuickMessage('혼자 가도 괜찮나요?')">👤 혼자 참가</button>
+            <button class="quick-btn" onclick="sendQuickMessage('드레스코드는 뭔가요?')">👗 드레스코드</button>
+            <button class="quick-btn" onclick="sendQuickMessage('연령대는 어떻게 되나요?')">🎂 연령대</button>
+            <button class="quick-btn" onclick="sendQuickMessage('오늘의 파티 운세')">🔮 파티 운세</button>
+            <button class="quick-btn" onclick="sendQuickMessage('티켓 구매 방법')">🎫 티켓 구매</button>
+        </div>
+        
+        <!-- 입력 영역 -->
+        <div style="
+            padding: 20px;
+            background: var(--bg-card);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+        ">
+            <input 
+                type="text" 
+                id="chatInput" 
+                placeholder="메시지를 입력하세요..."
+                onkeypress="if(event.keyCode==13) sendMessage()"
+                style="
+                    flex: 1;
+                    padding: 12px 15px;
+                    background: var(--bg-primary);
+                    border: 1px solid rgba(255, 255, 255, 0.2);
+                    border-radius: 25px;
+                    color: var(--text-primary);
+                    font-size: 0.95rem;
+                    outline: none;
+                    transition: all 0.3s ease;
+                "
+                onfocus="this.style.borderColor='var(--neon-accent)'"
+                onblur="this.style.borderColor='rgba(255, 255, 255, 0.2)'"
+            >
+            <button onclick="sendMessage()" style="
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                background: var(--neon-accent);
+                color: var(--bg-primary);
+                border: none;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.2rem;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                ➤
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 챗봇 스타일 */
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes typing {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+    }
+    
+    .quick-btn {
+        padding: 8px 14px;
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid rgba(0, 255, 136, 0.3);
+        color: var(--neon-accent);
+        border-radius: 20px;
+        font-size: 0.8rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+    
+    .quick-btn:hover {
+        background: rgba(0, 255, 136, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .user-message {
+        align-self: flex-end;
+        max-width: 80%;
+        background: linear-gradient(135deg, rgba(255, 0, 102, 0.1) 0%, rgba(255, 0, 102, 0.05) 100%);
+        padding: 15px;
+        border-radius: 18px 18px 5px 18px;
+        border: 1px solid rgba(255, 0, 102, 0.3);
+        animation: slideUp 0.3s ease;
+    }
+    
+    .bot-message {
+        align-self: flex-start;
+        max-width: 80%;
+        background: linear-gradient(135deg, rgba(0, 255, 136, 0.1) 0%, rgba(0, 255, 136, 0.05) 100%);
+        padding: 15px;
+        border-radius: 18px 18px 18px 5px;
+        border: 1px solid rgba(0, 255, 136, 0.3);
+        animation: slideUp 0.3s ease;
+    }
+    
+    .typing-indicator {
+        display: flex;
+        gap: 5px;
+        padding: 15px;
+    }
+    
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--neon-accent);
+        border-radius: 50%;
+        animation: typing 1.4s infinite;
+    }
+    
+    .typing-dot:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .typing-dot:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    /* 챗봇 컨테이너 - 버튼 위치 */
+    #chatbotContainer {
+        position: fixed !important;
+        bottom: 20px !important;
+        right: 20px !important;
+        z-index: 99999 !important;
+    }
+    
+    /* 챗봇 토글 버튼 */
+    #chatbotToggle {
+        width: 56px !important;
+        height: 56px !important;
+        font-size: 1.6rem !important;
+        box-shadow: 0 8px 30px rgba(0, 255, 136, 0.6) !important;
+    }
+    
+    /* 챗봇 윈도우 - 전체 화면 모드 */
+    #chatbotWindow {
+        position: fixed !important;
+        top: 60px !important;
+        left: 15px !important;
+        right: 15px !important;
+        bottom: 60px !important;
+        width: calc(100% - 30px) !important;
+        height: calc(100% - 120px) !important;
+        max-width: none !important;
+        max-height: none !important;
+        border-radius: 15px !important;
+        transform: none !important;
+    }
+    
+    /* 채팅 메시지 영역 높이 조정 */
+    #chatMessages {
+        max-height: calc(100vh - 320px) !important;
+        overflow-y: auto !important;
+    }
+    
+    /* 빠른 질문 버튼 영역 */
+    #quickQuestions {
+        max-height: 80px !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        white-space: nowrap !important;
+        display: flex !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    /* 빠른 버튼 스타일 */
+    .quick-btn {
+        flex-shrink: 0 !important;
+        margin-right: 8px !important;
+    }
+}
+</style>
+
+<script>
+    // 챗봇 답변 데이터
+    const chatbotResponses = {
+        '파티 일정': {
+            keywords: ['언제', '일정', '날짜', '시간', '요일', 'when'],
+            response: `📅 MONO PARTY는 주로 <span style="color: var(--neon-accent);">금요일, 토요일 저녁</span>에 열립니다!
+
+⏰ <strong>시간대:</strong>
+- 1부: 오후 8시 - 11시
+- 2부: 오후 11시 - 새벽 1시 30분
+
+최신 파티 일정은 상단의 "다가오는 파티 일정" 섹션에서 확인하실 수 있어요! 
+
+매회차 <span style="color: var(--neon-pink);">조기 마감</span>되니 서둘러 신청하세요 🎉`
+        },
+        '드레스코드': {
+            keywords: ['드레스', '옷', '복장', '블랙', '화이트', '무채색', 'dress'],
+            response: `🖤 MONO PARTY의 시그니처는 <strong>Black & White</strong>입니다!
+
+<span style="color: var(--neon-accent);">✨ 드레스코드:</span>
+- 올블랙 또는 올화이트
+- 무채색 계열 (검정, 흰색, 회색)
+- 포인트 악세서리 OK
+
+어두운 조명 아래서 당신의 실루엣이 더욱 매력적으로 빛날 거예요! 
+
+대부분 참가자들이 드레스코드를 지켜주셔서 통일감 있고 세련된 분위기가 만들어집니다 🌙`
+        },
+        '티켓 구매': {
+            keywords: ['티켓', '구매', '신청', '예약', '참가', '가격', 'ticket'],
+            response: `🎫 티켓 구매는 정말 간단해요!
+
+<span style="color: var(--neon-accent);">💳 구매 방법:</span>
+1. 홈페이지 "지금 참가 신청하기" 버튼 클릭
+2. 신청서 작성 (2분이면 완료!)
+3. 입금 확인 후 참가 확정
+
+<strong>가격:</strong>
+- 1부만: 남성 42,000원 / 여성 34,000원
+- 2부만: 25,000원
+- <span style="color: var(--neon-pink);">1부+2부 패키지: 특별 할인!</span>
+
+선착순 70명 마감이니 서둘러주세요! 💫`
+        },
+        '혼자 참가': {
+            keywords: ['혼자', '친구', '아는', '처음', 'alone'],
+            response: `👤 혼자 오시는 분들 정말 많아요!
+
+참가자의 <span style="color: var(--neon-accent);">60% 이상이 혼자</span> 오십니다!
+
+오히려 혼자 오시는 분들이 더 적극적이고 재밌게 즐기세요 ✨
+
+<strong>걱정하지 마세요:</strong>
+- 도착하자마자 아이스브레이킹 시작
+- 5분 안에 친해지는 특별한 게임들
+- MC가 자연스럽게 연결해드려요
+- 내향인도 편안한 구조
+
+혼자 와서 <span style="color: var(--neon-pink);">3-5명과 번호 교환</span>하고 가시는게 평균이에요! 😊`
+        },
+        '연령대': {
+            keywords: ['나이', '연령', '몇살', '세대', 'age'],
+            response: `🎂 MONO PARTY 연령대 안내
+
+<span style="color: var(--neon-accent);">✨ 참가 가능 연령:</span>
+- 남성: 25-36세
+- 여성: 20-37세
+
+<strong>주요 참가자층:</strong>
+- 20대 중후반 ~ 30대 초중반
+- 사회 초년생 ~ 중반 커리어
+- 감성적 교류를 원하는 MZ세대
+
+비슷한 연령대가 모여서 공감대 형성이 쉽고, 대화가 자연스럽게 이어져요! 
+
+<span style="color: var(--neon-pink);">신분증 지참 필수!</span> (나이 확인용) 🆔`
+        },
+        '파티 운세': {
+            keywords: ['운세', '오늘', '행운', '타로', '운', '점', '🔮'],
+            response: function() {
+                const fortunes = [
+                    {
+                        emoji: '✨',
+                        title: '네온 빛 아래 운명의 만남',
+                        desc: '오늘 당신은 <span style="color: var(--neon-accent);">검은 옷을 입은 누군가</span>와 특별한 인연을 만날 예정! 2부까지 남으면 연락처 5개는 기본~',
+                        lucky: '럭키 아이템: 향수 한 방울 💫'
+                    },
+                    {
+                        emoji: '🌙',
+                        title: '도파민 폭발의 날',
+                        desc: '미션 게임에서 <span style="color: var(--neon-pink);">주인공</span>이 될 운명! 평소보다 10배는 매력적으로 보이는 날이에요.',
+                        lucky: '럭키 타임: 밤 10시 30분 🕐'
+                    },
+                    {
+                        emoji: '💘',
+                        title: '설렘 지수 MAX',
+                        desc: '첫인상 롤링페이퍼에 <span style="color: var(--neon-accent);">당신을 향한 관심</span>이 폭주할 예정! 오늘은 인기스타~',
+                        lucky: '럭키 스팟: 바 카운터 근처 🍸'
+                    },
+                    {
+                        emoji: '⚡',
+                        title: '전기가 통하는 날',
+                        desc: '눈빛만으로도 <span style="color: var(--neon-pink);">감정 교류</span>가 가능한 날! 말하지 않아도 통하는 사람을 만날 거예요.',
+                        lucky: '럭키 액션: 먼저 다가가기 🚶'
+                    },
+                    {
+                        emoji: '🎯',
+                        title: '백발백중 큐피드의 화살',
+                        desc: '당신이 찍은 사람은 <span style="color: var(--neon-accent);">무조건 당신에게 호감</span>을 느낄 운명! 자신감을 가지세요.',
+                        lucky: '럭키 컬러: 올블랙 🖤'
+                    }
+                ];
+                
+                const fortune = fortunes[Math.floor(Math.random() * fortunes.length)];
+                return `${fortune.emoji} <strong>오늘의 MONO PARTY 운세</strong> ${fortune.emoji}
+
+<span style="color: var(--neon-accent); font-size: 1.1rem; font-weight: 700;">"${fortune.title}"</span>
+
+${fortune.desc}
+
+${fortune.lucky}
+
+<span style="color: var(--text-secondary); font-size: 0.85rem;">
+💭 조언: 오늘은 평소보다 더 적극적으로! 
+후회 없는 파티를 만들어보세요~
+</span>`;
+            }
+        },
+        '게임 미션': {
+            keywords: ['게임', '미션', '아이스브레이킹', '컨텐츠', 'game'],
+            response: `🎮 MONO PARTY만의 특별한 컨텐츠!
+
+<span style="color: var(--neon-accent);">✨ 1부 하이라이트:</span>
+- <strong>첫인상 롤링페이퍼</strong> - 익명으로 첫인상 주고받기
+- <strong>티키타카 게임</strong> - 마음이 통하는 사람 찾기
+- <strong>칩 게임</strong> - 자연스러운 스킨십의 시작
+
+<span style="color: var(--neon-pink);">💫 2부 딥다이브:</span>
+- <strong>자기소개 타임</strong> - 진짜 나를 보여주기
+- <strong>설렘박스</strong> - 두근두근 이미지 미션
+- <strong>익명라디오</strong> - 솔직한 마음 전하기
+
+지루할 틈이 1초도 없어요! 도파민이 미친듯이 터집니다 🔥`
+        },
+        '장소': {
+            keywords: ['장소', '위치', '어디', '주소', '양재', 'location'],
+            response: `📍 MONO PARTY 위치 안내
+
+<span style="color: var(--neon-accent);">🏢 장소:</span>
+양재역 도보 5분 거리
+60평 프라이빗 감성 파티룸
+
+<strong>특징:</strong>
+- 넓고 쾌적한 단독 공간
+- 무드 있는 조명 시스템
+- 인스타 감성 인테리어
+- 프라이빗한 분위기
+
+<span style="color: var(--neon-pink);">정확한 주소는 참가 확정 후 개별 안내드려요!</span>
+
+양재역에서 정말 가까워서 대중교통 이용이 편해요 🚇`
+        },
+        '다른 파티와 차이': {
+            keywords: ['차이', '다른', '특별', '뭐가', '왜'],
+            response: `💎 MONO PARTY만의 특별함!
+
+<span style="color: var(--neon-accent);">✨ 일반 파티와 다른 점:</span>
+
+<strong>vs 클럽</strong>
+- 시끄럽지 않아 대화 가능
+- 자연스러운 만남과 교류
+- 품격 있는 분위기
+
+<strong>vs 소개팅</strong>
+- 1:1 부담감 제로
+- 여러 사람을 자연스럽게 만남
+- 게임으로 어색함 해소
+
+<strong>vs 일반 소셜파티</strong>
+- <span style="color: var(--neon-pink);">감정 중심</span> 설계
+- 도파민 과학적 접근
+- 검증된 매칭 시스템
+
+"소개팅은 부담스럽고 클럽은 시끄러운" 
+당신을 위한 <strong>무드 기반 파티</strong>입니다! 🌙`
+        },
+        '사진': {
+            keywords: ['사진', '촬영', '인스타', '포토존', 'photo'],
+            response: `📸 인스타 감성 폭발!
+
+<span style="color: var(--neon-accent);">✨ 포토 스팟:</span>
+- 네온사인 포토존
+- 무드등 가득한 공간
+- 올블랙 단체샷 존
+- 미러볼 아래 감성샷
+
+<strong>촬영 팁:</strong>
+- 어두운 조명이 더 매력적으로 만들어줘요
+- 실루엣 샷이 특히 인기
+- 스토리용 부메랑도 찍어보세요
+
+<span style="color: var(--neon-pink);">주의:</span> 다른 참가자 동의 없이 촬영 금지!
+본인 셀카와 분위기 샷은 자유롭게 OK 📱
+
+#MONOPARTY 태그 잊지 마세요! ✨`
+        },
+        '2부': {
+            keywords: ['2부', '투부', '애프터', '이후', 'after'],
+            response: `🌙 2부는 진짜가 시작되는 시간!
+
+<span style="color: var(--neon-accent);">✨ 2부만의 매력:</span>
+- 더 깊은 대화와 교감
+- 소규모 그룹 (50-60% 참여)
+- 편안하고 친밀한 분위기
+- 진짜 연결의 가능성
+
+<strong>2부 프로그램:</strong>
+- 진솔한 자기소개
+- 설렘박스 미션
+- 익명라디오
+- 프리토킹 타임
+
+<span style="color: var(--neon-pink);">💡 Tip:</span> 
+1부에서 마음에 드는 사람을 발견했다면
+2부는 필수! 대부분의 커플이 2부에서 탄생해요 💕
+
+선택사항이지만 강추! 후회 없을 거예요~`
+        },
+        '환불': {
+            keywords: ['환불', '취소', '변경', '못가', 'refund'],
+            response: `💰 환불 정책 안내
+
+<span style="color: var(--neon-accent);">📋 환불 규정:</span>
+- 파티 <strong>7일 전까지</strong>: 100% 환불
+- 파티 <strong>7일 전부터</strong>: 환불 불가
+
+<strong>예시:</strong>
+7월 19일 파티 → 7월 12일까지 환불 가능
+7월 13일부터는 환불 불가
+
+<span style="color: var(--neon-pink);">⚠️ 주의사항:</span>
+- 일정 변경도 7일 전까지만 가능
+- 긴급 상황 시 개별 문의
+- 선발 제외 시 100% 환불
+
+신중하게 일정 확인 후 신청해주세요! 
+문의: 인스타그램 DM @mono_party_ 📩`
+        }
+    };
+    
+    // 기본 응답
+    const defaultResponse = `흠... 정확한 답변을 찾지 못했어요 🤔
+
+하지만 걱정하지 마세요! 
+
+<span style="color: var(--neon-accent);">💬 직접 문의하기:</span>
+- 인스타그램: @mono_party_
+- 홈페이지 상단 파티 일정 확인
+
+자주 묻는 질문:
+- 파티 일정 / 드레스코드
+- 혼자 참가 / 연령대
+- 티켓 구매 / 게임 미션
+
+무엇을 도와드릴까요? ✨`;
+    
+    // 챗봇 토글
+window.toggleChatbot = function() {
+    const window = document.getElementById('chatbotWindow');
+    const toggle = document.getElementById('chatbotToggle');
+    
+    if (window.style.display === 'none' || window.style.display === '') {
+        window.style.display = 'flex';
+        toggle.innerHTML = '✕';
+        toggle.style.background = 'linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-accent) 100%)';
+        // 모바일에서 버튼 위치 유지
+        toggle.style.visibility = 'visible';
+        toggle.style.display = 'flex';
+    } else {
+        window.style.display = 'none';
+        toggle.innerHTML = '💬';
+        toggle.style.background = 'linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%)';
+        // 모바일에서도 버튼 계속 표시
+        toggle.style.visibility = 'visible';
+        toggle.style.display = 'flex';
+    }
+}
+    
+    // 메시지 전송
+    window.sendMessage = function() {
+        const input = document.getElementById('chatInput');
+        const message = input.value.trim();
+        
+        if (message) {
+            addUserMessage(message);
+            input.value = '';
+            
+            // 타이핑 인디케이터 표시
+            showTypingIndicator();
+            
+            // 1초 후 봇 응답
+            setTimeout(() => {
+                removeTypingIndicator();
+                const response = getResponse(message);
+                addBotMessage(response);
+            }, 1000);
+        }
+    }
+    
+    // 빠른 메시지 전송
+    window.sendQuickMessage = function(message) {
+        addUserMessage(message);
+        showTypingIndicator();
+        
+        setTimeout(() => {
+            removeTypingIndicator();
+            const response = getResponse(message);
+            addBotMessage(response);
+        }, 1000);
+    }
+    
+    // 응답 가져오기
+    function getResponse(message) {
+        const lowerMessage = message.toLowerCase();
+        
+        // 운세는 함수로 처리
+        if (lowerMessage.includes('운세') || lowerMessage.includes('행운')) {
+            return chatbotResponses['파티 운세'].response();
+        }
+        
+        // 키워드 매칭
+        for (const key in chatbotResponses) {
+            const item = chatbotResponses[key];
+            if (item.keywords) {
+                for (const keyword of item.keywords) {
+                    if (lowerMessage.includes(keyword)) {
+                        return typeof item.response === 'function' ? item.response() : item.response;
+                    }
+                }
+            }
+        }
+        
+        return defaultResponse;
+    }
+    
+    // 사용자 메시지 추가
+    function addUserMessage(message) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'user-message';
+        messageDiv.innerHTML = `<p style="margin: 0; font-size: 0.95rem;">${message}</p>`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // 봇 메시지 추가
+    function addBotMessage(message) {
+        const chatMessages = document.getElementById('chatMessages');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'bot-message';
+        messageDiv.innerHTML = `<p style="margin: 0; font-size: 0.95rem; line-height: 1.5;">${message}</p>`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // 타이핑 인디케이터
+    function showTypingIndicator() {
+        const chatMessages = document.getElementById('chatMessages');
+        const typingDiv = document.createElement('div');
+        typingDiv.id = 'typingIndicator';
+        typingDiv.className = 'bot-message typing-indicator';
+        typingDiv.innerHTML = `
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    function removeTypingIndicator() {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) {
+            indicator.remove();
+        }
+    }
+    
+    // 초기 환영 메시지 애니메이션
+    setTimeout(() => {
+        const toggle = document.getElementById('chatbotToggle');
+        if (toggle) {
+            toggle.style.animation = 'pulse 2s infinite, bounce 1s ease';
+        }
+    }, 3000);
+        // 모바일에서 챗봇 버튼 위치 강제 조정
+    if (window.innerWidth <= 768) {
+        window.addEventListener('load', function() {
+            const container = document.getElementById('chatbotContainer');
+            const toggle = document.getElementById('chatbotToggle');
+            
+            if (container) {
+                container.style.position = 'fixed';
+                container.style.bottom = '120px';
+                container.style.right = '15px';
+                container.style.zIndex = '99999';
+            }
+            
+            if (toggle) {
+                toggle.style.display = 'flex';
+                toggle.style.visibility = 'visible';
+                console.log('✅ 모바일 챗봇 버튼 위치 조정 완료');
+            }
+        });
+    }
+        // 모바일 화면 대응
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.innerWidth <= 768) {
+            const chatWindow = document.getElementById('chatbotWindow');
+            const chatContainer = document.getElementById('chatbotContainer');
+            
+            // 모바일에서 챗봇 윈도우 스타일 강제 적용
+            if (chatWindow) {
+                chatWindow.style.cssText += `
+                    position: fixed !important;
+                    top: 20px !important;
+                    left: 10px !important;
+                    right: 10px !important;
+                    bottom: 20px !important;
+                    width: calc(100% - 20px) !important;
+                    height: calc(100% - 40px) !important;
+                    max-width: none !important;
+                    max-height: none !important;
+                `;
+            }
+            
+            // 챗봇 버튼 위치
+            if (chatContainer) {
+                chatContainer.style.cssText += `
+                    position: fixed !important;
+                    bottom: 100px !important;
+                    right: 15px !important;
+                    z-index: 99999 !important;
+                `;
+            }
+        }
+    });
+</script>
+<!-- AI 챗봇 끝 -->
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <h3 class="footer-logo">MONO PARTY</h3>
+        <p class="footer-text">당신의 감정을, 우리가 함께 디자인합니다.</p>
+    </footer>
+    <!-- 신청 모달 -->
+<div id="applicationModal" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 10000;
+    overflow-y: auto;
+    backdrop-filter: blur(10px);
+">
+    <div style="
+        position: relative;
+        max-width: 900px;
+        margin: 20px auto;
+        background: var(--bg-primary);
+        border: 2px solid var(--neon-accent);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 255, 136, 0.3);
+    ">
+        <!-- 닫기 버튼 -->
+        <button onclick="closeApplicationModal()" style="
+            position: sticky;
+            top: 20px;
+            right: 20px;
+            float: right;
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10001;
+            margin: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        " onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">×</button>
+        
+        <!-- iframe으로 신청 페이지 로드 -->
+        <iframe 
+            id="applicationFrame"
+            src="" 
+            style="
+                width: 100%;
+                height: calc(100vh - 40px);
+                border: none;
+                border-radius: 20px;
+            ">
+        </iframe>
+    </div>
+</div>
+    
+       <!-- ⬇️⬇️⬇️ YouTube API 스크립트 추가 ⬇️⬇️⬇️ -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+    // YouTube 플레이어 변수
+    var player;
+    var isPlaying = false;
+    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    // YouTube API 준비
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('youtubeIframe', {
+            videoId: 'CY3ZzFmCCd0',
+            playerVars: {
+                'autoplay': 1,
+                'loop': 1,
+                'playlist': 'CY3ZzFmCCd0',
+                'controls': 0,
+                'disablekb': 1,
+                'fs': 0,
+                'modestbranding': 1,
+                'playsinline': 1,
+                'mute': isMobile ? 1 : 0
+            },
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+    
+    // 플레이어 준비 완료
+    function onPlayerReady(event) {
+        // 모바일에서 음소거 상태로 자동재생
+        if (isMobile) {
+            player.mute();
+            player.playVideo();
+            
+            // 사용자 상호작용 후 음소거 해제
+            document.addEventListener('click', function unmuteMobile() {
+                if (player && player.isMuted()) {
+                    player.unMute();
+                    showMusicNotification();
+                }
+            }, { once: true });
+        } else {
+            // 데스크톱에서는 바로 재생
+            player.playVideo();
+        }
+    }
+    
+    // 음악 재생 알림 표시
+    function showMusicNotification() {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 255, 136, 0.9);
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            z-index: 10000;
+            animation: fadeInOut 2s ease;
+        `;
+        notification.textContent = '🎵 음악이 재생됩니다';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 2000);
+    }
+    
+    // 재생 상태 변경
+    function onPlayerStateChange(event) {
+        if (event.data == YT.PlayerState.PLAYING) {
+            isPlaying = true;
+            updateButtonDisplay();
+            // 음악바 애니메이션 시작
+            const musicBars = document.getElementById('musicBars');
+            if (musicBars) {
+                musicBars.classList.add('playing');
+            }
+        } else if (event.data == YT.PlayerState.PAUSED) {
+            isPlaying = false;
+            updateButtonDisplay();
+            // 음악바 애니메이션 중지
+            const musicBars = document.getElementById('musicBars');
+            if (musicBars) {
+                musicBars.classList.remove('playing');
+            }
+        } else if (event.data == YT.PlayerState.ENDED) {
+            // 반복재생
+            player.playVideo();
+        }
+    }
+    
+    // 재생 함수
+    function playMusic() {
+        console.log('Play music called');
+        if (player && player.playVideo) {
+            player.playVideo();
+            // 모바일에서 음소거 상태면 해제
+            if (isMobile && player.isMuted && player.isMuted()) {
+                player.unMute();
+                showMusicNotification();
+            }
+            isPlaying = true;
+            updateButtonDisplay();
+        }
+    }
+    
+    // 일시정지 함수
+    function pauseMusic() {
+        console.log('Pause music called');
+        if (player && player.pauseVideo) {
+            player.pauseVideo();
+            isPlaying = false;
+            updateButtonDisplay();
+        }
+    }
+    
+    // 토글 함수 (기존 호환성 유지)
+    function togglePlayPause() {
+        if (isPlaying) {
+            pauseMusic();
+        } else {
+            playMusic();
+        }
+    }
+    
+    // 버튼 표시 업데이트
+    function updateButtonDisplay() {
+        const playBtn = document.getElementById('playBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const miniPlayBtn = document.getElementById('miniPlayBtn');
+        const miniPauseBtn = document.getElementById('miniPauseBtn');
+        
+        console.log('Updating buttons, isPlaying:', isPlaying);
+        
+        if (isPlaying) {
+            // 재생 중: 일시정지 버튼만 표시
+            if (playBtn) playBtn.style.display = 'none';
+            if (pauseBtn) pauseBtn.style.display = 'flex';
+            if (miniPlayBtn) miniPlayBtn.style.display = 'none';
+            if (miniPauseBtn) miniPauseBtn.style.display = 'flex';
+        } else {
+            // 일시정지 중: 재생 버튼만 표시
+            if (playBtn) playBtn.style.display = 'flex';
+            if (pauseBtn) pauseBtn.style.display = 'none';
+            if (miniPlayBtn) miniPlayBtn.style.display = 'flex';
+            if (miniPauseBtn) miniPauseBtn.style.display = 'none';
+        }
+    }
+    
+    // 전역 함수로 등록
+    window.togglePlayPause = togglePlayPause;
+    window.playMusic = playMusic;
+    window.pauseMusic = pauseMusic;
+    window.updateButtonDisplay = updateButtonDisplay;
+</script>
+    <script>
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://wframchrsfspkxrpughn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmcmFtY2hyc2ZzcGt4cnB1Z2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0OTg1NDIsImV4cCI6MjA2OTA3NDU0Mn0.62tDcKGS8eVPC92MmO6mXyfNcM6QKiaRpydaBYKsum0';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+// 실시간 조회 인원 업데이트
+function updateViewerCount() {
+    const count = Math.floor(Math.random() * 100) + 1;
+    const desktopCounter = document.getElementById('viewerCount');
+    const mobileCounter = document.getElementById('viewerCountMobile');
+    
+    if (desktopCounter) desktopCounter.textContent = count;
+    if (mobileCounter) mobileCounter.textContent = count;
+}
+        
+        // 5초마다 조회 인원 업데이트
+        setInterval(updateViewerCount, 5000);
+        
+        // 실시간 참여 알림 표시
+        function showNotification(gender, age) {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            
+            notification.className = 'notification-item';
+            notification.style.opacity = '0';
+            
+            const genderText = gender === 'male' ? '남성' : '여성';
+            const emoji = gender === 'male' ? '🤵' : '👗';
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">${emoji}</span>
+                    <div>
+                        <div style="color: var(--text-primary); font-weight: 500;">${genderText}(${age}세)</div>
+                        <div style="color: var(--text-secondary); font-size: 0.8rem;">방금 참가 신청</div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertBefore(notification, container.firstChild);
+            
+            // 애니메이션
+            setTimeout(() => {
+                notification.style.opacity = '1';
+            }, 100);
+            
+            // 5초 후 제거
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
+            }, 5000);
+            
+            // 최대 3개까지만 표시
+            const notifications = container.children;
+            if (notifications.length > 3) {
+                notifications[notifications.length - 1].remove();
+            }
+        }
+        
+// 파티 날짜 불러오기
+async function loadPartyDates() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('party_schedules')
+            .select('*')
+            .eq('is_active', true)
+            .gte('party_date', new Date().toISOString().split('T')[0])
+            .order('party_date', { ascending: true })
+            .limit(6);
+        
+        if (error) throw error;
+        
+        const container = document.getElementById('upcomingParties');
+        
+        if (data && data.length > 0) {
+            container.innerHTML = data.map(party => {
+                const date = new Date(party.party_date + 'T00:00:00');
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const dayOfWeek = dayNames[date.getDay()];
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                
+                // 토요일은 특별 표시
+                const isSaturday = date.getDay() === 6;
+                const borderColor = isSaturday ? 'var(--neon-pink)' : 'var(--neon-accent)';
+                
+                // 실제 잔여석 계산 - 데이터베이스에서 가져온 값 사용
+                const remainingSeats = party.remaining_seats !== undefined ? party.remaining_seats : 70;
+                const maxCapacity = party.max_capacity || 70;
+                const occupancyRate = ((maxCapacity - remainingSeats) / maxCapacity) * 100;
+                
+                // 잔여석에 따른 상태 표시
+                let seatStatusColor = 'var(--neon-accent)';
+                let seatStatusText = `잔여 ${remainingSeats}석`;
+                let urgencyBadge = '';
+                
+                if (remainingSeats === 0) {
+                    seatStatusColor = 'var(--neon-pink)';
+                    seatStatusText = '🔥 마감';
+                    urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: var(--neon-pink); color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700;">SOLD OUT</div>';
+                } else if (remainingSeats <= 5) {
+                    seatStatusColor = 'var(--neon-pink)';
+                    seatStatusText = `🔥 마감임박! ${remainingSeats}석`;
+                    urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: var(--neon-pink); color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700; animation: pulse 1s infinite;">마감임박</div>';
+                } else if (remainingSeats <= 10) {
+                    seatStatusColor = '#ffaa00';
+                    seatStatusText = `⚡ 잔여 ${remainingSeats}석`;
+                    urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: #ffaa00; color: var(--bg-primary); padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700;">HOT</div>';
+                }
+                
+                return `
+                    <div class="party-card ${isSaturday ? 'saturday' : ''}" style="border-color: ${borderColor}; position: relative; ${remainingSeats === 0 ? 'opacity: 0.7; pointer-events: none;' : ''}">
+                        ${urgencyBadge}
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">
+                            ${isSaturday ? '🎉' : '✨'}
+                        </div>
+                        <div style="font-size: 1.8rem; font-weight: 700; color: ${borderColor};">
+                            ${month}월 ${day}일
+                        </div>
+                        <div style="font-size: 1.2rem; color: var(--text-secondary); margin-top: 5px;">
+                            ${dayOfWeek}요일
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <div style="background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px; margin-bottom: 10px;">
+                                <div style="background: ${seatStatusColor}; height: 100%; width: ${occupancyRate}%; transition: all 0.3s ease;"></div>
+                            </div>
+                            <div style="padding: 8px; background: rgba(0, 255, 136, 0.1); border-radius: 20px; border: 1px solid ${seatStatusColor};">
+                                <span style="color: ${seatStatusColor}; font-size: 0.9rem; font-weight: 600;">${seatStatusText}</span>
+                            </div>
+                        </div>
+                        ${remainingSeats === 0 ? '<div style="margin-top: 10px; color: var(--text-secondary); font-size: 0.85rem;">다음 파티를 기다려주세요!</div>' : ''}
+                    </div>
+                `;
+            }).join('');
+        } else {
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <p style="color: var(--text-secondary); font-size: 1.1rem;">
+                        새로운 파티 일정을 준비중입니다.<br>
+                        인스타그램에서 최신 소식을 확인하세요!
+                    </p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading party dates:', error);
+        // 에러 시 기본 표시
+        const container = document.getElementById('upcomingParties');
+        container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                <p style="color: var(--text-secondary); font-size: 1.1rem;">
+                    파티 일정을 확인중입니다...<br>
+                    잠시만 기다려주세요!
+                </p>
+            </div>
+        `;
+    }
+}
+        // 실시간 알림 구독
+        async function subscribeToNotifications() {
+            const channel = supabaseClient
+                .channel('notifications')
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'live_notifications'
+                }, (payload) => {
+                    if (payload.new.type === 'registration') {
+                        showNotification(payload.new.gender, payload.new.age);
+                    }
+                })
+                .subscribe();
+        }
+        
+        // 실제 신청 시 알림 추가
+        async function subscribeToApplications() {
+            const channel = supabaseClient
+                .channel('applications')
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'applications'
+                }, (payload) => {
+                    // 실제 신청이 들어오면 알림 표시
+                    showNotification(payload.new.gender, payload.new.age);
+                })
+                .subscribe();
+        }
+        
+        // 랜덤 알림 생성 (초기 활성화를 위해)
+        function generateRandomNotifications() {
+            // 페이지 로드 후 3-10초 사이에 첫 알림
+            setTimeout(() => {
+                const gender = Math.random() > 0.5 ? 'male' : 'female';
+                const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
+                showNotification(gender, age);
+            }, Math.random() * 7000 + 3000);
+            
+            // 이후 20-60초마다 랜덤 알림
+            setInterval(() => {
+                if (Math.random() > 0.7) { // 30% 확률로 알림 생성
+                    const gender = Math.random() > 0.5 ? 'male' : 'female';
+                    const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
+                    showNotification(gender, age);
+                }
+            }, Math.random() * 40000 + 20000);
+        }
+        
+        // Create floating particles - Desktop only
+        if (window.innerWidth > 768) {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // Create floating emojis - Desktop only
+        if (window.innerWidth > 768) {
+            const createFloatingEmoji = () => {
+                const emojis = ['💫', '✨', '⚡', '🖤', '🔥'];
+                const emoji = document.createElement('div');
+                emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                emoji.style.position = 'fixed';
+                emoji.style.left = Math.random() * window.innerWidth + 'px';
+                emoji.style.top = window.innerHeight + 'px';
+                emoji.style.fontSize = Math.random() * 15 + 15 + 'px';
+                emoji.style.opacity = '0.6';
+                emoji.style.pointerEvents = 'none';
+                emoji.style.zIndex = '9999';
+                emoji.style.transition = 'all 5s linear';
+                
+                document.body.appendChild(emoji);
+                
+                setTimeout(() => {
+                    emoji.style.transform = `translateY(-${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`;
+                    emoji.style.opacity = '0';
+                }, 100);
+                
+                setTimeout(() => {
+                    emoji.remove();
+                }, 5000);
+            };
+            
+            // Trigger floating emojis periodically
+            setInterval(createFloatingEmoji, 4000);
+        }
+        // ===== 새로운 네비게이션 함수들 =====
+
+// 인트로 보기
+function showIntro() {
+    document.getElementById('mainHero').style.display = 'none';
+    document.getElementById('introSection').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // 파티 일정 로드
+    loadUpcomingPartiesForIntro();
+}
+
+// 인트로용 파티 일정 로드
+async function loadUpcomingPartiesForIntro() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('party_schedules')
+            .select('*')
+            .eq('is_active', true)
+            .gte('party_date', new Date().toISOString().split('T')[0])
+            .order('party_date', { ascending: true })
+            .limit(6);
+        
+        if (error) throw error;
+        
+        const container = document.getElementById('upcomingPartiesIntro');
+        
+        if (data && data.length > 0) {
+            container.innerHTML = data.map(party => {
+                const date = new Date(party.party_date + 'T00:00:00');
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const dayOfWeek = dayNames[date.getDay()];
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                const remainingSeats = party.remaining_seats || 70;
+                
+                return `
+                    <div class="party-card" style="border-color: var(--neon-accent);">
+                        <div style="font-size: 2.5rem; margin-bottom: 10px;">✨</div>
+                        <div style="font-size: 1.8rem; font-weight: 700; color: var(--neon-accent);">
+                            ${month}월 ${day}일
+                        </div>
+                        <div style="font-size: 1.2rem; color: var(--text-secondary); margin-top: 5px;">
+                            ${dayOfWeek}요일
+                        </div>
+                        <div style="margin-top: 15px; padding: 8px; background: rgba(0, 255, 136, 0.1); border-radius: 20px;">
+                            <span style="color: var(--neon-accent); font-size: 0.9rem; font-weight: 600;">
+                                잔여 ${remainingSeats}석
+                            </span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    } catch (error) {
+        console.error('Error loading party dates:', error);
+    }
+}
+
+// 메인으로 돌아가기
+function backToMain() {
+    document.getElementById('mainHero').style.display = 'flex';
+    document.getElementById('introSection').style.display = 'none';
+    document.getElementById('categoryContent').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 인트로로 돌아가기
+function backToIntro() {
+    document.getElementById('introSection').style.display = 'block';
+    document.getElementById('categoryContent').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 카테고리 보기
+function showCategory(category) {
+    document.getElementById('introSection').style.display = 'none';
+    document.getElementById('categoryContent').style.display = 'block';
+    
+    const contentArea = document.getElementById('contentArea');
+    
+    switch(category) {
+        case 'party-info':
+            contentArea.innerHTML = getPartyInfoContent();
+            break;
+        case 'host':
+            contentArea.innerHTML = getHostContent();
+            break;
+        case 'reviews':
+            contentArea.innerHTML = getReviewsContent();
+            break;
+        case 'gallery':
+            contentArea.innerHTML = getGalleryContent();
+            break;
+        case 'seats':
+            contentArea.innerHTML = getSeatsContent();
+            setTimeout(() => loadPartyDates(), 100);
+            break;
+        case 'qna':
+            contentArea.innerHTML = getQnaContent();
+            break;
+    }
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 파티 정보 컨텐츠
+function getPartyInfoContent() {
+    return `
+        <h2 class="section-title">파티 소개 & 컨텐츠</h2>
+        
+        <div class="concept-grid">
+            <div class="concept-card neon-border">
+                <span class="concept-icon">🎯</span>
+                <h3 class="concept-title">첫인상 롤링페이퍼</h3>
+                <p class="concept-subtitle">익명으로 첫인상 주고받기</p>
+                <p class="concept-description">
+                    서로의 첫인상을 익명으로 적어주고, 관심있는 사람에게 다가가 첫인상을 전달하는 자연스러운 아이스브레이킹
+                </p>
+            </div>
+            
+            <div class="concept-card neon-border">
+                <span class="concept-icon">💫</span>
+                <h3 class="concept-title">티키타카 게임</h3>
+                <p class="concept-subtitle">마음이 통하는 사람 찾기</p>
+                <p class="concept-description">
+                    같은 생각을 하는 사람과 자연스럽게 연결되는 게임. 가장 많은 점수를 얻은 사람은 칵테일로 마음 표현 기회!
+                </p>
+            </div>
+            
+            <div class="concept-card neon-border">
+                <span class="concept-icon">🎮</span>
+                <h3 class="concept-title">칩 게임</h3>
+                <p class="concept-subtitle">자연스러운 스킨십의 시작</p>
+                <p class="concept-description">
+                    가위바위보, 눈싸움 등 간단한 게임으로 칩을 모으고, 상품으로 이성에게 어필하는 재미있는 컨텐츠
+                </p>
+            </div>
+        </div>
+        
+        <h3 style="margin-top: 50px; color: var(--neon-accent);">2부 프로그램</h3>
+        <div class="concept-grid">
+            <div class="concept-card neon-border">
+                <span class="concept-icon">🎤</span>
+                <h3 class="concept-title">자기소개 타임</h3>
+                <p class="concept-description">이름, 사는 곳, MBTI, 매력 포인트를 공유하며 진짜 나를 보여주는 시간</p>
+            </div>
+            
+            <div class="concept-card neon-border">
+                <span class="concept-icon">📦</span>
+                <h3 class="concept-title">설렘박스</h3>
+                <p class="concept-description">이미지 미션을 통해 관심있는 사람에게 자연스럽게 다가가는 두근두근한 시간</p>
+            </div>
+            
+            <div class="concept-card neon-border">
+                <span class="concept-icon">📻</span>
+                <h3 class="concept-title">익명라디오</h3>
+                <p class="concept-description">익명으로 마음을 전하고 질문하는 솔직한 감정 교류의 시간</p>
+            </div>
+        </div>
+    `;
+}
+
+// 호스트 컨텐츠
+function getHostContent() {
+    return `
+        <h2 class="section-title">HOST MOOD</h2>
+        <div style="text-align: center; margin-bottom: 40px;">
+            <img src="https://ifh.cc/g/cg9lOf.jpg" 
+                 alt="MONO PARTY 호스트" 
+                 style="width: 100%; max-width: 400px; border-radius: 20px; margin-bottom: 30px;">
+            
+            <h3 style="color: var(--neon-accent); font-size: 2rem; margin-bottom: 20px;">
+                파티계의 끝판왕 "MOOD"
+            </h3>
+            
+            <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-secondary);">
+                자칭 타칭 "블랙 성애자" ⚫<br>
+                365일 올블랙이지만 절대 지루하지 않은 남자<br><br>
+                
+                <strong style="color: var(--text-primary);">헬스로 만든 피지컬</strong>에 
+                <strong style="color: var(--text-primary);">여유로운 마인드</strong>까지<br>
+                시끄러운 사람은 조용하게, 조용한 사람은 신나게 만드는 마법같은 능력<br><br>
+                
+                <span style="color: var(--neon-accent); font-size: 1.3rem; font-weight: 700;">
+                "사람들이 진짜 행복한 하루를 보냈으면 좋겠어요"
+                </span>
+            </p>
+        </div>
+    `;
+}
+
+// 리뷰 컨텐츠
+function getReviewsContent() {
+    return `
+        <h2 class="section-title">실참여자 생생 후기</h2>
+        <div class="testimonials-container">
+            <div class="testimonial">
+                <p>첫 파티인데 이 퀄리티 실화인가요? 도파민이 미쳤어요. 재방문 예약 완료.</p>
+            </div>
+            <div class="testimonial">
+                <p>내향인인데도 말이 트였어요. 편안하면서도 설레는 밤이었습니다.</p>
+            </div>
+            <div class="testimonial">
+                <p>게임 구성 재밌고, 지루할 틈이 없이 놀았어요 💗</p>
+            </div>
+            <div class="testimonial">
+                <p>안주도 바로바로 준비되고, 술 무제한. 가성비 최고!</p>
+            </div>
+            <div class="testimonial">
+                <p>눈 마주치며 자연스레 대화하고, 감정이 연결되는 경험이었어요.</p>
+            </div>
+            <div class="testimonial">
+                <p>소개팅은 부담스럽고 클럽은 시끄러운데, 여기는 딱 제가 원하던 분위기예요!</p>
+            </div>
+        </div>
+    `;
+}
+
+// 갤러리 컨텐츠
+function getGalleryContent() {
+    return `
+        <h2 class="section-title">파티 현장 사진 & 영상</h2>
+        
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="https://ifh.cc/g/DtMZ8p.webp" alt="MONO PARTY 현장">
+                <div class="gallery-overlay"></div>
+                <div class="gallery-content">
+                    <h3>70명이 만드는 에너지</h3>
+                    <p>매회차 마감되는 인기</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item">
+                <img src="https://ifh.cc/g/xxbXJt.webp" alt="올블랙 드레스코드">
+                <div class="gallery-overlay"></div>
+                <div class="gallery-content">
+                    <h3>올블랙의 시크한 매력</h3>
+                    <p>드레스코드가 만드는 통일감</p>
+                </div>
+            </div>
+        </div>
+        
+        <h3 style="margin-top: 50px; margin-bottom: 30px; text-align: center; color: var(--neon-accent);">
+            🎬 베스트 영상
+        </h3>
+        
+        <div class="video-container">
+            <div class="video-wrapper">
+                <iframe src="https://drive.google.com/file/d/1fDGzePRinMuNTXfEU8f7JYlMqtou3Lki/preview" allow="autoplay"></iframe>
+            </div>
+        </div>
+    `;
+}
+
+// 잔여석 컨텐츠
+function getSeatsContent() {
+    return `
+        <h2 class="section-title">🎫 잔여석 확인</h2>
+        <div id="upcomingParties" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px;">
+            <!-- 파티 날짜가 여기 로드됨 -->
+        </div>
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">
+                지금 참가 신청하기
+            </a>
+        </div>
+    `;
+}
+
+// Q&A 컨텐츠
+function getQnaContent() {
+    return `
+        <h2 class="section-title">자주 묻는 질문</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <h3>혼자 가도 괜찮나요?</h3>
+                <p>참가자의 60%가 혼자 오세요. 오히려 혼자 오시는 분들이 더 적극적이고 재밌게 즐기십니다.</p>
+            </div>
+            <div class="faq-item">
+                <h3>드레스코드를 꼭 지켜야 하나요?</h3>
+                <p>올블랙 무채색 드레스코드를 권장합니다. 대부분의 참가자들이 맞춰오시면서 세련된 분위기를 만들어요.</p>
+            </div>
+            <div class="faq-item">
+                <h3>언제 파티가 열리나요?</h3>
+                <p>주로 금요일, 토요일 저녁에 진행됩니다. 정확한 일정은 잔여석 확인 메뉴에서 확인하세요!</p>
+            </div>
+            <div class="faq-item">
+                <h3>연령대는 어떻게 되나요?</h3>
+                <p>남성 25-36세, 여성 20-37세입니다. 비슷한 연령대가 모여 자연스러운 대화가 가능해요.</p>
+            </div>
+            <div class="faq-item">
+                <h3>2부는 꼭 참여해야 하나요?</h3>
+                <p>2부는 선택사항이에요. 보통 전체 인원의 50-60%가 2부까지 함께해요.</p>
+            </div>
+        </div>
+    `;
+}
+
+// 전역 함수로 등록
+window.showIntro = showIntro;
+window.backToMain = backToMain;
+window.backToIntro = backToIntro;
+window.showCategory = showCategory;
+      
+        // 페이지 로드 시 실행
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPartyDates();
+            subscribeToNotifications();
+            subscribeToApplications();
+            generateRandomNotifications();
+            updateViewerCount();
+            // 버튼 초기 상태 설정
+setTimeout(() => {
+    if (window.updateButtonDisplay) {
+        window.updateButtonDisplay();
+    }
+}, 1000);
+            // 모바일 사용자에게 음악 안내
+if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+    setTimeout(() => {
+        const musicTip = document.createElement('div');
+        musicTip.style.cssText = `
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            color: var(--neon-accent);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        `;
+        musicTip.innerHTML = '👆 화면을 탭하면 음악이 재생됩니다';
+        document.body.appendChild(musicTip);
+        
+        // 클릭 시 제거
+        document.addEventListener('click', () => {
+            musicTip.remove();
+        }, { once: true });
+        
+        // 10초 후 자동 제거
+        setTimeout(() => {
+            if (musicTip.parentNode) {
+                musicTip.remove();
+            }
+        }, 10000);
+    }, 2000);
+}
+            // 모달로 신청 페이지 열기
+            window.openApplicationModal = function() {
+                const modal = document.getElementById('applicationModal');
+                const iframe = document.getElementById('applicationFrame');
+                
+                // iframe에 페이지 로드
+                iframe.src = 'application.html';
+                modal.style.display = 'block';
+                
+                // 스크롤 방지
+                document.body.style.overflow = 'hidden';
+                
+                // 모달 열릴 때 애니메이션
+                modal.style.animation = 'fadeIn 0.3s ease';
+            }
+            
+            // 모달 닫기
+            window.closeApplicationModal = function() {
+                const modal = document.getElementById('applicationModal');
+                const iframe = document.getElementById('applicationFrame');
+                
+                modal.style.display = 'none';
+                iframe.src = ''; // iframe 초기화
+                
+                // 스크롤 복구
+                document.body.style.overflow = 'auto';
+            }
+            
+            // ESC 키로 모달 닫기
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('applicationModal');
+                    if (modal && modal.style.display === 'block') {
+                        closeApplicationModal();
+                    }
+                }
+            });
+            
+            // 모달 외부 클릭시 닫기
+            document.getElementById('applicationModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeApplicationModal();
+                }
+            });
+// YouTube 플레이어 토글 기능
+            window.toggleYoutubePlayer = function() {
+                const player = document.getElementById('youtubePlayer');
+                const miniPlayer = document.getElementById('miniYoutubePlayer');
+                
+                if (player.style.display === 'none') {
+                    player.style.display = 'block';
+                    miniPlayer.style.display = 'none';
+                } else {
+                    player.style.display = 'none';
+                    miniPlayer.style.display = 'block';
+                }
+            }
+
+                        // 5초 후 미니플레이어로 자동 전환
+            setTimeout(() => {
+                const player = document.getElementById('youtubePlayer');
+                const miniPlayer = document.getElementById('miniYoutubePlayer');
+                if (player && miniPlayer) {
+                    player.style.display = 'none';
+                    miniPlayer.style.display = 'block';
+                }
+            }, 5000);
+
+
+// YouTube 자동재생 시도
+            function attemptYoutubeAutoplay() {
+                const youtubeIframe = document.getElementById('youtubeIframe');
+                if (youtubeIframe) {
+                    // YouTube 자동재생 URL 설정
+                    const videoId = 'CY3ZzFmCCd0';
+                    youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=1&mute=0&enablejsapi=1`;
+                }
+            }
+            
+            // 페이지 로드 후 자동재생 시도
+            window.addEventListener('load', function() {
+                setTimeout(() => {
+                    attemptYoutubeAutoplay();
+                    // 5초 후 미니 플레이어로 전환
+                    const player = document.getElementById('youtubePlayer');
+                    const miniPlayer = document.getElementById('miniYoutubePlayer');
+                    if (player && miniPlayer) {
+                        setTimeout(() => {
+                            player.style.display = 'none';
+                            miniPlayer.style.display = 'block';
+                        }, 5000);
+                    }
+                }, 1000);
+            });
+            
+            // 첫 클릭 시 자동재생 (브라우저 정책 우회)
+            let hasUserInteracted = false;
+            document.addEventListener('click', function() {
+                if (!hasUserInteracted) {
+                    hasUserInteracted = true;
+                    attemptYoutubeAutoplay();
+                }
+            }, { once: true });
+
+            // 경험 시작 (자동재생 활성화)
+window.startExperience = function() {
+    if (player) {
+        player.playVideo();
+    }
+}
+    // 오버레이 숨기기
+    const overlay = document.getElementById('autoplayOverlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+    
+    // 모바일 체크
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (player) {
+        // YouTube Player API 사용
+        if (isMobile && player.isMuted()) {
+            player.unMute();
+        }
+        player.playVideo();
+    } else {
+        // fallback: iframe src 변경
+        const youtubeIframe = document.getElementById('youtubeIframe');
+        if (youtubeIframe) {
+            const videoId = 'CY3ZzFmCCd0';
+            const muteParam = isMobile ? '1' : '0';
+            youtubeIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&controls=0&enablejsapi=1&mute=${muteParam}&playsinline=1`;
+        }
+    }
+    
+    // 3초 후 미니 플레이어로 전환
+    setTimeout(() => {
+        const playerEl = document.getElementById('youtubePlayer');
+        const miniPlayer = document.getElementById('miniYoutubePlayer');
+        if (playerEl && miniPlayer) {
+            playerEl.style.display = 'none';
+            miniPlayer.style.display = 'block';
+        }
+    }, 3000);
+}
+            
+            // 오버레이 클릭으로도 시작
+            const autoplayOverlay = document.getElementById('autoplayOverlay');
+            if (autoplayOverlay) {
+                autoplayOverlay.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        startExperience();
+                    }
+                });
+            }
+            
+            // Smooth scroll for CTA buttons
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+            
+            // Mobile-optimized scroll reveal
+            if ('IntersectionObserver' in window) {
+                const observerOptions = {
+                    threshold: 0.05,
+                    rootMargin: '0px 0px -30px 0px'
+                };
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, observerOptions);
+                
+                // Observe elements with simpler selectors for better performance
+                document.querySelectorAll('.section, .concept-card, .testimonial').forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(20px)';
+                    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    observer.observe(el);
+                });
+            }
+            
+            // Touch-friendly interactions
+            if ('ontouchstart' in window) {
+                // Add touch feedback to interactive elements
+                document.querySelectorAll('.cta-button, .concept-card, .feature-item').forEach(el => {
+                    el.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.98)';
+                    });
+                    
+                    el.addEventListener('touchend', function() {
+                        this.style.transform = '';
+                    });
+                });
+            }
+            
+            // Preload critical images
+            const criticalImages = [
+                'https://ifh.cc/g/cg9lOf.jpg',
+                'https://ifh.cc/g/DtMZ8p.webp',
+                'https://ifh.cc/g/xxbXJt.webp'
+            ];
+            
+            criticalImages.forEach(src => {
+                const img = new Image();
+                img.src = src;
+            });
+        });
+         // 모바일에서 CTA 버튼 클릭 이벤트 보장
+    document.querySelectorAll('.cta-button').forEach(button => {
+        // 터치 이벤트 개선
+        button.addEventListener('touchstart', function(e) {
+            this.style.transform = 'scale(0.95)';
+            this.style.background = 'rgba(0, 255, 136, 0.9)';
+        }, {passive: true});
+        
+        button.addEventListener('touchend', function(e) {
+            this.style.transform = '';
+            this.style.background = '';
+            
+            // 링크 클릭 확인
+            console.log('Button clicked:', this.href);
+            
+            // 만약 href가 있으면 페이지 이동
+            if (this.href) {
+                window.location.href = this.href;
+            }
+        }, {passive: false});
+        
+        // 클릭 이벤트도 추가 (데스크톱 호환성)
+        button.addEventListener('click', function(e) {
+            console.log('Button clicked (click event):', this.href);
+        });
+    });
+    
+    // iOS Safari 버그 해결
+    document.addEventListener('touchstart', function() {}, {passive: true});
+    
+    // 모바일에서 z-index 충돌 해결
+    if (window.innerWidth <= 768) {
+        // 모든 CTA 버튼의 z-index를 높임
+        document.querySelectorAll('.cta-button').forEach(button => {
+            button.style.position = 'relative';
+            button.style.zIndex = '1001';
+        });
+        
+        // 알림 컨테이너가 버튼을 가리지 않도록 설정
+        const notificationContainer = document.getElementById('notificationContainer');
+        if (notificationContainer) {
+            notificationContainer.style.pointerEvents = 'none';
+        }
+        
+        const liveViewer = document.querySelector('.live-viewer');
+        if (liveViewer) {
+            liveViewer.style.pointerEvents = 'none';
+        }
+    }
+
+        // Prevent zoom on iOS when focusing inputs
+        document.addEventListener('touchstart', function(event) {
+            if (event.touches.length > 1) {
+                event.preventDefault();
+            }
+        });
+        
+        // Add viewport height fix for mobile browsers
+        function setVH() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        setVH();
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', setVH);
+    </script>
+        <script>
+        // 챗봇 버튼 확인
+        window.addEventListener('load', function() {
+            const chatbotBtn = document.getElementById('chatbotToggle');
+            if (chatbotBtn) {
+                console.log('✅ 챗봇 버튼이 존재합니다!');
+                // 3초 후 버튼 강조 애니메이션
+                setTimeout(() => {
+                    chatbotBtn.style.animation = 'pulse 2s infinite, bounce 1s ease';
+                    chatbotBtn.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        chatbotBtn.style.transform = 'scale(1)';
+                    }, 1000);
+                }, 3000);
+            } else {
+                console.log('❌ 챗봇 버튼을 찾을 수 없습니다!');
+            }
+        });
+    </script>
+    <!-- 🔼 테스트 코드 끝 🔼 -->
+</body>
+</html>
