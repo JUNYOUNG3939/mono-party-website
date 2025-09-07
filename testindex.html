@@ -1082,6 +1082,62 @@
 .main-page {
     animation: slideIn 0.5s ease;
 }
+/* 새로운 애니메이션들 */
+@keyframes glow {
+    0%, 100% { 
+        opacity: 1;
+        text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    }
+    50% { 
+        opacity: 0.9;
+        text-shadow: 0 0 40px rgba(0, 255, 136, 0.8), 0 0 60px rgba(0, 255, 136, 0.4);
+    }
+}
+
+@keyframes shine {
+    to {
+        left: 100%;
+    }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 파티 카드 호버 효과 개선 */
+.party-card {
+    transform-style: preserve-3d;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.party-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(0, 255, 136, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    border-radius: 20px;
+}
+
+.party-card:hover::before {
+    opacity: 1;
+}
+
+/* 긴급 배지 애니메이션 */
+@keyframes urgent {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+[style*="마감임박"] {
+    animation: urgent 1s ease-in-out infinite !important;
+}
 </style>
 
 
@@ -1305,45 +1361,159 @@
     </div>
     <!-- YouTube 음악 플레이어 끝 -->
 
-    <!-- 인트로 페이지 -->
+<!-- 새로운 인트로 페이지 -->
 <section id="introPage" class="intro-page" style="
     position: relative;
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     overflow: hidden;
+    background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
 ">
-    <!-- 배경 이미지 -->
+    <!-- 배경 효과 -->
     <div style="
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background-image: url('https://lh3.googleusercontent.com/d/1Ap0784QeIiu0R48zBKEobjnQWrhVpLHR');
-        background-size: cover;
-        background-position: center;
-        filter: brightness(0.4);
-        z-index: 0;
+        background: radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.08) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 50%, rgba(255, 0, 102, 0.08) 0%, transparent 50%);
+        pointer-events: none;
     "></div>
     
-    <!-- 인트로 콘텐츠 -->
+    <!-- 메인 콘텐츠 -->
     <div style="
         position: relative;
         z-index: 1;
         text-align: center;
-        padding: 20px;
+        max-width: 900px;
+        width: 100%;
+        margin: 0 auto;
     ">
-        <h1 class="logo floating" style="font-size: clamp(3rem, 10vw, 8rem); margin-bottom: 30px;">
-            MONO PARTY
-        </h1>
-        <p style="font-size: clamp(1.2rem, 3vw, 2rem); color: var(--neon-accent); margin-bottom: 50px;">
-            Black or White, 감정이 흐르는 무드 파티
-        </p>
-        <button onclick="scrollToMain()" class="cta-button neon-glow" style="margin-bottom: 20px;">
-            더 알아보기
+        <!-- MONO PARTY 로고 -->
+        <h1 style="
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(4rem, 12vw, 10rem);
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            margin: 0;
+            color: #ffffff;
+            text-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+            animation: glow 3s ease-in-out infinite;
+        ">MONO</h1>
+        <h1 style="
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(4rem, 12vw, 10rem);
+            font-weight: 900;
+            letter-spacing: 0.3em;
+            margin: 0 0 30px 0;
+            color: #ffffff;
+            text-shadow: 0 0 40px rgba(0, 255, 136, 0.5);
+            animation: glow 3s ease-in-out infinite 0.5s;
+        ">PARTY</h1>
+        
+        <!-- 서브 타이틀 -->
+        <p style="
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: #999;
+            letter-spacing: 0.3em;
+            margin-bottom: 40px;
+            font-weight: 300;
+        ">Black or White</p>
+        
+        <!-- 메인 카피 -->
+        <h2 style="
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            color: var(--neon-accent);
+            margin-bottom: 30px;
+            font-weight: 700;
+            line-height: 1.3;
+        ">감정이 흐르는 <span style="color: #fff;">무드</span> 파티</h2>
+        
+        <!-- 설명 텍스트 -->
+        <div style="
+            margin: 40px auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        ">
+            <p style="
+                font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+                line-height: 1.8;
+                color: #ccc;
+                margin-bottom: 15px;
+            ">
+                "혼자였던 밤, 오늘은 설레일 거예요."
+            </p>
+            <p style="
+                font-size: clamp(0.95rem, 2vw, 1.1rem);
+                line-height: 1.6;
+                color: #999;
+            ">
+                소개팅도, 클럽도, 어설픈 술자리가 아닌<br>
+                감정이 흐르는 대로 스며드는 '<strong style="color: var(--neon-accent);">무드 기반 소셜링 파티</strong>'
+            </p>
+        </div>
+        
+        <!-- 다가오는 파티 일정 -->
+        <div style="margin: 50px 0;">
+            <h3 style="
+                font-size: 1.5rem;
+                color: #fff;
+                margin-bottom: 30px;
+                position: relative;
+            ">
+                <span style="
+                    background: linear-gradient(90deg, transparent 0%, rgba(0, 255, 136, 0.3) 50%, transparent 100%);
+                    display: block;
+                    height: 1px;
+                    position: absolute;
+                    width: 100%;
+                    top: 50%;
+                    left: 0;
+                    z-index: -1;
+                "></span>
+                <span style="
+                    background: #000;
+                    padding: 0 30px;
+                    position: relative;
+                ">📅 다가오는 파티 일정</span>
+            </h3>
+            
+            <div id="introPartyDates" style="
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+                margin-bottom: 40px;
+            ">
+                <!-- 파티 카드들이 여기 표시됨 -->
+            </div>
+        </div>
+        
+        <!-- CTA 버튼 -->
+        <button onclick="navigateTo('main')" style="
+            padding: 18px 60px;
+            background: linear-gradient(135deg, var(--neon-accent) 0%, #00cc70 100%);
+            color: #000;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+            letter-spacing: 0.05em;
+        " onmouseover="this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 15px 40px rgba(0, 255, 136, 0.6)';" 
+           onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 30px rgba(0, 255, 136, 0.4)';">
+            자세히 알아보기 →
         </button>
     </div>
 </section>
@@ -3591,39 +3761,132 @@ async function loadPartyDates() {
                     urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: #ffaa00; color: var(--bg-primary); padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700;">HOT</div>';
                 }
                 
-                return `
-                    <div class="party-card ${isSaturday ? 'saturday' : ''}" style="border-color: ${borderColor}; position: relative; ${remainingSeats === 0 ? 'opacity: 0.7; pointer-events: none;' : ''}">
-                        ${urgencyBadge}
-                        <div style="font-size: 2.5rem; margin-bottom: 10px;">
-                            ${isSaturday ? '🎉' : '✨'}
-                        </div>
-                        <div style="font-size: 1.8rem; font-weight: 700; color: ${borderColor};">
-                            ${month}월 ${day}일
-                        </div>
-                        <div style="font-size: 1.2rem; color: var(--text-secondary); margin-top: 5px;">
-                            ${dayOfWeek}요일
-                        </div>
-                        <div style="margin-top: 15px;">
-                            <div style="background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px; margin-bottom: 10px;">
-                                <div style="background: ${seatStatusColor}; height: 100%; width: ${occupancyRate}%; transition: all 0.3s ease;"></div>
-                            </div>
-                            <div style="padding: 8px; background: rgba(0, 255, 136, 0.1); border-radius: 20px; border: 1px solid ${seatStatusColor};">
-                                <span style="color: ${seatStatusColor}; font-size: 0.9rem; font-weight: 600;">${seatStatusText}</span>
-                            </div>
-                        </div>
-                        ${remainingSeats === 0 ? '<div style="margin-top: 10px; color: var(--text-secondary); font-size: 0.85rem;">다음 파티를 기다려주세요!</div>' : ''}
-                    </div>
-                `;
-            }).join('');
-        } else {
-            container.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                    <p style="color: var(--text-secondary); font-size: 1.1rem;">
-                        새로운 파티 일정을 준비중입니다.<br>
-                        인스타그램에서 최신 소식을 확인하세요!
-                    </p>
+                // loadPartyDates 함수 내부의 return 부분을 이걸로 교체
+return `
+    <div class="party-card ${isSaturday ? 'saturday' : ''}" style="
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(17, 17, 17, 0.9) 100%);
+        border: 2px solid ${borderColor};
+        border-radius: 20px;
+        padding: 30px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        ${remainingSeats === 0 ? 'opacity: 0.6; pointer-events: none;' : ''}
+    " onmouseover="this.style.transform='translateY(-10px) scale(1.02)'; this.style.boxShadow='0 20px 40px rgba(0, 255, 136, 0.4)';" 
+       onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='none';">
+        
+        ${urgencyBadge ? urgencyBadge : ''}
+        
+        <!-- 상단 이모지와 날짜 -->
+        <div style="text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 15px;">
+                ${isSaturday ? '🎉' : '✨'}
+            </div>
+            <div style="
+                font-size: 2.5rem;
+                font-weight: 900;
+                color: ${borderColor};
+                margin-bottom: 5px;
+                text-shadow: 0 0 20px ${borderColor};
+            ">
+                ${month}월 ${day}일
+            </div>
+            <div style="
+                font-size: 1.1rem;
+                color: #999;
+                margin-bottom: 25px;
+                letter-spacing: 0.1em;
+            ">
+                ${dayOfWeek}요일
+            </div>
+        </div>
+        
+        <!-- 잔여석 게이지 -->
+        <div style="margin: 20px 0;">
+            <div style="
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 8px;
+                font-size: 0.9rem;
+            ">
+                <span style="color: #999;">잔여석</span>
+                <span style="
+                    color: ${seatStatusColor};
+                    font-weight: 700;
+                ">${remainingSeats}/${maxCapacity}</span>
+            </div>
+            
+            <!-- 게이지 바 -->
+            <div style="
+                background: rgba(255, 255, 255, 0.05);
+                border-radius: 50px;
+                overflow: hidden;
+                height: 12px;
+                position: relative;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            ">
+                <div style="
+                    background: linear-gradient(90deg, ${seatStatusColor} 0%, ${seatStatusColor}dd 100%);
+                    height: 100%;
+                    width: ${occupancyRate}%;
+                    transition: all 0.5s ease;
+                    border-radius: 50px;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <!-- 빛나는 효과 -->
+                    <div style="
+                        position: absolute;
+                        top: 0;
+                        left: -100%;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+                        animation: shine 2s infinite;
+                    "></div>
                 </div>
-            `;
+            </div>
+            
+            <!-- 상태 텍스트 -->
+            <div style="
+                text-align: center;
+                margin-top: 15px;
+                padding: 8px;
+                background: ${remainingSeats <= 10 ? 'rgba(255, 0, 102, 0.1)' : 'rgba(0, 255, 136, 0.1)'};
+                border-radius: 25px;
+                border: 1px solid ${seatStatusColor};
+            ">
+                <span style="
+                    color: ${seatStatusColor};
+                    font-size: 0.95rem;
+                    font-weight: 600;
+                    letter-spacing: 0.05em;
+                    ${remainingSeats <= 5 ? 'animation: blink 1s infinite;' : ''}
+                ">${seatStatusText}</span>
+            </div>
+        </div>
+        
+        ${remainingSeats === 0 ? `
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.9);
+                padding: 20px 40px;
+                border-radius: 10px;
+                border: 2px solid var(--neon-pink);
+            ">
+                <span style="
+                    color: var(--neon-pink);
+                    font-size: 1.5rem;
+                    font-weight: 900;
+                ">SOLD OUT</span>
+            </div>
+        ` : ''}
+    </div>
+`;
         }
     } catch (error) {
         console.error('Error loading party dates:', error);
@@ -3742,6 +4005,106 @@ async function loadPartyDates() {
             subscribeToApplications();
             generateRandomNotifications();
             updateViewerCount();
+            // 인트로 페이지 파티 날짜 로드
+async function loadIntroPartyDates() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('party_schedules')
+            .select('*')
+            .eq('is_active', true)
+            .gte('party_date', new Date().toISOString().split('T')[0])
+            .order('party_date', { ascending: true })
+            .limit(3);
+        
+        if (error) throw error;
+        
+        const container = document.getElementById('introPartyDates');
+        
+        if (data && data.length > 0) {
+            container.innerHTML = data.map(party => {
+                const date = new Date(party.party_date + 'T00:00:00');
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const dayOfWeek = dayNames[date.getDay()];
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                const remainingSeats = party.remaining_seats || 0;
+                const maxCapacity = party.max_capacity || 70;
+                const occupancyRate = ((maxCapacity - remainingSeats) / maxCapacity) * 100;
+                
+                let borderColor = '#00ff88';
+                let statusText = `잔여 ${remainingSeats}석`;
+                
+                if (remainingSeats <= 5) {
+                    borderColor = '#ff0066';
+                    statusText = '🔥 마감임박!';
+                } else if (remainingSeats <= 10) {
+                    borderColor = '#ffaa00';
+                    statusText = `⚡ 잔여 ${remainingSeats}석`;
+                }
+                
+                return `
+                    <div style="
+                        background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+                        border: 2px solid ${borderColor};
+                        border-radius: 20px;
+                        padding: 25px;
+                        text-align: center;
+                        position: relative;
+                        overflow: hidden;
+                        transition: all 0.3s ease;
+                        cursor: pointer;
+                    " onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 30px rgba(0, 255, 136, 0.3)';" 
+                       onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                        
+                        <div style="font-size: 2rem; margin-bottom: 10px;">
+                            ${date.getDay() === 6 ? '🎉' : '✨'}
+                        </div>
+                        
+                        <div style="
+                            font-size: 1.8rem;
+                            font-weight: 900;
+                            color: ${borderColor};
+                            margin-bottom: 5px;
+                        ">
+                            ${month}월 ${day}일
+                        </div>
+                        
+                        <div style="
+                            font-size: 1rem;
+                            color: #999;
+                            margin-bottom: 15px;
+                        ">${dayOfWeek}요일</div>
+                        
+                        <!-- 게이지 -->
+                        <div style="
+                            background: rgba(255, 255, 255, 0.05);
+                            border-radius: 50px;
+                            overflow: hidden;
+                            height: 8px;
+                            margin: 15px 0;
+                        ">
+                            <div style="
+                                background: ${borderColor};
+                                height: 100%;
+                                width: ${occupancyRate}%;
+                                transition: all 0.5s ease;
+                            "></div>
+                        </div>
+                        
+                        <div style="
+                            color: ${borderColor};
+                            font-size: 0.9rem;
+                            font-weight: 600;
+                            ${remainingSeats <= 5 ? 'animation: blink 1s infinite;' : ''}
+                        ">${statusText}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+    } catch (error) {
+        console.error('Error loading intro party dates:', error);
+    }
+}
             // 버튼 초기 상태 설정
 setTimeout(() => {
     if (window.updateButtonDisplay) {
@@ -3888,6 +4251,33 @@ if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
 
             // 경험 시작 (자동재생 활성화)
 window.startExperience = function() {
+    // 브라우저 히스토리 관리
+window.addEventListener('popstate', function(event) {
+    if (event.state && event.state.page) {
+        showPage(event.state.page);
+    }
+});
+
+function navigateTo(page) {
+    history.pushState({ page: page }, '', '#' + page);
+    showPage(page);
+}
+
+function showPage(page) {
+    // 모든 섹션 숨기기
+    document.querySelectorAll('.section, #introPage, #mainPage').forEach(el => {
+        el.style.display = 'none';
+    });
+    
+    // 선택한 페이지 표시
+    if (page === 'intro') {
+        document.getElementById('introPage').style.display = 'block';
+    } else if (page === 'main') {
+        document.getElementById('mainPage').style.display = 'block';
+    } else {
+        showCategory(page);
+    }
+}
     // 오버레이 숨기기
     const overlay = document.getElementById('autoplayOverlay');
     if (overlay) {
