@@ -1315,19 +1315,18 @@
     align-items: center;
     justify-content: center;
 ">
-    <!-- 배경 이미지 -->
-    <div style="
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: url('https://lh3.googleusercontent.com/d/1Ap0784QeIiu0R48zBKEobjnQWrhVpLHR');
-        background-size: cover;
-        background-position: center;
-        filter: brightness(0.4);
-        z-index: 0;
-    "></div>
+<!-- 그라디언트 배경 -->
+<div style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(0, 255, 136, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 30% 70%, rgba(255, 0, 102, 0.1) 0%, transparent 50%),
+                linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    z-index: 0;
+"></div>
     
     <!-- 인트로 콘텐츠 -->
     <div style="
@@ -3573,23 +3572,34 @@ async function loadPartyDates() {
                 const occupancyRate = ((maxCapacity - remainingSeats) / maxCapacity) * 100;
                 
                 // 잔여석에 따른 상태 표시
-                let seatStatusColor = 'var(--neon-accent)';
-                let seatStatusText = `잔여 ${remainingSeats}석`;
-                let urgencyBadge = '';
-                
-                if (remainingSeats === 0) {
-                    seatStatusColor = 'var(--neon-pink)';
-                    seatStatusText = '🔥 마감';
-                    urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: var(--neon-pink); color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700;">SOLD OUT</div>';
-                } else if (remainingSeats <= 5) {
-                    seatStatusColor = 'var(--neon-pink)';
-                    seatStatusText = `🔥 마감임박! ${remainingSeats}석`;
-                    urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: var(--neon-pink); color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700; animation: pulse 1s infinite;">마감임박</div>';
-                } else if (remainingSeats <= 10) {
-                    seatStatusColor = '#ffaa00';
-                    seatStatusText = `⚡ 잔여 ${remainingSeats}석`;
-                    urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: #ffaa00; color: var(--bg-primary); padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700;">HOT</div>';
-                }
+// 잔여석에 따른 상태 표시
+let seatStatusColor = 'var(--neon-accent)';
+let seatStatusText = `잔여 ${remainingSeats}석`;
+let urgencyBadge = '';
+let pulseAnimation = '';
+
+if (remainingSeats === 0) {
+    seatStatusColor = 'var(--neon-pink)';
+    seatStatusText = '🔥 마감완료';
+    urgencyBadge = '<div style="position: absolute; top: -10px; right: -10px; background: var(--neon-pink); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 900; z-index: 10; animation: pulse 0.8s infinite;">SOLD OUT</div>';
+} else if (remainingSeats <= 3) {
+    seatStatusColor = '#ff0066';
+    seatStatusText = `🚨 마감임박! 단 ${remainingSeats}석`;
+    pulseAnimation = 'animation: pulse 1s infinite;';
+    urgencyBadge = '<div style="position: absolute; top: -10px; right: -10px; background: #ff0066; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 900; z-index: 10; animation: shake 0.5s infinite;">마감임박</div>';
+} else if (remainingSeats <= 5) {
+    seatStatusColor = '#ff3366';
+    seatStatusText = `⚡ 거의 마감! ${remainingSeats}석`;
+    pulseAnimation = 'animation: pulse 1.5s infinite;';
+    urgencyBadge = '<div style="position: absolute; top: -10px; right: -10px; background: #ff3366; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 900; z-index: 10;">HOT🔥</div>';
+} else if (remainingSeats <= 10) {
+    seatStatusColor = '#ffaa00';
+    seatStatusText = `🔥 인기폭발! ${remainingSeats}석`;
+    urgencyBadge = '<div style="position: absolute; top: -10px; right: -10px; background: #ffaa00; color: var(--bg-primary); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 900; z-index: 10;">인기</div>';
+} else if (remainingSeats <= 20) {
+    seatStatusColor = 'var(--neon-accent)';
+    seatStatusText = `✨ ${remainingSeats}석 남음`;
+}
                 
                 return `
                     <div class="party-card ${isSaturday ? 'saturday' : ''}" style="border-color: ${borderColor}; position: relative; ${remainingSeats === 0 ? 'opacity: 0.7; pointer-events: none;' : ''}">
@@ -3603,14 +3613,39 @@ async function loadPartyDates() {
                         <div style="font-size: 1.2rem; color: var(--text-secondary); margin-top: 5px;">
                             ${dayOfWeek}요일
                         </div>
-                        <div style="margin-top: 15px;">
-                            <div style="background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px; margin-bottom: 10px;">
-                                <div style="background: ${seatStatusColor}; height: 100%; width: ${occupancyRate}%; transition: all 0.3s ease;"></div>
-                            </div>
-                            <div style="padding: 8px; background: rgba(0, 255, 136, 0.1); border-radius: 20px; border: 1px solid ${seatStatusColor};">
-                                <span style="color: ${seatStatusColor}; font-size: 0.9rem; font-weight: 600;">${seatStatusText}</span>
-                            </div>
-                        </div>
+<div style="margin-top: 15px;">
+    <!-- 게이지 컨테이너 -->
+    <div style="position: relative; background: rgba(255, 255, 255, 0.05); border-radius: 10px; overflow: visible; height: 12px; margin-bottom: 10px; border: 1px solid rgba(255, 255, 255, 0.1);">
+        <!-- 게이지 바 -->
+        <div style="
+            background: linear-gradient(90deg, ${seatStatusColor} 0%, ${seatStatusColor}99 100%);
+            height: 100%;
+            width: ${occupancyRate}%;
+            transition: all 0.5s ease;
+            position: relative;
+            ${pulseAnimation}
+            ${occupancyRate > 80 ? 'box-shadow: 0 0 20px ' + seatStatusColor + ';' : ''}
+        ">
+            ${occupancyRate > 70 ? '<div style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); color: white; font-size: 0.7rem; font-weight: 700;">' + Math.floor(occupancyRate) + '%</div>' : ''}
+        </div>
+    </div>
+    
+    <!-- 상태 텍스트 -->
+    <div style="
+        padding: 10px;
+        background: linear-gradient(135deg, ${seatStatusColor}22 0%, ${seatStatusColor}11 100%);
+        border-radius: 25px;
+        border: 1px solid ${seatStatusColor};
+        text-align: center;
+        ${pulseAnimation}
+        position: relative;
+    ">
+        <span style="color: ${seatStatusColor}; font-size: 0.9rem; font-weight: 700;">
+            ${seatStatusText}
+        </span>
+        ${remainingSeats <= 10 && remainingSeats > 0 ? '<div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 5px;">⏰ 서둘러 신청하세요!</div>' : ''}
+    </div>
+</div>
                         ${remainingSeats === 0 ? '<div style="margin-top: 10px; color: var(--text-secondary); font-size: 0.85rem;">다음 파티를 기다려주세요!</div>' : ''}
                     </div>
                 `;
