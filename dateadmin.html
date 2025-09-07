@@ -497,10 +497,16 @@
                         </label>
                     </div>
                     
-                    <div class="setting-item">
-                        <label class="setting-label">기본 파티 정원 (새로 추가되는 날짜에 적용)</label>
-                        <input type="number" class="setting-input" id="maxCapacity" value="70" min="10" max="200">
-                    </div>
+<!-- 수정된 코드로 교체 -->
+<div class="setting-item">
+    <label class="setting-label">기본 남성 정원 (새로 추가되는 날짜에 적용)</label>
+    <input type="number" class="setting-input" id="maleMaxCapacity" value="35" min="5" max="100">
+</div>
+
+<div class="setting-item">
+    <label class="setting-label">기본 여성 정원 (새로 추가되는 날짜에 적용)</label>
+    <input type="number" class="setting-input" id="femaleMaxCapacity" value="35" min="5" max="100">
+</div>
                     
                     <div class="setting-item">
                         <label class="setting-label">공지사항 (선택사항)</label>
@@ -586,13 +592,16 @@
                 if (data) {
                     data.forEach(item => {
                         // Active인 것만 selectedDates에 추가
-                        if (item.is_active) {
-                            selectedDates.set(item.party_date, {
-                                id: item.id,
-                                remaining_seats: item.remaining_seats || 70,
-                                max_capacity: item.max_capacity || 70
-                            });
-                        }
+// 다음과 같이 수정
+if (item.is_active) {
+    selectedDates.set(item.party_date, {
+        id: item.id,
+        male_remaining_seats: item.male_remaining_seats || 35,
+        female_remaining_seats: item.female_remaining_seats || 35,
+        male_max_capacity: item.male_max_capacity || 35,
+        female_max_capacity: item.female_max_capacity || 35
+    });
+}
                         // 모든 기존 데이터를 별도로 저장
                         existingDatesFromDB.set(item.party_date, {
                             id: item.id,
@@ -684,44 +693,65 @@
         }
         
         // Toggle date selection
-        function toggleDate(dateStr) {
-            if (selectedDates.has(dateStr)) {
-                selectedDates.delete(dateStr);
-            } else {
-                const maxCapacity = parseInt(document.getElementById('maxCapacity').value) || 70;
-                // 기존 DB에 있는 날짜인지 확인
-                const existingDate = existingDatesFromDB.get(dateStr);
-                
-                selectedDates.set(dateStr, {
-                    id: existingDate?.id || null,
-                    remaining_seats: maxCapacity,
-                    max_capacity: maxCapacity
-                });
-            }
-            generateCalendar();
-            updateSelectedDatesList();
-        }
+// 수정된 코드
+function toggleDate(dateStr) {
+    if (selectedDates.has(dateStr)) {
+        selectedDates.delete(dateStr);
+    } else {
+        const maleMaxCapacity = parseInt(document.getElementById('maleMaxCapacity').value) || 35;
+        const femaleMaxCapacity = parseInt(document.getElementById('femaleMaxCapacity').value) || 35;
+        const existingDate = existingDatesFromDB.get(dateStr);
         
-        // Update remaining seats for a specific date
-        function updateRemainingSeats(dateStr, value) {
-            if (selectedDates.has(dateStr)) {
-                const dateInfo = selectedDates.get(dateStr);
-                dateInfo.remaining_seats = parseInt(value) || 0;
-                selectedDates.set(dateStr, dateInfo);
-            }
-        }
+        selectedDates.set(dateStr, {
+            id: existingDate?.id || null,
+            male_remaining_seats: maleMaxCapacity,
+            female_remaining_seats: femaleMaxCapacity,
+            male_max_capacity: maleMaxCapacity,
+            female_max_capacity: femaleMaxCapacity
+        });
+    }
+    generateCalendar();
+    updateSelectedDatesList();
+}
+        
+function updateMaleRemainingSeats(dateStr, value) {
+    if (selectedDates.has(dateStr)) {
+        const dateInfo = selectedDates.get(dateStr);
+        dateInfo.male_remaining_seats = parseInt(value) || 0;
+        selectedDates.set(dateStr, dateInfo);
+    }
+}
+
+function updateFemaleRemainingSeats(dateStr, value) {
+    if (selectedDates.has(dateStr)) {
+        const dateInfo = selectedDates.get(dateStr);
+        dateInfo.female_remaining_seats = parseInt(value) || 0;
+        selectedDates.set(dateStr, dateInfo);
+    }
+}
         
         // Quick adjust seats
-        function quickAdjustSeats(dateStr, adjustment) {
-            if (selectedDates.has(dateStr)) {
-                const dateInfo = selectedDates.get(dateStr);
-                const currentSeats = dateInfo.remaining_seats;
-                const newSeats = Math.max(0, Math.min(dateInfo.max_capacity, currentSeats + adjustment));
-                dateInfo.remaining_seats = newSeats;
-                selectedDates.set(dateStr, dateInfo);
-                document.getElementById(`seats-${dateStr}`).value = newSeats;
-            }
-        }
+function quickAdjustMaleSeats(dateStr, adjustment) {
+    if (selectedDates.has(dateStr)) {
+        const dateInfo = selectedDates.get(dateStr);
+        const currentSeats = dateInfo.male_remaining_seats;
+        const newSeats = Math.max(0, Math.min(dateInfo.male_max_capacity, currentSeats + adjustment));
+        dateInfo.male_remaining_seats = newSeats;
+        selectedDates.set(dateStr, dateInfo);
+        document.getElementById(`male-seats-${dateStr}`).value = newSeats;
+    }
+}
+
+function quickAdjustFemaleSeats(dateStr, adjustment) {
+    if (selectedDates.has(dateStr)) {
+        const dateInfo = selectedDates.get(dateStr);
+        const currentSeats = dateInfo.female_remaining_seats;
+        const newSeats = Math.max(0, Math.min(dateInfo.female_max_capacity, currentSeats + adjustment));
+        dateInfo.female_remaining_seats = newSeats;
+        selectedDates.set(dateStr, dateInfo);
+        document.getElementById(`female-seats-${dateStr}`).value = newSeats;
+    }
+}
         
         // Update selected dates list
         function updateSelectedDatesList() {
@@ -738,29 +768,53 @@
                 const date = new Date(dateStr + 'T00:00:00');
                 const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
                 
-                dateItem.innerHTML = `
-                    <div class="date-info">
-                        <span class="date-text">${dateStr} (${dayOfWeek})</span>
-                        <div class="remaining-seats-control">
-                            <span class="seats-label">잔여석:</span>
-                            <input type="number" 
-                                   class="seats-input" 
-                                   id="seats-${dateStr}"
-                                   value="${dateInfo.remaining_seats}" 
-                                   min="0" 
-                                   max="${dateInfo.max_capacity}"
-                                   onchange="updateRemainingSeats('${dateStr}', this.value)">
-                            <span class="seats-label">/ ${dateInfo.max_capacity}명</span>
-                            <div class="quick-adjust">
-                                <button class="quick-btn" onclick="quickAdjustSeats('${dateStr}', -5)">-5</button>
-                                <button class="quick-btn" onclick="quickAdjustSeats('${dateStr}', -1)">-1</button>
-                                <button class="quick-btn" onclick="quickAdjustSeats('${dateStr}', 1)">+1</button>
-                                <button class="quick-btn" onclick="quickAdjustSeats('${dateStr}', 5)">+5</button>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="date-remove" onclick="removeDate('${dateStr}')">×</button>
-                `;
+// 🟢 새 코드로 완전히 교체
+dateItem.innerHTML = `
+    <div class="date-info" style="flex-direction: column; width: 100%;">
+        <span class="date-text" style="margin-bottom: 15px;">${dateStr} (${dayOfWeek})</span>
+        
+        <!-- 남성 잔여석 -->
+        <div class="remaining-seats-control" style="background: rgba(0, 229, 255, 0.1); margin-bottom: 10px;">
+            <span class="seats-label" style="color: #00e5ff; font-weight: 600;">♂ 남성:</span>
+            <input type="number" 
+                   class="seats-input" 
+                   id="male-seats-${dateStr}"
+                   value="${dateInfo.male_remaining_seats}" 
+                   min="0" 
+                   max="${dateInfo.male_max_capacity}"
+                   onchange="updateMaleRemainingSeats('${dateStr}', this.value)"
+                   style="background: rgba(0, 229, 255, 0.2);">
+            <span class="seats-label">/ ${dateInfo.male_max_capacity}명</span>
+            <div class="quick-adjust">
+                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', -5)">-5</button>
+                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', -1)">-1</button>
+                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', 1)">+1</button>
+                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', 5)">+5</button>
+            </div>
+        </div>
+        
+        <!-- 여성 잔여석 -->
+        <div class="remaining-seats-control" style="background: rgba(255, 0, 102, 0.1);">
+            <span class="seats-label" style="color: #ff0066; font-weight: 600;">♀ 여성:</span>
+            <input type="number" 
+                   class="seats-input" 
+                   id="female-seats-${dateStr}"
+                   value="${dateInfo.female_remaining_seats}" 
+                   min="0" 
+                   max="${dateInfo.female_max_capacity}"
+                   onchange="updateFemaleRemainingSeats('${dateStr}', this.value)"
+                   style="background: rgba(255, 0, 102, 0.2);">
+            <span class="seats-label">/ ${dateInfo.female_max_capacity}명</span>
+            <div class="quick-adjust">
+                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', -5)">-5</button>
+                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', -1)">-1</button>
+                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', 1)">+1</button>
+                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', 5)">+5</button>
+            </div>
+        </div>
+    </div>
+    <button class="date-remove" onclick="removeDate('${dateStr}')">×</button>
+`;
                 
                 list.appendChild(dateItem);
             });
@@ -813,12 +867,18 @@
                 const promises = [];
                 
                 for (const [dateStr, dateInfo] of selectedDates) {
-                    const partyData = {
-                        party_date: dateStr,
-                        is_active: true,
-                        max_capacity: dateInfo.max_capacity,
-                        remaining_seats: dateInfo.remaining_seats
-                    };
+ // 🟢 새 코드로 교체
+const partyData = {
+    party_date: dateStr,
+    is_active: true,
+    max_capacity: (dateInfo.male_max_capacity || 35) + (dateInfo.female_max_capacity || 35), // 전체 유지
+    remaining_seats: (dateInfo.male_remaining_seats || 35) + (dateInfo.female_remaining_seats || 35), // 전체 유지
+    male_max_capacity: dateInfo.male_max_capacity || 35,
+    female_max_capacity: dateInfo.female_max_capacity || 35,
+    male_remaining_seats: dateInfo.male_remaining_seats || 35,
+    female_remaining_seats: dateInfo.female_remaining_seats || 35
+};
+
                     
                     // 기존 레코드가 있는지 확인
                     const existingRecord = existingDatesFromDB.get(dateStr);
@@ -945,8 +1005,10 @@
         });
         
         // Make functions globally accessible
-        window.updateRemainingSeats = updateRemainingSeats;
-        window.quickAdjustSeats = quickAdjustSeats;
+window.updateMaleRemainingSeats = updateMaleRemainingSeats;
+window.updateFemaleRemainingSeats = updateFemaleRemainingSeats;
+window.quickAdjustMaleSeats = quickAdjustMaleSeats;
+window.quickAdjustFemaleSeats = quickAdjustFemaleSeats;
         window.removeDate = removeDate;
         window.prevMonth = prevMonth;
         window.nextMonth = nextMonth;
