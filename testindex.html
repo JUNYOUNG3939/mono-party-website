@@ -1555,7 +1555,7 @@
     display: none;
 ">
     <!-- 뒤로가기 버튼 -->
-    <button id="backButton" onclick="backToIntro()" style="
+    <button id="backButton" onclick="handleBackButton()" style="
         position: fixed;
         top: 20px;
         left: 20px;
@@ -3553,10 +3553,18 @@ window.toggleChatbot = function() {
             }
         });
     }
+    
     // 페이지 네비게이션 함수들
 function scrollToMain() {
     document.getElementById('introPage').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
+    
+    currentPage = 'main'; // 추가
+    
+    // 뒤로가기 버튼 표시 및 설정
+    const backBtn = document.getElementById('backButton');
+    backBtn.style.display = 'flex';
+    backBtn.onclick = handleBackButton; // 수정
     
     // 파티 일정 즉시 로드
     setTimeout(() => {
@@ -3570,17 +3578,19 @@ function backToIntro() {
     document.getElementById('mainPage').style.display = 'none';
     document.getElementById('introPage').style.display = 'block';
     document.getElementById('backButton').style.display = 'none';
-    
+    currentPage = 'intro'; // 추가
+
     // 모든 섹션 숨기기
     document.querySelectorAll('.section').forEach(section => {
         section.style.display = 'none';
     });
+      window.scrollTo({ top: 0, behavior: 'smooth'); // 추가
 }
 
 function showCategory(category) {
     // 메인 페이지 숨기기
     document.getElementById('mainPage').style.display = 'none';
-    
+    currentPage = 'category'; // 추가
     // 모든 섹션 먼저 숨기기
     document.querySelectorAll('.section').forEach(section => {
         section.style.display = 'none';
@@ -3615,15 +3625,13 @@ function showCategory(category) {
             break;
     }
     
-    // 뒤로가기 버튼 표시
-    document.getElementById('backButton').style.display = 'flex';
-    document.getElementById('backButton').onclick = function() {
-        backToMain();
-    };
+// 뒤로가기 버튼 표시 및 설정
+    const backBtn = document.getElementById('backButton');
+    backBtn.style.display = 'flex';
+    backBtn.onclick = handleBackButton; // 수정
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 function backToMain() {
     // 모든 섹션 숨기기
     document.querySelectorAll('.section').forEach(section => {
@@ -3633,10 +3641,12 @@ function backToMain() {
     // 메인 페이지 표시
     document.getElementById('mainPage').style.display = 'block';
     
-    // 뒤로가기 버튼 텍스트 변경
-    document.getElementById('backButton').onclick = function() {
-        backToIntro();
-    };
+    currentPage = 'main'; // 추가
+    
+    // 뒤로가기 버튼 유지
+    const backBtn = document.getElementById('backButton');
+    backBtn.style.display = 'flex';
+    backBtn.onclick = handleBackButton; // 수정
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -3848,6 +3858,23 @@ document.head.appendChild(style);
         }
     });
 </script>
+<script>
+// 현재 페이지 위치 추적
+let currentPage = 'intro'; // 'intro', 'main', 'category' 중 하나
+
+// 통합된 뒤로가기 함수
+function handleBackButton() {
+    console.log('현재 페이지:', currentPage);
+    
+    if (currentPage === 'category') {
+        // 카테고리에서 메인으로
+        backToMain();
+    } else if (currentPage === 'main') {
+        // 메인에서 인트로로
+        backToIntro();
+    }
+}
+</script>    
 <!-- AI 챗봇 끝 -->
     
     <!-- Footer -->
