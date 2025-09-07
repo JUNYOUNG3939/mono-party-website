@@ -756,8 +756,8 @@
             
             /* Simplify animations on mobile for better performance */
             * {
-                animation-duration: none !important;
-                animation-delay: none !important;
+                animation-duration: 0s !important;
+                animation-delay: 0s !important;
             }
             
             /* Better spacing for mobile */
@@ -795,186 +795,6 @@
         @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
-}
-      /* ===== 새로운 메가 애니메이션 스타일 ===== */
-
-/* 메가 애니메이션 로고 */
-.mega-animation {
-    font-size: clamp(3rem, 12vw, 8rem);
-    position: relative;
-    display: inline-block;
-    text-shadow: 
-        0 0 10px var(--neon-accent),
-        0 0 20px var(--neon-accent),
-        0 0 30px var(--neon-accent),
-        0 0 40px var(--neon-accent);
-}
-
-.mega-animation span {
-    display: inline-block;
-    animation: letterFloat 3s ease-in-out infinite;
-}
-
-.letter-m { animation-delay: 0s; }
-.letter-o1 { animation-delay: 0.1s; }
-.letter-n { animation-delay: 0.2s; }
-.letter-o2 { animation-delay: 0.3s; }
-.letter-p { animation-delay: 0.5s; }
-.letter-a { animation-delay: 0.6s; }
-.letter-r { animation-delay: 0.7s; }
-.letter-t { animation-delay: 0.8s; }
-.letter-y { animation-delay: 0.9s; }
-
-@keyframes letterFloat {
-    0%, 100% { 
-        transform: translateY(0) rotateZ(0deg) scale(1);
-        color: var(--text-primary);
-        filter: brightness(1);
-    }
-    25% { 
-        transform: translateY(-20px) rotateZ(-5deg) scale(1.1);
-        color: var(--neon-accent);
-        filter: brightness(1.5);
-    }
-    50% { 
-        transform: translateY(-10px) rotateZ(5deg) scale(1.05);
-        color: var(--neon-pink);
-        filter: brightness(1.3);
-    }
-    75% { 
-        transform: translateY(-15px) rotateZ(-3deg) scale(1.08);
-        color: var(--neon-blue);
-        filter: brightness(1.4);
-    }
-}
-
-/* 탐색 버튼 */
-.explore-button {
-    margin-top: 40px;
-    padding: 18px 50px;
-    background: linear-gradient(135deg, var(--neon-accent), var(--neon-pink));
-    border: none;
-    border-radius: 50px;
-    color: var(--bg-primary);
-    font-size: 1.2rem;
-    font-weight: 700;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    animation: pulse 2s infinite;
-    transition: all 0.3s ease;
-}
-
-.explore-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 10px 40px rgba(0, 255, 136, 0.5);
-}
-
-.arrow-down {
-    display: inline-block;
-    animation: bounceArrow 1.5s infinite;
-}
-
-@keyframes bounceArrow {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(5px); }
-}
-
-/* 카테고리 메뉴 */
-.category-menu {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 20px;
-    margin-top: 50px;
-}
-
-.category-btn {
-    padding: 30px 20px;
-    background: var(--bg-card);
-    border: 2px solid var(--neon-accent);
-    border-radius: 15px;
-    color: var(--text-primary);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-.category-btn:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
-    background: rgba(0, 255, 136, 0.1);
-}
-
-.category-btn .icon {
-    font-size: 2.5rem;
-}
-
-/* 뒤로가기 버튼 */
-.back-button {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    padding: 12px 24px;
-    background: var(--bg-card);
-    border: 2px solid var(--neon-accent);
-    color: var(--neon-accent);
-    border-radius: 25px;
-    cursor: pointer;
-    z-index: 1000;
-    transition: all 0.3s ease;
-    font-weight: 600;
-}
-
-.back-button:hover {
-    background: var(--neon-accent);
-    color: var(--bg-primary);
-    transform: translateX(-5px);
-}
-
-/* fade 애니메이션 */
-.fade-in-up {
-    animation: fadeInUp 1s ease-out forwards;
-    opacity: 0;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* 모바일 반응형 */
-@media (max-width: 768px) {
-    .category-menu {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 15px;
-    }
-    
-    .category-btn {
-        padding: 20px 15px;
-        font-size: 0.9rem;
-    }
-    
-    .category-btn .icon {
-        font-size: 2rem;
-    }
-    
-    .back-button {
-        top: 10px;
-        left: 10px;
-        padding: 10px 20px;
-        font-size: 0.9rem;
-    }
 }
         /* Only apply animations on desktop */
         @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
@@ -1240,100 +1060,33 @@
             right: 30px !important;
         }
     }
-</style>
-<style>
-/* 인트로 페이지 - 전체 배경 이미지 */
-#introPage {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: #000000;
-    z-index: 100000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-image: url('https://drive.google.com/uc?export=view&id=1GFnEYohpv1CIgKrOhtPNxlKp6unXOVge');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+        /* 카테고리 카드 호버 효과 */
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+    border-color: var(--neon-accent) !important;
 }
 
-/* 오버레이 효과 (선택사항) */
-#introPage::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.3); /* 살짝 어둡게 */
-    z-index: 1;
-}
-
-/* Learn More 버튼 */
-.learn-more-button {
-    position: relative;
-    z-index: 2;
-    margin-top: auto;
-    margin-bottom: 80px;
-    padding: 18px 60px;
-    background: transparent;
-    border: 2px solid #ffffff;
-    color: #ffffff;
-    font-size: 1.1rem;
-    font-weight: 600;
-    font-family: 'Montserrat', sans-serif;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    cursor: pointer;
-    opacity: 0;
-    animation: buttonFadeIn 1s ease-in-out 2s forwards;
-    transition: all 0.3s ease;
-}
-
-.learn-more-button:hover {
-    background: #ffffff;
-    color: #000000;
-    transform: translateY(-2px);
-}
-
-@keyframes buttonFadeIn {
-    0% { 
-        opacity: 0; 
-        transform: translateY(20px); 
+/* 페이지 전환 애니메이션 */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
-    100% { 
-        opacity: 1; 
-        transform: translateY(0); 
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
-/* 5초 후 버튼 펄스 애니메이션 */
-@keyframes buttonPulse {
-    0%, 100% { 
-        transform: scale(1); 
-    }
-    50% { 
-        transform: scale(1.05); 
-    }
-}
-
-.button-pulse {
-    animation: buttonPulse 2s ease-in-out infinite;
+.main-page {
+    animation: slideIn 0.5s ease;
 }
 </style>
+
 
 </head>
 <body>
-        <!-- ===== 인트로 페이지 시작 ===== -->
-    <div id="introPage">
-        <div id="introBackground"></div>
-        <button id="learnMoreBtn" onclick="showMainContent()">LEARN MORE</button>
-    </div>
-    <!-- ===== 인트로 페이지 끝 ===== -->
     <!-- Particles Background - Desktop Only -->
     <div class="particles" id="particles"></div>
     
@@ -1552,98 +1305,201 @@
     </div>
     <!-- YouTube 음악 플레이어 끝 -->
 
-    <!-- Hero Section -->
-<section class="hero" id="mainHero" style="display: none;">
-    <div class="hero-content">
-        <!-- 화려한 애니메이션 로고 -->
-        <h1 class="logo mega-animation">
-            <span class="letter-m">M</span>
-            <span class="letter-o1">O</span>
-            <span class="letter-n">N</span>
-            <span class="letter-o2">O</span>
-            <span class="space"> </span>
-            <span class="letter-p">P</span>
-            <span class="letter-a">A</span>
-            <span class="letter-r">R</span>
-            <span class="letter-t">T</span>
-            <span class="letter-y">Y</span>
+    <!-- 인트로 페이지 -->
+<section id="introPage" class="intro-page" style="
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+">
+    <!-- 배경 이미지 -->
+    <div style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url('https://lh3.googleusercontent.com/d/1Ap0784QeIiu0R48zBKEobjnQWrhVpLHR');
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.4);
+        z-index: 0;
+    "></div>
+    
+    <!-- 인트로 콘텐츠 -->
+    <div style="
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 20px;
+    ">
+        <h1 class="logo floating" style="font-size: clamp(3rem, 10vw, 8rem); margin-bottom: 30px;">
+            MONO PARTY
         </h1>
-        <p class="tagline fade-in-up" style="animation-delay: 0.5s;">Black or White</p>
-        <h2 class="hero-subtitle fade-in-up" style="animation-delay: 0.7s;">감정이 흐르는 무드 파티</h2>
-        
-        <!-- 더 알아보기 버튼 -->
-        <button onclick="showIntro()" class="explore-button pulse-glow">
-            더 알아보기 <span class="arrow-down">↓</span>
+        <p style="font-size: clamp(1.2rem, 3vw, 2rem); color: var(--neon-accent); margin-bottom: 50px;">
+            Black or White, 감정이 흐르는 무드 파티
+        </p>
+        <button onclick="scrollToMain()" class="cta-button neon-glow" style="margin-bottom: 20px;">
+            더 알아보기
         </button>
     </div>
 </section>
 
-<!-- 인트로 섹션 (처음엔 숨김) -->
-<section id="introSection" style="display: none; min-height: 100vh; padding: 60px 20px;">
-    <div class="intro-container" style="max-width: 1200px; margin: 0 auto;">
-        <button onclick="backToMain()" class="back-button">← 메인으로</button>
-        
-        <!-- 파티 인트로 -->
-        <div class="intro-content" style="text-align: center; margin-top: 80px;">
-            <h2 style="font-size: 3rem; color: var(--neon-accent); margin-bottom: 30px;">당신의 설렘을 디자인합니다</h2>
-            <p style="font-size: 1.3rem; color: var(--text-secondary); margin-bottom: 40px;">
-                "혼자였던 밤, 오늘은 설레일 거예요."<br>
-                소개팅도, 클럽도, 어설픈 술자리가 아닌<br>
-                <strong style="color: var(--text-primary);">감정이 흐르는 대로 스며드는 '무드 기반 소셜링 파티'</strong>
-            </p>
-            
-            <!-- 참가 신청 버튼 -->
-            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow" style="margin-bottom: 50px;">
+<!-- 메인 페이지 (카테고리 선택) -->
+<section id="mainPage" class="main-page" style="
+    min-height: 100vh;
+    padding: 60px 20px;
+    background: var(--bg-primary);
+    display: none;
+">
+    <!-- 뒤로가기 버튼 -->
+    <button id="backButton" onclick="backToIntro()" style="
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        padding: 10px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    ">
+        ← 뒤로가기
+    </button>
+
+    <!-- 헤더 -->
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h2 class="section-title">MONO PARTY</h2>
+        <p style="color: var(--text-secondary);">원하시는 정보를 선택해주세요</p>
+    </div>
+    
+    <!-- 파티 일정 표시 -->
+    <div id="upcomingPartiesIntro" style="
+        background: var(--bg-card);
+        border: 2px solid var(--neon-accent);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 40px;
+    ">
+        <h3 style="color: var(--neon-accent); margin-bottom: 20px;">🗓️ 다가오는 파티 일정</h3>
+        <div id="partyScheduleGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <!-- 파티 날짜들이 여기 표시됩니다 -->
+        </div>
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">
                 지금 참가 신청하기
             </a>
-            
-            <!-- 다가오는 파티 일정 -->
-            <h3 style="font-size: 2rem; margin-bottom: 30px; color: var(--text-primary);">🗓️ 다가오는 파티 일정</h3>
-            <div id="upcomingPartiesIntro" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 50px;">
-                <!-- 파티 일정이 여기 표시됨 -->
-            </div>
+        </div>
+    </div>
+    
+    <!-- 카테고리 그리드 -->
+    <div class="category-grid" style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 40px;
+    ">
+        <!-- 파티소개 -->
+        <div class="category-card" onclick="showCategory('party-intro')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">파티 소개</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">정보 & 컨텐츠</p>
         </div>
         
-        <!-- 카테고리 메뉴 -->
-        <div class="category-menu">
-            <button onclick="showCategory('party-info')" class="category-btn">
-                <span class="icon">🎯</span>
-                <span>파티소개/컨텐츠</span>
-            </button>
-            <button onclick="showCategory('host')" class="category-btn">
-                <span class="icon">👑</span>
-                <span>호스트 소개</span>
-            </button>
-            <button onclick="showCategory('reviews')" class="category-btn">
-                <span class="icon">💬</span>
-                <span>참가자 후기</span>
-            </button>
-            <button onclick="showCategory('gallery')" class="category-btn">
-                <span class="icon">📸</span>
-                <span>파티 사진/영상</span>
-            </button>
-            <button onclick="showCategory('seats')" class="category-btn">
-                <span class="icon">🎫</span>
-                <span>잔여석 확인</span>
-            </button>
-            <button onclick="showCategory('qna')" class="category-btn">
-                <span class="icon">❓</span>
-                <span>Q&A</span>
-            </button>
+        <!-- 호스트 소개 -->
+        <div class="category-card" onclick="showCategory('host-intro')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">👤</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">호스트 소개</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">HOST MOOD</p>
+        </div>
+        
+        <!-- 후기 -->
+        <div class="category-card" onclick="showCategory('reviews')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">💬</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">참가자 후기</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">생생한 리뷰</p>
+        </div>
+        
+        <!-- 파티 분위기 -->
+        <div class="category-card" onclick="showCategory('gallery')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">📸</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">파티 분위기</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">사진 & 영상</p>
+        </div>
+        
+        <!-- 잔여석 -->
+        <div class="category-card" onclick="showCategory('seats')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">🎟️</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">잔여석 확인</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">실시간 현황</p>
+        </div>
+        
+        <!-- Q&A -->
+        <div class="category-card" onclick="showCategory('qna')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">❓</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">자주 묻는 질문</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Q&A</p>
         </div>
     </div>
-</section>
-
-<!-- 카테고리별 컨텐츠 섹션 -->
-<section id="categoryContent" style="display: none; min-height: 100vh; padding: 60px 20px;">
-    <button onclick="backToIntro()" class="back-button">← 뒤로가기</button>
-    <div id="contentArea" style="max-width: 1200px; margin: 80px auto 0;">
-        <!-- 선택된 카테고리 내용이 여기 표시됨 -->
-    </div>
-</section>
-    
+</section>    
     <!-- Why MONO PARTY Section -->
-    <section class="section" style="display: none; background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);">
+    <section class="section" id="whyMonoParty" style="display: none; background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);">
         <div style="max-width: 900px; margin: 0 auto; text-align: center;">
             <h2 style="font-size: clamp(2rem, 6vw, 4rem); margin-bottom: 30px; font-weight: 900; line-height: 1.3;">
                 다른 파티는 잊어라.<br>
@@ -1685,7 +1541,7 @@
     </section>
     
     <!-- Visual Experience Section -->
-    <section class="section" style="display: none;">
+    <section class="section" id="visualSection" style="display: none;">
         <h2 class="section-title">무채색 속에서 빛나는<br>네온의 유혹</h2>
         
         <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 50px;">
@@ -1716,7 +1572,7 @@
     </section>
     
     <!-- Dopamine Rush Section -->
-    <section class="section" style="display: none; background: var(--bg-secondary); position: relative; overflow: hidden;">
+    <section class="section" id="dopamineSection" style="display: none; background: var(--bg-secondary); position: relative; overflow: hidden;">
         <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 50%, rgba(255, 0, 102, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0, 229, 255, 0.1) 0%, transparent 50%);"></div>
         
         <div style="position: relative; z-index: 1;">
@@ -1774,7 +1630,7 @@
     </section>
     
     <!-- Concept Section -->
-    <section class="section" style="display: none;">
+    <section class="section" id="conceptSection" style="display: none;">
         <h2 class="section-title">우리는 사람을 소개하지 않아요.<br><span class="neon-glow">감정</span>을 소개합니다.</h2>
         
         <div class="concept-grid">
@@ -1808,7 +1664,7 @@
     </section>
     
     <!-- Flow Section -->
-    <section class="section" style="display: none; background: var(--bg-secondary);">
+    <section class="section" id="flowSection" style="display: none; background: var(--bg-secondary);">
         <h2 class="section-title">감정의 흐름에 맞춘 플로우</h2>
         
         <div class="flow-container">
@@ -1839,7 +1695,7 @@
     </section>
     
     <!-- Features Section -->
-    <section class="section" style="display: none;">
+    <section class="section" id="featuresSection" style="display: none;">
         <h2 class="section-title">왜 사람들이 다시 오는가?</h2>
         
         <div class="features-grid">
@@ -1894,7 +1750,7 @@
     </section>
     
     <!-- Testimonials Section -->
-    <section class="section" style="display: none; background: var(--bg-secondary);">
+    <section class="section" id="testimonialsSection" style="display: none; background: var(--bg-secondary);">
         <h2 class="section-title">실참여자 생생 리뷰</h2>
         
         <div class="testimonials-container">
@@ -1925,7 +1781,7 @@
     </section>
     
     <!-- Video Section with TOP 3 -->
-    <section class="section" style="display: none; background: var(--bg-primary); position: relative; overflow: hidden;">
+    <section class="section" id="videoSection" style="display: none; background: var(--bg-primary); position: relative; overflow: hidden;">
         <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 30% 50%, rgba(255, 0, 102, 0.1) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(0, 229, 255, 0.1) 0%, transparent 50%);"></div>
         
         <div style="position: relative; z-index: 1;">
@@ -2080,7 +1936,7 @@
     </section>
     
     <!-- Host Introduction Section -->
-    <section class="section" style="display: none;background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); position: relative; overflow: hidden;">
+    <section class="section" id="hostSection" style="display: none; background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); position: relative; overflow: hidden;">
         <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 70% 30%, rgba(255, 0, 102, 0.1) 0%, transparent 50%);"></div>
         
         <div style="position: relative; z-index: 1;">
@@ -2232,7 +2088,7 @@
     </section>
     
     <!-- Real Party Gallery Section -->
-    <section class="section" style="display: none; background: var(--bg-secondary); padding-bottom: 0; overflow: hidden;">
+    <section class="section" id="gallerySection" style="display: none; background: var(--bg-secondary); padding-bottom: 0; overflow: hidden;">
         <h2 class="section-title">실제 파티 현장,<br><span class="neon-glow">도파민이 터지는 순간들</span></h2>
         
         <div class="party-gallery" style="margin-top: 50px;">
@@ -2330,7 +2186,7 @@
     </section>
     
     <!-- Space Gallery Section -->
-    <section class="section" style="display: none;">
+    <section class="section" id="spaceSection" style="display: none;">
         <h2 class="section-title">프라이빗한 감성 공간</h2>
         
         <div style="position: relative; height: 400px; margin: 0 -15px; overflow: hidden; margin-bottom: 30px; border-radius: 15px;">
@@ -2357,7 +2213,7 @@
     </section>
     
     <!-- 파티 일정 섹션 (새로 추가) -->
-    <section class="section" style="display: none; background: var(--bg-secondary);">
+    <section class="section" id="partyScheduleSection" style="display: none; background: var(--bg-secondary);">
         <h2 class="section-title">🗓️ 다가오는 파티 일정</h2>
         
         <div id="upcomingParties" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px;">
@@ -2372,7 +2228,7 @@
     </section>
     
     <!-- FAQ Section -->
-    <section class="section" style="display: none; background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);">
+    <section class="section" id="faqSection" style="display: none; background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);">
         <h2 class="section-title">자주 묻는 질문</h2>
         
         <div class="faq-container">
@@ -2422,7 +2278,7 @@
     </section>
     
     <!-- Special Offer Section -->
-    <section class="section" style="display: none; position: relative; overflow: hidden;">
+    <section class="section" id="specialOfferSection" style="display: none; position: relative; overflow: hidden;">
         <div style="position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(0, 255, 136, 0.2) 0%, transparent 70%);"></div>
         
         <div style="position: relative; z-index: 1; text-align: center; max-width: 800px; margin: 0 auto;">
@@ -2465,7 +2321,7 @@
     </section>
     
     <!-- Info Section -->
-    <section class="section" id="register"style="display: none;">
+    <section class="section" id="register" style="display: none;">
         <h2 class="section-title">파티 정보</h2>
         
         <div class="info-grid neon-border">
@@ -3232,6 +3088,136 @@ window.toggleChatbot = function() {
             }
         });
     }
+    // 페이지 네비게이션 함수들
+function scrollToMain() {
+    document.getElementById('introPage').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'block';
+    loadPartyDatesForIntro(); // 파티 일정 로드
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function backToIntro() {
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('introPage').style.display = 'block';
+    document.getElementById('backButton').style.display = 'none';
+    
+    // 모든 섹션 숨기기
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+}
+
+function showCategory(category) {
+    // 메인 페이지 숨기기
+    document.getElementById('mainPage').style.display = 'none';
+    
+    // 모든 섹션 먼저 숨기기
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // 선택한 카테고리 표시
+    switch(category) {
+        case 'party-intro':
+            document.getElementById('whyMonoParty').style.display = 'block';
+            document.getElementById('conceptSection').style.display = 'block';
+            document.getElementById('flowSection').style.display = 'block';
+            document.getElementById('dopamineSection').style.display = 'block';
+            document.getElementById('featuresSection').style.display = 'block';
+            break;
+        case 'host-intro':
+            document.getElementById('hostSection').style.display = 'block';
+            break;
+        case 'reviews':
+            document.getElementById('testimonialsSection').style.display = 'block';
+            break;
+        case 'gallery':
+            document.getElementById('videoSection').style.display = 'block';
+            document.getElementById('gallerySection').style.display = 'block';
+            document.getElementById('spaceSection').style.display = 'block';
+            break;
+        case 'seats':
+            document.getElementById('partyScheduleSection').style.display = 'block';
+            loadPartyDates(); // 파티 일정 로드
+            break;
+        case 'qna':
+            document.getElementById('faqSection').style.display = 'block';
+            break;
+    }
+    
+    // 뒤로가기 버튼 표시
+    document.getElementById('backButton').style.display = 'flex';
+    document.getElementById('backButton').onclick = function() {
+        backToMain();
+    };
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function backToMain() {
+    // 모든 섹션 숨기기
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // 메인 페이지 표시
+    document.getElementById('mainPage').style.display = 'block';
+    
+    // 뒤로가기 버튼 텍스트 변경
+    document.getElementById('backButton').onclick = function() {
+        backToIntro();
+    };
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 인트로용 파티 일정 로드
+async function loadPartyDatesForIntro() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('party_schedules')
+            .select('*')
+            .eq('is_active', true)
+            .gte('party_date', new Date().toISOString().split('T')[0])
+            .order('party_date', { ascending: true })
+            .limit(4);
+        
+        if (error) throw error;
+        
+        const container = document.getElementById('partyScheduleGrid');
+        
+        if (data && data.length > 0) {
+            container.innerHTML = data.map(party => {
+                const date = new Date(party.party_date + 'T00:00:00');
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const dayOfWeek = dayNames[date.getDay()];
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                const remainingSeats = party.remaining_seats || 0;
+                
+                return `
+                    <div style="
+                        background: rgba(0, 255, 136, 0.1);
+                        border: 1px solid var(--neon-accent);
+                        border-radius: 10px;
+                        padding: 15px;
+                        text-align: center;
+                    ">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--neon-accent);">
+                            ${month}/${day}
+                        </div>
+                        <div style="color: var(--text-secondary);">${dayOfWeek}요일</div>
+                        <div style="margin-top: 10px; color: ${remainingSeats > 10 ? 'var(--neon-accent)' : 'var(--neon-pink)'};">
+                            잔여 ${remainingSeats}석
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    } catch (error) {
+        console.error('Error loading party dates:', error);
+    }
+}
         // 모바일 화면 대응
     document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth <= 768) {
@@ -3327,7 +3313,7 @@ window.toggleChatbot = function() {
         </iframe>
     </div>
 </div>
-    
+   
        <!-- ⬇️⬇️⬇️ YouTube API 스크립트 추가 ⬇️⬇️⬇️ -->
 <script src="https://www.youtube.com/iframe_api"></script>
 
@@ -3748,312 +3734,7 @@ async function loadPartyDates() {
             // Trigger floating emojis periodically
             setInterval(createFloatingEmoji, 4000);
         }
-        // ===== 새로운 네비게이션 함수들 =====
-
-// 인트로 보기
-function showIntro() {
-    document.getElementById('mainHero').style.display = 'none';
-    document.getElementById('introSection').style.display = 'block';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    // 파티 일정 로드
-    loadUpcomingPartiesForIntro();
-}
-
-// 인트로용 파티 일정 로드
-async function loadUpcomingPartiesForIntro() {
-    try {
-        const { data, error } = await supabaseClient
-            .from('party_schedules')
-            .select('*')
-            .eq('is_active', true)
-            .gte('party_date', new Date().toISOString().split('T')[0])
-            .order('party_date', { ascending: true })
-            .limit(6);
         
-        if (error) throw error;
-        
-        const container = document.getElementById('upcomingPartiesIntro');
-        
-        if (data && data.length > 0) {
-            container.innerHTML = data.map(party => {
-                const date = new Date(party.party_date + 'T00:00:00');
-                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-                const dayOfWeek = dayNames[date.getDay()];
-                const month = date.getMonth() + 1;
-                const day = date.getDate();
-                const remainingSeats = party.remaining_seats || 70;
-                
-                return `
-                    <div class="party-card" style="border-color: var(--neon-accent);">
-                        <div style="font-size: 2.5rem; margin-bottom: 10px;">✨</div>
-                        <div style="font-size: 1.8rem; font-weight: 700; color: var(--neon-accent);">
-                            ${month}월 ${day}일
-                        </div>
-                        <div style="font-size: 1.2rem; color: var(--text-secondary); margin-top: 5px;">
-                            ${dayOfWeek}요일
-                        </div>
-                        <div style="margin-top: 15px; padding: 8px; background: rgba(0, 255, 136, 0.1); border-radius: 20px;">
-                            <span style="color: var(--neon-accent); font-size: 0.9rem; font-weight: 600;">
-                                잔여 ${remainingSeats}석
-                            </span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-    } catch (error) {
-        console.error('Error loading party dates:', error);
-    }
-}
-
-// 메인으로 돌아가기
-function backToMain() {
-    document.getElementById('mainHero').style.display = 'flex';
-    document.getElementById('introSection').style.display = 'none';
-    document.getElementById('categoryContent').style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// 인트로로 돌아가기
-function backToIntro() {
-    document.getElementById('introSection').style.display = 'block';
-    document.getElementById('categoryContent').style.display = 'none';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// 카테고리 보기
-function showCategory(category) {
-    document.getElementById('introSection').style.display = 'none';
-    document.getElementById('categoryContent').style.display = 'block';
-    
-    const contentArea = document.getElementById('contentArea');
-    
-    switch(category) {
-        case 'party-info':
-            contentArea.innerHTML = getPartyInfoContent();
-            break;
-        case 'host':
-            contentArea.innerHTML = getHostContent();
-            break;
-        case 'reviews':
-            contentArea.innerHTML = getReviewsContent();
-            break;
-        case 'gallery':
-            contentArea.innerHTML = getGalleryContent();
-            break;
-        case 'seats':
-            contentArea.innerHTML = getSeatsContent();
-            setTimeout(() => loadPartyDates(), 100);
-            break;
-        case 'qna':
-            contentArea.innerHTML = getQnaContent();
-            break;
-    }
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// 파티 정보 컨텐츠
-function getPartyInfoContent() {
-    return `
-        <h2 class="section-title">파티 소개 & 컨텐츠</h2>
-        
-        <div class="concept-grid">
-            <div class="concept-card neon-border">
-                <span class="concept-icon">🎯</span>
-                <h3 class="concept-title">첫인상 롤링페이퍼</h3>
-                <p class="concept-subtitle">익명으로 첫인상 주고받기</p>
-                <p class="concept-description">
-                    서로의 첫인상을 익명으로 적어주고, 관심있는 사람에게 다가가 첫인상을 전달하는 자연스러운 아이스브레이킹
-                </p>
-            </div>
-            
-            <div class="concept-card neon-border">
-                <span class="concept-icon">💫</span>
-                <h3 class="concept-title">티키타카 게임</h3>
-                <p class="concept-subtitle">마음이 통하는 사람 찾기</p>
-                <p class="concept-description">
-                    같은 생각을 하는 사람과 자연스럽게 연결되는 게임. 가장 많은 점수를 얻은 사람은 칵테일로 마음 표현 기회!
-                </p>
-            </div>
-            
-            <div class="concept-card neon-border">
-                <span class="concept-icon">🎮</span>
-                <h3 class="concept-title">칩 게임</h3>
-                <p class="concept-subtitle">자연스러운 스킨십의 시작</p>
-                <p class="concept-description">
-                    가위바위보, 눈싸움 등 간단한 게임으로 칩을 모으고, 상품으로 이성에게 어필하는 재미있는 컨텐츠
-                </p>
-            </div>
-        </div>
-        
-        <h3 style="margin-top: 50px; color: var(--neon-accent);">2부 프로그램</h3>
-        <div class="concept-grid">
-            <div class="concept-card neon-border">
-                <span class="concept-icon">🎤</span>
-                <h3 class="concept-title">자기소개 타임</h3>
-                <p class="concept-description">이름, 사는 곳, MBTI, 매력 포인트를 공유하며 진짜 나를 보여주는 시간</p>
-            </div>
-            
-            <div class="concept-card neon-border">
-                <span class="concept-icon">📦</span>
-                <h3 class="concept-title">설렘박스</h3>
-                <p class="concept-description">이미지 미션을 통해 관심있는 사람에게 자연스럽게 다가가는 두근두근한 시간</p>
-            </div>
-            
-            <div class="concept-card neon-border">
-                <span class="concept-icon">📻</span>
-                <h3 class="concept-title">익명라디오</h3>
-                <p class="concept-description">익명으로 마음을 전하고 질문하는 솔직한 감정 교류의 시간</p>
-            </div>
-        </div>
-    `;
-}
-
-// 호스트 컨텐츠
-function getHostContent() {
-    return `
-        <h2 class="section-title">HOST MOOD</h2>
-        <div style="text-align: center; margin-bottom: 40px;">
-            <img src="https://ifh.cc/g/cg9lOf.jpg" 
-                 alt="MONO PARTY 호스트" 
-                 style="width: 100%; max-width: 400px; border-radius: 20px; margin-bottom: 30px;">
-            
-            <h3 style="color: var(--neon-accent); font-size: 2rem; margin-bottom: 20px;">
-                파티계의 끝판왕 "MOOD"
-            </h3>
-            
-            <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-secondary);">
-                자칭 타칭 "블랙 성애자" ⚫<br>
-                365일 올블랙이지만 절대 지루하지 않은 남자<br><br>
-                
-                <strong style="color: var(--text-primary);">헬스로 만든 피지컬</strong>에 
-                <strong style="color: var(--text-primary);">여유로운 마인드</strong>까지<br>
-                시끄러운 사람은 조용하게, 조용한 사람은 신나게 만드는 마법같은 능력<br><br>
-                
-                <span style="color: var(--neon-accent); font-size: 1.3rem; font-weight: 700;">
-                "사람들이 진짜 행복한 하루를 보냈으면 좋겠어요"
-                </span>
-            </p>
-        </div>
-    `;
-}
-
-// 리뷰 컨텐츠
-function getReviewsContent() {
-    return `
-        <h2 class="section-title">실참여자 생생 후기</h2>
-        <div class="testimonials-container">
-            <div class="testimonial">
-                <p>첫 파티인데 이 퀄리티 실화인가요? 도파민이 미쳤어요. 재방문 예약 완료.</p>
-            </div>
-            <div class="testimonial">
-                <p>내향인인데도 말이 트였어요. 편안하면서도 설레는 밤이었습니다.</p>
-            </div>
-            <div class="testimonial">
-                <p>게임 구성 재밌고, 지루할 틈이 없이 놀았어요 💗</p>
-            </div>
-            <div class="testimonial">
-                <p>안주도 바로바로 준비되고, 술 무제한. 가성비 최고!</p>
-            </div>
-            <div class="testimonial">
-                <p>눈 마주치며 자연스레 대화하고, 감정이 연결되는 경험이었어요.</p>
-            </div>
-            <div class="testimonial">
-                <p>소개팅은 부담스럽고 클럽은 시끄러운데, 여기는 딱 제가 원하던 분위기예요!</p>
-            </div>
-        </div>
-    `;
-}
-
-// 갤러리 컨텐츠
-function getGalleryContent() {
-    return `
-        <h2 class="section-title">파티 현장 사진 & 영상</h2>
-        
-        <div class="gallery-grid">
-            <div class="gallery-item">
-                <img src="https://ifh.cc/g/DtMZ8p.webp" alt="MONO PARTY 현장">
-                <div class="gallery-overlay"></div>
-                <div class="gallery-content">
-                    <h3>70명이 만드는 에너지</h3>
-                    <p>매회차 마감되는 인기</p>
-                </div>
-            </div>
-            
-            <div class="gallery-item">
-                <img src="https://ifh.cc/g/xxbXJt.webp" alt="올블랙 드레스코드">
-                <div class="gallery-overlay"></div>
-                <div class="gallery-content">
-                    <h3>올블랙의 시크한 매력</h3>
-                    <p>드레스코드가 만드는 통일감</p>
-                </div>
-            </div>
-        </div>
-        
-        <h3 style="margin-top: 50px; margin-bottom: 30px; text-align: center; color: var(--neon-accent);">
-            🎬 베스트 영상
-        </h3>
-        
-        <div class="video-container">
-            <div class="video-wrapper">
-                <iframe src="https://drive.google.com/file/d/1fDGzePRinMuNTXfEU8f7JYlMqtou3Lki/preview" allow="autoplay"></iframe>
-            </div>
-        </div>
-    `;
-}
-
-// 잔여석 컨텐츠
-function getSeatsContent() {
-    return `
-        <h2 class="section-title">🎫 잔여석 확인</h2>
-        <div id="upcomingParties" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px;">
-            <!-- 파티 날짜가 여기 로드됨 -->
-        </div>
-        <div style="text-align: center; margin-top: 40px;">
-            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">
-                지금 참가 신청하기
-            </a>
-        </div>
-    `;
-}
-
-// Q&A 컨텐츠
-function getQnaContent() {
-    return `
-        <h2 class="section-title">자주 묻는 질문</h2>
-        <div class="faq-container">
-            <div class="faq-item">
-                <h3>혼자 가도 괜찮나요?</h3>
-                <p>참가자의 60%가 혼자 오세요. 오히려 혼자 오시는 분들이 더 적극적이고 재밌게 즐기십니다.</p>
-            </div>
-            <div class="faq-item">
-                <h3>드레스코드를 꼭 지켜야 하나요?</h3>
-                <p>올블랙 무채색 드레스코드를 권장합니다. 대부분의 참가자들이 맞춰오시면서 세련된 분위기를 만들어요.</p>
-            </div>
-            <div class="faq-item">
-                <h3>언제 파티가 열리나요?</h3>
-                <p>주로 금요일, 토요일 저녁에 진행됩니다. 정확한 일정은 잔여석 확인 메뉴에서 확인하세요!</p>
-            </div>
-            <div class="faq-item">
-                <h3>연령대는 어떻게 되나요?</h3>
-                <p>남성 25-36세, 여성 20-37세입니다. 비슷한 연령대가 모여 자연스러운 대화가 가능해요.</p>
-            </div>
-            <div class="faq-item">
-                <h3>2부는 꼭 참여해야 하나요?</h3>
-                <p>2부는 선택사항이에요. 보통 전체 인원의 50-60%가 2부까지 함께해요.</p>
-            </div>
-        </div>
-    `;
-}
-
-// 전역 함수로 등록
-window.showIntro = showIntro;
-window.backToMain = backToMain;
-window.backToIntro = backToIntro;
-window.showCategory = showCategory;
-      
         // 페이지 로드 시 실행
         document.addEventListener('DOMContentLoaded', function() {
             loadPartyDates();
@@ -4207,10 +3888,6 @@ if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
 
             // 경험 시작 (자동재생 활성화)
 window.startExperience = function() {
-    if (player) {
-        player.playVideo();
-    }
-}
     // 오버레이 숨기기
     const overlay = document.getElementById('autoplayOverlay');
     if (overlay) {
@@ -4407,61 +4084,5 @@ window.startExperience = function() {
         });
     </script>
     <!-- 🔼 테스트 코드 끝 🔼 -->
-    <script>
-// ===== 인트로 페이지 관리 =====
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('페이지 로드 완료');
-    
-    // 5초 후 버튼 펄스 효과
-    setTimeout(() => {
-        const btn = document.getElementById('learnMoreBtn');
-        if (btn) {
-            btn.classList.add('pulse-effect');
-            console.log('버튼 펄스 효과 추가');
-        }
-    }, 5000);
-});
-
-// Learn More 버튼 클릭 시
-function showMainContent() {
-    console.log('Learn More 클릭됨');
-    
-    // 인트로 페이지 페이드아웃
-    const introPage = document.getElementById('introPage');
-    introPage.style.opacity = '0';
-    introPage.style.transition = 'opacity 1s ease';
-    
-    setTimeout(() => {
-        // 인트로 페이지 숨기기
-        introPage.style.display = 'none';
-        
-        // 인트로 섹션 보여주기 (카테고리가 있는 페이지)
-        const introSection = document.getElementById('introSection');
-        introSection.style.display = 'block';
-        
-        // 파티 일정 로드
-        if (typeof loadUpcomingPartiesForIntro === 'function') {
-            loadUpcomingPartiesForIntro();
-        }
-        
-        console.log('메인 컨텐츠 표시됨');
-    }, 1000);
-}
-
-// 카테고리 기능 확인
-function checkCategories() {
-    console.log('카테고리 기능 체크');
-    
-    // showCategory 함수가 정의되어 있는지 확인
-    if (typeof showCategory === 'function') {
-        console.log('showCategory 함수 존재');
-    } else {
-        console.log('showCategory 함수 없음 - 재정의 필요');
-    }
-}
-
-// 페이지 로드 시 체크
-window.addEventListener('load', checkCategories);
-</script>
 </body>
 </html>
