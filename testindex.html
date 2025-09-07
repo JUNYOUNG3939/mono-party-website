@@ -1619,23 +1619,26 @@
     </div>
     
     <!-- 파티 일정 표시 -->
-    <div id="upcomingPartiesIntro" style="
-        background: var(--bg-card);
-        border: 2px solid var(--neon-accent);
-        border-radius: 15px;
-        padding: 30px;
-        margin-bottom: 40px;
-    ">
-        <h3 style="color: var(--neon-accent); margin-bottom: 20px;">🗓️ 다가오는 파티 일정</h3>
-        <div id="partyScheduleGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-            <!-- 파티 날짜들이 여기 표시됩니다 -->
-        </div>
-        <div style="text-align: center; margin-top: 30px;">
-            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">
-                지금 참가 신청하기
-            </a>
+<div id="upcomingPartiesIntro" style="
+    background: var(--bg-card);
+    border: 2px solid var(--neon-accent);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 40px;
+">
+    <h3 style="color: var(--neon-accent); margin-bottom: 20px;">🗓️ 다가오는 파티 일정</h3>
+    <div id="partyScheduleGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <!-- 로딩 메시지 -->
+        <div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-secondary);">
+            파티 일정을 불러오는 중...
         </div>
     </div>
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">
+            지금 참가 신청하기
+        </a>
+    </div>
+</div>
     
     <!-- 카테고리 그리드 -->
     <div class="category-grid" style="
@@ -3580,7 +3583,12 @@ window.toggleChatbot = function() {
 function scrollToMain() {
     document.getElementById('introPage').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
-    loadPartyDatesForIntro(); // 파티 일정 로드
+    
+    // 파티 일정 즉시 로드
+    setTimeout(() => {
+        loadPartyDatesForIntro();
+    }, 100);
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -3660,7 +3668,10 @@ function backToMain() {
 }
 
 // 인트로용 파티 일정 로드
+// 인트로용 파티 일정 로드 - 완전 수정 버전
 async function loadPartyDatesForIntro() {
+    console.log('파티 일정 로드 시작'); // 디버깅용
+    
     try {
         const { data, error } = await supabaseClient
             .from('party_schedules')
@@ -3670,146 +3681,150 @@ async function loadPartyDatesForIntro() {
             .order('party_date', { ascending: true })
             .limit(4);
         
-        if (error) throw error;
+        console.log('받아온 데이터:', data); // 디버깅용
+        
+        if (error) {
+            console.error('Supabase 에러:', error);
+            throw error;
+        }
         
         const container = document.getElementById('partyScheduleGrid');
         
+        if (!container) {
+            console.error('partyScheduleGrid 컨테이너를 찾을 수 없습니다');
+            return;
+        }
+        
         if (data && data.length > 0) {
-            // container.innerHTML = 부분을 다음으로 교체
-container.innerHTML = data.map((party, index) => {
-    const date = new Date(party.party_date + 'T00:00:00');
-    const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-    const dayOfWeek = dayNames[date.getDay()];
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const remainingSeats = party.remaining_seats || 0;
-    
-    let statusColor = '#00ff88';
-    let statusText = `${remainingSeats}석`;
-    let urgencyClass = '';
-    
-    if (remainingSeats === 0) {
-        statusColor = '#ff0066';
-        statusText = '마감';
-        urgencyClass = 'sold-out';
-    } else if (remainingSeats <= 5) {
-        statusColor = '#ff0066';
-        statusText = `🔥 ${remainingSeats}석`;
-        urgencyClass = 'hot';
-    } else if (remainingSeats <= 10) {
-        statusColor = '#ffaa00';
-        statusText = `⚡ ${remainingSeats}석`;
-        urgencyClass = 'limited';
-    }
-    
-    return `
-        <div class="premium-date-card ${urgencyClass}" style="
-            background: linear-gradient(135deg, rgba(17, 17, 17, 0.95) 0%, rgba(30, 30, 30, 0.95) 100%);
-            backdrop-filter: blur(10px);
-            border: 2px solid ${statusColor};
-            border-radius: 20px;
-            padding: 30px;
-            text-align: center;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp ${0.3 + index * 0.1}s ease;
-            ${remainingSeats === 0 ? 'opacity: 0.6; pointer-events: none;' : ''}
-        " 
-        onmouseover="
-            this.style.transform='translateY(-10px) scale(1.05)';
-            this.style.boxShadow='0 30px 60px rgba(0, 255, 136, 0.4)';
-        " 
-        onmouseout="
-            this.style.transform='translateY(0) scale(1)';
-            this.style.boxShadow='none';
-        ">
-            <!-- 배경 그라디언트 애니메이션 -->
-            <div style="
-                position: absolute;
-                top: -50%;
-                left: -50%;
-                width: 200%;
-                height: 200%;
-                background: linear-gradient(45deg, 
-                    transparent 30%, 
-                    ${statusColor}22 50%, 
-                    transparent 70%);
-                animation: shimmer 3s infinite;
-                pointer-events: none;
-            "></div>
-            
-            <!-- 날짜 표시 -->
-            <div style="
-                position: relative;
-                z-index: 2;
-                font-size: 2.5rem; 
-                font-weight: 900; 
-                background: linear-gradient(135deg, ${statusColor}, ${statusColor}cc);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                margin-bottom: 10px;
-                filter: drop-shadow(0 0 20px ${statusColor}66);
-            ">
-                ${month}.${day}
-            </div>
-            
-            <!-- 요일 -->
-            <div style="
-                color: rgba(255, 255, 255, 0.6); 
-                font-size: 1rem; 
-                margin-bottom: 20px;
-                text-transform: uppercase;
-                letter-spacing: 2px;
-                font-weight: 500;
-            ">${dayOfWeek}요일</div>
-            
-            <!-- 잔여석 상태 -->
-            <div class="glass-effect" style="
-                margin-top: 15px;
-                padding: 12px;
-                background: linear-gradient(135deg, ${statusColor}22, ${statusColor}11);
-                border-radius: 30px;
-                border: 1px solid ${statusColor}66;
-                color: ${statusColor};
-                font-weight: 700;
-                font-size: 0.95rem;
-                letter-spacing: 1px;
-                position: relative;
-                overflow: hidden;
-            ">
-                <span style="position: relative; z-index: 2;">${statusText}</span>
-                ${urgencyClass === 'hot' ? `
+            container.innerHTML = data.map((party, index) => {
+                const date = new Date(party.party_date + 'T00:00:00');
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const dayOfWeek = dayNames[date.getDay()];
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                
+                // 잔여석 처리
+                const remainingSeats = party.remaining_seats !== undefined ? party.remaining_seats : 70;
+                const maxCapacity = party.max_capacity || 70;
+                
+                let statusColor = '#00ff88';
+                let statusText = `잔여 ${remainingSeats}석`;
+                let urgencyBadge = '';
+                
+                if (remainingSeats === 0) {
+                    statusColor = '#ff0066';
+                    statusText = '마감';
+                    urgencyBadge = 'SOLD OUT';
+                } else if (remainingSeats <= 5) {
+                    statusColor = '#ff0066';
+                    statusText = `🔥 ${remainingSeats}석`;
+                    urgencyBadge = '마감임박';
+                } else if (remainingSeats <= 10) {
+                    statusColor = '#ffaa00';
+                    statusText = `⚡ ${remainingSeats}석`;
+                    urgencyBadge = 'HOT';
+                }
+                
+                return `
                     <div style="
-                        position: absolute;
-                        top: 0;
-                        left: -100%;
-                        width: 100%;
-                        height: 100%;
-                        background: linear-gradient(90deg, transparent, ${statusColor}44, transparent);
-                        animation: shimmer 1.5s infinite;
-                    "></div>
-                ` : ''}
-            </div>
+                        background: rgba(17, 17, 17, 0.95);
+                        border: 2px solid ${statusColor};
+                        border-radius: 15px;
+                        padding: 25px 20px;
+                        text-align: center;
+                        transition: all 0.3s ease;
+                        position: relative;
+                        ${remainingSeats === 0 ? 'opacity: 0.6;' : ''}
+                    " 
+                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(0, 255, 136, 0.3)'" 
+                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                        
+                        ${urgencyBadge ? `
+                            <div style="
+                                position: absolute;
+                                top: -10px;
+                                right: 10px;
+                                background: ${statusColor};
+                                color: white;
+                                padding: 5px 12px;
+                                border-radius: 15px;
+                                font-size: 0.7rem;
+                                font-weight: 700;
+                            ">${urgencyBadge}</div>
+                        ` : ''}
+                        
+                        <!-- 날짜 표시 -->
+                        <div style="
+                            font-size: 2rem;
+                            font-weight: 900;
+                            color: ${statusColor};
+                            margin-bottom: 5px;
+                        ">
+                            ${month}월 ${day}일
+                        </div>
+                        
+                        <!-- 요일 -->
+                        <div style="
+                            color: rgba(255, 255, 255, 0.6);
+                            font-size: 0.9rem;
+                            margin-bottom: 15px;
+                        ">${dayOfWeek}요일</div>
+                        
+                        <!-- 잔여석 표시 -->
+                        <div style="
+                            padding: 8px 15px;
+                            background: rgba(0, 255, 136, 0.1);
+                            border: 1px solid ${statusColor};
+                            border-radius: 20px;
+                            color: ${statusColor};
+                            font-weight: 700;
+                            font-size: 0.9rem;
+                        ">
+                            ${statusText}
+                        </div>
+                    </div>
+                `;
+            }).join('');
             
-            ${urgencyClass === 'sold-out' ? `
+        } else {
+            // 데이터가 없을 때
+            container.innerHTML = `
                 <div style="
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%) rotate(-15deg);
-                    font-size: 3rem;
-                    font-weight: 900;
-                    color: #ff0066;
-                    opacity: 0.3;
-                    letter-spacing: 3px;
-                    pointer-events: none;
-                ">SOLD OUT</div>
-            ` : ''}
-        </div>
-    `;
-}).join('');
+                    grid-column: 1 / -1;
+                    text-align: center;
+                    padding: 40px 20px;
+                    background: rgba(255, 0, 102, 0.1);
+                    border: 1px solid var(--neon-pink);
+                    border-radius: 10px;
+                ">
+                    <p style="color: var(--neon-pink); font-size: 1.1rem; margin-bottom: 10px;">
+                        📅 현재 예약 가능한 파티가 없습니다
+                    </p>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        새로운 파티 일정은 인스타그램에서 확인해주세요!
+                    </p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('파티 일정 로드 실패:', error);
+        
+        const container = document.getElementById('partyScheduleGrid');
+        if (container) {
+            container.innerHTML = `
+                <div style="
+                    grid-column: 1 / -1;
+                    text-align: center;
+                    padding: 30px;
+                    color: var(--text-secondary);
+                ">
+                    <p>파티 일정을 불러오는데 실패했습니다.</p>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">잠시 후 다시 시도해주세요.</p>
+                </div>
+            `;
+        }
+    }
+}
 
 // fadeInUp 애니메이션 추가
 const style = document.createElement('style');
@@ -4347,6 +4362,23 @@ async function loadPartyDates() {
             subscribeToApplications();
             generateRandomNotifications();
             updateViewerCount();
+                // 메인 페이지가 보이면 파티 일정 로드
+    const mainPageObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.target.id === 'mainPage' && mutation.target.style.display === 'block') {
+                console.log('메인 페이지 표시됨 - 파티 일정 로드');
+                loadPartyDatesForIntro();
+            }
+        });
+    });
+    
+    const mainPage = document.getElementById('mainPage');
+    if (mainPage) {
+        mainPageObserver.observe(mainPage, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+    }
             // 버튼 초기 상태 설정
 setTimeout(() => {
     if (window.updateButtonDisplay) {
