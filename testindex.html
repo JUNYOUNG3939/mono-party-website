@@ -18,9 +18,9 @@
         }
         
         :root {
-    --neon-accent: #00ff88;
-    --neon-pink: #ff0066;
-    --neon-blue: #00e5ff;
+    --neon-accent: rgba(0, 255, 136, 0.7);  /* 투명도 추가 */
+    --neon-pink: rgba(255, 0, 102, 0.7);
+    --neon-blue: rgba(0, 229, 255, 0.7);
     --text-primary: #ffffff;
     --text-secondary: #999999;
     --bg-primary: #000000;
@@ -140,9 +140,9 @@
         }
         
         /* Neon Glow Effect */
-        .neon-glow {
-            text-shadow: 0 0 20px var(--neon-accent), 0 0 40px var(--neon-accent);
-        }
+       .neon-glow {
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
         
         .neon-border {
             border: 1px solid var(--neon-accent);
@@ -1461,14 +1461,20 @@
 ">
         <!-- 프리미엄 로고 -->
         <div class="logo-wrapper" style="position: relative; display: inline-block;">
-            <h1 class="logo floating neon-text-premium" style="
-                font-size: clamp(3rem, 10vw, 8rem); 
-                margin-bottom: 30px;
-                position: relative;
-                z-index: 2;
-            ">
-                MONO PARTY
-            </h1>
+<h1 class="logo floating" style="
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 2;
+    white-space: nowrap;
+    background: linear-gradient(90deg, #ffffff 0%, rgba(0, 255, 136, 0.6) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    filter: none;
+">
+    MONO PARTY
+</h1>
             <!-- 로고 백라이트 효과 -->
             <div style="
                 position: absolute;
@@ -1486,35 +1492,29 @@
         
 <!-- 매력적인 카피 문구 -->
 <div style="
-    position: absolute;
-    right: -100px;
-    bottom: -80px;
-    text-align: right;
-    max-width: 400px;
+    margin-top: 40px;
+    text-align: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
 ">
     <p style="
-        font-family: 'Montserrat', sans-serif;
-        font-size: clamp(1rem, 2vw, 1.3rem);
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: clamp(1rem, 2.5vw, 1.4rem);
         font-weight: 300;
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(255, 255, 255, 0.8);
         line-height: 1.6;
         margin-bottom: 30px;
         letter-spacing: 0.5px;
     ">
         <span style="
-            display: block;
-            font-weight: 700;
-            font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-            background: linear-gradient(90deg, #fff 0%, var(--neon-accent) 100%);
+            display: inline;
+            font-weight: 500;
+            font-size: clamp(1.1rem, 2.8vw, 1.5rem);
+            background: linear-gradient(90deg, #fff 0%, rgba(0, 255, 136, 0.8) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        ">매주 70명이 증명하는 서울 1위 무드파티</span>
-        <span style="
-            display: block;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: clamp(0.9rem, 1.8vw, 1.1rem);
-        ">3시간 만에 연락처 5개, 설렘은 무한대</span>
+        ">감정이 흐르는 대로 스며드는 '무드 기반 소셜링 파티'</span>
     </p>
     
     <!-- CTA 버튼 -->
@@ -3106,14 +3106,16 @@
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {
-    /* 매력적인 카피 문구 모바일 위치 */
-    div[style*="position: absolute"][style*="right: -100px"] {
-        position: static !important;
-        right: auto !important;
-        bottom: auto !important;
-        text-align: center !important;
-        max-width: 100% !important;
+    /* 인트로 페이지 모바일 최적화 */
+    .logo {
+        font-size: clamp(2rem, 12vw, 4rem) !important;
+        white-space: normal !important;
+    }
+    
+    /* 카피 문구 위치 조정 */
+    div[style*="margin-top: 40px"] {
         margin-top: 30px !important;
+        padding: 0 20px;
     }
 }
     /* 챗봇 컨테이너 - 버튼 위치 */
