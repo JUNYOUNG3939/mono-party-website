@@ -1497,7 +1497,7 @@
         </div>
         
         <!-- CTA 버튼 -->
-        <button onclick="navigateTo('main')" style="
+        <button onclick="learnMoreBtn" style="
             padding: 18px 60px;
             background: linear-gradient(135deg, var(--neon-accent) 0%, #00cc70 100%);
             color: #000;
@@ -4107,6 +4107,40 @@ return `
             subscribeToApplications();
             generateRandomNotifications();
             updateViewerCount();
+                // ⭐⭐⭐ 여기에 새 코드를 추가하세요! ⭐⭐⭐
+    // 자세히 알아보기 버튼 이벤트 추가
+    const learnMoreBtn = document.querySelector('button[onclick*="navigateTo"]');
+    if (learnMoreBtn) {
+        console.log('✅ 자세히 알아보기 버튼 찾음!');
+        
+        // onclick 속성 제거하고 새 이벤트 추가
+        learnMoreBtn.removeAttribute('onclick');
+        learnMoreBtn.addEventListener('click', function() {
+            console.log('자세히 알아보기 버튼 클릭됨');
+            
+            // 인트로 페이지 숨기기
+            const introPage = document.getElementById('introPage');
+            if (introPage) {
+                introPage.style.display = 'none';
+            }
+            
+            // 메인 페이지 표시
+            const mainPage = document.getElementById('mainPage');
+            if (mainPage) {
+                mainPage.style.display = 'block';
+            }
+            
+            // 파티 일정 로드
+            if (typeof loadPartyDatesForIntro === 'function') {
+                loadPartyDatesForIntro();
+            }
+            
+            // 스크롤 맨 위로
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+    // ⭐⭐⭐ 새 코드 추가 끝 ⭐⭐⭐
+    
             // 인트로 페이지 파티 날짜 로드
 async function loadIntroPartyDates() {
     try {
