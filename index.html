@@ -675,6 +675,26 @@
         .party-card.saturday {
             border-color: var(--neon-pink);
         }
+        /* ✨ 여기에 새 코드 추가 ✨ */
+/* 파티 카드 남녀 잔여석 스타일 */
+@media (max-width: 768px) {
+    .party-card {
+        padding: 20px !important;
+    }
+    
+    .party-card > div {
+        font-size: 0.9rem !important;
+    }
+}
+
+/* 잔여석 바 애니메이션 */
+.party-card div[style*="transition"] {
+    animation: fillBar 1s ease;
+}
+
+@keyframes fillBar {
+    from { width: 0 !important; }
+}
         
         .floating-badge {
             position: absolute;
