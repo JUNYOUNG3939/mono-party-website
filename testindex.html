@@ -1497,24 +1497,24 @@
         </div>
         
         <!-- CTA 버튼 -->
-        <button onclick="navigateTo('main')" style="
-            padding: 18px 60px;
-            background: linear-gradient(135deg, var(--neon-accent) 0%, #00cc70 100%);
-            color: #000;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
-            letter-spacing: 0.05em;
-        " onmouseover="this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 15px 40px rgba(0, 255, 136, 0.6)';" 
-           onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 30px rgba(0, 255, 136, 0.4)';">
-            자세히 알아보기 →
-        </button>
+<button id="introLearnMoreBtn" onclick="goToMain()" style="
+    padding: 18px 60px;
+    background: linear-gradient(135deg, var(--neon-accent) 0%, #00cc70 100%);
+    color: #000;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+    letter-spacing: 0.05em;
+" onmouseover="this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 15px 40px rgba(0, 255, 136, 0.6)';" 
+   onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 10px 30px rgba(0, 255, 136, 0.4)';">
+    자세히 알아보기 →
+</button>
     </div>
 </section>
 
@@ -4107,39 +4107,54 @@ return `
             subscribeToApplications();
             generateRandomNotifications();
             updateViewerCount();
-                // ⭐⭐⭐ 여기에 새 코드를 추가하세요! ⭐⭐⭐
-    // 자세히 알아보기 버튼 이벤트 추가
-    const learnMoreBtn = document.querySelector('button[onclick*="navigateTo"]');
-    if (learnMoreBtn) {
-        console.log('✅ 자세히 알아보기 버튼 찾음!');
+           // ⭐ 자세히 알아보기 버튼 이벤트 - 수정된 버전
+
+    // 약간의 지연 후 실행 (DOM이 완전히 로드되도록)
+    setTimeout(function() {
+        const learnMoreBtn = document.getElementById('introLearnMoreBtn');
         
-        // onclick 속성 제거하고 새 이벤트 추가
-        learnMoreBtn.removeAttribute('onclick');
-        learnMoreBtn.addEventListener('click', function() {
-            console.log('자세히 알아보기 버튼 클릭됨');
+        if (learnMoreBtn) {
+            console.log('✅ 자세히 알아보기 버튼 찾음!');
             
-            // 인트로 페이지 숨기기
-            const introPage = document.getElementById('introPage');
-            if (introPage) {
-                introPage.style.display = 'none';
-            }
+            learnMoreBtn.addEventListener('click', function(e) {
+                e.preventDefault(); // 기본 동작 방지
+                console.log('자세히 알아보기 버튼 클릭됨!');
+                
+                // 인트로 페이지 숨기기
+                const introPage = document.getElementById('introPage');
+                if (introPage) {
+                    introPage.style.display = 'none';
+                    console.log('인트로 페이지 숨김');
+                }
+                
+                // 메인 페이지 표시
+                const mainPage = document.getElementById('mainPage');
+                if (mainPage) {
+                    mainPage.style.display = 'block';
+                    console.log('메인 페이지 표시');
+                }
+                
+                // 파티 일정 로드
+                if (typeof loadPartyDatesForIntro === 'function') {
+                    loadPartyDatesForIntro();
+                    console.log('파티 일정 로드 완료');
+                }
+                
+                // 스크롤 맨 위로
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
             
-            // 메인 페이지 표시
-            const mainPage = document.getElementById('mainPage');
-            if (mainPage) {
-                mainPage.style.display = 'block';
-            }
+            // 터치 이벤트 추가 (모바일 대응)
+            learnMoreBtn.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                this.click();
+            });
             
-            // 파티 일정 로드
-            if (typeof loadPartyDatesForIntro === 'function') {
-                loadPartyDatesForIntro();
-            }
-            
-            // 스크롤 맨 위로
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-    // ⭐⭐⭐ 새 코드 추가 끝 ⭐⭐⭐
+        } else {
+            console.log('❌ 버튼을 찾을 수 없음');
+        }
+    }, 100); // 100ms 지연
+});
     
             // 인트로 페이지 파티 날짜 로드
 async function loadIntroPartyDates() {
@@ -4608,6 +4623,18 @@ function showPage(page) {
                 console.log('❌ 챗봇 버튼을 찾을 수 없습니다!');
             }
         });
+            // 전역 함수로도 등록 (백업)
+window.goToMain = function() {
+    console.log('goToMain 함수 실행');
+    document.getElementById('introPage').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'block';
+    
+    if (typeof loadPartyDatesForIntro === 'function') {
+        loadPartyDatesForIntro();
+    }
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
     </script>
     <!-- 🔼 테스트 코드 끝 🔼 -->
 </body>
