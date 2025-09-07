@@ -18,9 +18,9 @@
         }
         
         :root {
-    --neon-accent: #00ff88;
-    --neon-pink: #ff0066;
-    --neon-blue: #00e5ff;
+    --neon-accent: #ffffff;  /* 흰색으로 변경 */
+    --neon-pink: #888888;    /* 회색으로 변경 */
+    --neon-blue: #cccccc;    /* 밝은 회색 */
     --text-primary: #ffffff;
     --text-secondary: #999999;
     --bg-primary: #000000;
@@ -1475,152 +1475,135 @@
     <!-- 인트로 콘텐츠 -->
 <div style="position: relative; z-index: 2; text-align: center; padding: 20px;">
     
-    <!-- 충격적인 헤드라인 추가 -->
-    <div style="margin-bottom: 30px; animation: pulse 2s infinite;">
+    <!-- 미니멀한 경고 -->
+    <div style="margin-bottom: 30px;">
         <span style="
-            background: linear-gradient(45deg, #ff0066, #ffaa00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: clamp(1rem, 3vw, 1.3rem);
-            font-weight: 900;
-            letter-spacing: 3px;
-            font-family: 'Bebas Neue', sans-serif;
-        ">⚠️ WARNING: 중독성 있음 ⚠️</span>
+            color: #ffffff;
+            font-size: clamp(0.8rem, 2vw, 1rem);
+            font-weight: 300;
+            letter-spacing: 5px;
+            opacity: 0.5;
+            font-family: 'Montserrat', sans-serif;
+        ">BLACK OR WHITE ONLY</span>
     </div>
     
-    <!-- 메인 로고 -->
-    <h1 class="logo floating neon-text-premium" style="
+    <!-- 메인 로고 - 흑백 -->
+    <h1 style="
         font-family: 'Bebas Neue', sans-serif;
         font-size: clamp(4rem, 12vw, 10rem); 
         margin-bottom: 20px;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        color: #ffffff;
+        text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
     ">
         MONO PARTY
     </h1>
     
-    <!-- 도발적인 서브타이틀 -->
+    <!-- 시크한 서브타이틀 -->
     <div style="margin-bottom: 40px;">
         <p style="
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
-            font-weight: 900;
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 100;
             margin-bottom: 20px;
             font-family: 'Montserrat', sans-serif;
+            color: #999999;
+            letter-spacing: 2px;
         ">
-            <span style="color: #fff;">혼자 온 70명이</span><br>
-            <span style="background: linear-gradient(90deg, #00ff88, #00e5ff, #ff0066);
-                   -webkit-background-clip: text;
-                   -webkit-text-fill-color: transparent;">
-                새벽까지 못 헤어지는 이유
+            <span style="color: #ffffff;">검은 옷을 입은 70명</span><br>
+            <span style="color: #666666;">
+                새벽까지 헤어지지 못하는 이유
             </span>
         </p>
         
-        <!-- 충격적인 통계 -->
+        <!-- 미니멀한 통계 -->
         <div style="
             display: flex;
             justify-content: center;
-            gap: 30px;
-            margin: 30px 0;
+            gap: 40px;
+            margin: 40px 0;
             flex-wrap: wrap;
         ">
             <div style="text-align: center;">
                 <div style="
-                    font-size: 2.5rem;
-                    font-weight: 900;
-                    color: #00ff88;
-                    font-family: 'Bebas Neue', sans-serif;
+                    font-size: 2rem;
+                    font-weight: 100;
+                    color: #ffffff;
+                    font-family: 'Montserrat', sans-serif;
                 ">87%</div>
-                <div style="font-size: 0.8rem; color: #666;">재참가율</div>
+                <div style="font-size: 0.7rem; color: #444; letter-spacing: 2px;">RETURN</div>
             </div>
             <div style="text-align: center;">
                 <div style="
-                    font-size: 2.5rem;
-                    font-weight: 900;
-                    color: #ff0066;
-                    font-family: 'Bebas Neue', sans-serif;
-                ">3-5명</div>
-                <div style="font-size: 0.8rem; color: #666;">평균 번호 교환</div>
+                    font-size: 2rem;
+                    font-weight: 100;
+                    color: #ffffff;
+                    font-family: 'Montserrat', sans-serif;
+                ">3-5</div>
+                <div style="font-size: 0.7rem; color: #444; letter-spacing: 2px;">CONTACTS</div>
             </div>
             <div style="text-align: center;">
                 <div style="
-                    font-size: 2.5rem;
-                    font-weight: 900;
-                    color: #00e5ff;
-                    font-family: 'Bebas Neue', sans-serif;
+                    font-size: 2rem;
+                    font-weight: 100;
+                    color: #ffffff;
+                    font-family: 'Montserrat', sans-serif;
                 ">99%</div>
-                <div style="font-size: 0.8rem; color: #666;">만족도</div>
+                <div style="font-size: 0.7rem; color: #444; letter-spacing: 2px;">SATISFIED</div>
             </div>
         </div>
     </div>
     
-    <!-- 호기심 자극 문구 -->
-    <div class="glass-effect" style="
+    <!-- 미니멀한 설명 -->
+    <div style="
         display: inline-block;
-        padding: 20px 40px;
-        border-radius: 50px;
+        padding: 30px 50px;
+        border: 1px solid #222;
         margin-bottom: 40px;
-        backdrop-filter: blur(20px);
-        background: rgba(255, 255, 255, 0.03);
-        border: 1px solid rgba(255, 255, 255, 0.1);
     ">
         <p style="
-            font-size: clamp(1rem, 3vw, 1.3rem);
-            line-height: 1.8;
-            font-weight: 600;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            line-height: 2;
+            font-weight: 300;
+            color: #666;
+            letter-spacing: 1px;
         ">
-            🔥 <span style="color: #ff0066;">소개팅?</span> 너무 부담스러워<br>
-            💀 <span style="color: #666;">클럽?</span> 너무 시끄러워<br>
-            ✨ <span style="color: #00ff88;">MONO?</span> 
-            <span style="
-                font-weight: 900;
-                background: linear-gradient(45deg, #00ff88, #ff0066);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-            ">딱 좋아</span>
+            소개팅도 아니고<br>
+            클럽도 아닌<br>
+            <span style="color: #ffffff; font-weight: 500;">무채색 감성의 무드 파티</span>
         </p>
     </div>
     
-    <!-- CTA 버튼 변경 -->
-    <button onclick="scrollToMain()" class="premium-button" style="
-        padding: 25px 80px;
-        font-size: 1.3rem;
-        font-weight: 900;
-        font-family: 'Bebas Neue', sans-serif;
+    <!-- 미니멀한 CTA 버튼 -->
+    <button onclick="scrollToMain()" style="
+        padding: 20px 60px;
+        font-size: 1rem;
+        font-weight: 300;
+        font-family: 'Montserrat', sans-serif;
         letter-spacing: 3px;
-        text-transform: uppercase;
+        background: #000;
+        color: #fff;
+        border: 1px solid #333;
+        cursor: pointer;
+        transition: all 0.5s ease;
         position: relative;
-        overflow: hidden;
-    ">
-        <span style="position: relative; z-index: 2;">
-            뭔데 이게? 👀
-        </span>
-        <!-- 반짝이는 효과 추가 -->
-        <div style="
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #00ff88, #00e5ff, #ff0066, #00ff88);
-            background-size: 400% 400%;
-            animation: gradient-shift 2s ease infinite;
-            z-index: -1;
-            filter: blur(5px);
-        "></div>
+    " 
+    onmouseover="this.style.background='#fff'; this.style.color='#000';"
+    onmouseout="this.style.background='#000'; this.style.color='#fff';">
+        ENTER
     </button>
     
-    <!-- 추가 호기심 유발 텍스트 -->
-    <div style="margin-top: 30px;">
+    <!-- 미니멀한 인디케이터 -->
+    <div style="margin-top: 40px;">
         <p style="
-            color: #666;
-            font-size: 0.9rem;
-            animation: fadeInOut 3s infinite;
+            color: #333;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            font-weight: 300;
         ">
-            ⚡ 지금 <span style="color: #00ff88; font-weight: 700;">23명</span>이 신청 중...
+            SCROLL TO EXPLORE
         </p>
     </div>
-</div>
-        
+</div>    
         
         <!-- 스크롤 인디케이터 -->
         <div style="
@@ -1692,23 +1675,19 @@
     <h2 style="
         font-family: 'Bebas Neue', sans-serif;
         font-size: clamp(3rem, 8vw, 5rem);
-        letter-spacing: 0.1em;
+        letter-spacing: 0.2em;
         margin-bottom: 20px;
-        background: linear-gradient(45deg, #00ff88, #ff0066);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #ffffff;
+        text-shadow: none;
     ">MONO PARTY</h2>
     
     <p style="
-        font-size: clamp(1.2rem, 3vw, 1.8rem);
-        font-weight: 700;
-        color: #fff;
+        font-size: clamp(1rem, 2vw, 1.3rem);
+        font-weight: 300;
+        color: #666;
         margin-bottom: 10px;
-    ">도대체 뭐길래 다들 난리야? 🤯</p>
-    
-    <p style="color: #666; font-size: 1rem;">
-        👇 궁금한 거 골라봐 (3초면 끝)
-    </p>
+        letter-spacing: 2px;
+    ">무엇이 궁금하신가요?</p>
 </div>
     
     <!-- 파티 일정 표시 -->
