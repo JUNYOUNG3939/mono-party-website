@@ -4418,9 +4418,14 @@ window.toggleChatbot = function() {
         });
     }
     // 페이지 네비게이션 함수들
+// 페이지 네비게이션 함수들
 function scrollToMain() {
     document.getElementById('introPage').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
+    
+    // 네비게이션 숨기기
+    document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('mobileBottomNav').style.display = 'none';
     
     // 파티 일정 즉시 로드
     setTimeout(() => {
@@ -4435,17 +4440,53 @@ function backToIntro() {
     document.getElementById('introPage').style.display = 'block';
     document.getElementById('backButton').style.display = 'none';
     
+    // 네비게이션 숨기기
+    document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('mobileBottomNav').style.display = 'none';
+    
     // 모든 섹션 숨기기
     document.querySelectorAll('.section').forEach(section => {
         section.style.display = 'none';
     });
 }
 
+// 메인으로 돌아가기 함수 추가
+function goToMain() {
+    // 모든 섹션 숨기기
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // 인트로 숨기기
+    document.getElementById('introPage').style.display = 'none';
+    
+    // 메인 페이지 표시
+    document.getElementById('mainPage').style.display = 'block';
+    
+    // 네비게이션 숨기기
+    document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('mobileBottomNav').style.display = 'none';
+    
+    // 뒤로가기 버튼 숨기기
+    document.getElementById('backButton').style.display = 'none';
+    
+    // 파티 일정 로드
+    loadPartyDatesForIntro();
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 퀵 카테고리 보기 함수 추가
+function showQuickCategory(category) {
+    // 카테고리 표시 함수 재사용
+    showCategory(category);
+}
+
 function showCategory(category) {
     // 메인 페이지 숨기기
     document.getElementById('mainPage').style.display = 'none';
     
-    // ⭐️ 네비게이션 표시 추가 ⭐️
+    // 네비게이션 표시
     document.getElementById('floatingNav').style.display = 'block';
     if (window.innerWidth <= 768) {
         document.getElementById('mobileBottomNav').style.display = 'block';
@@ -4503,6 +4544,10 @@ function backToMain() {
     // 메인 페이지 표시
     document.getElementById('mainPage').style.display = 'block';
     
+    // 네비게이션 숨기기
+    document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('mobileBottomNav').style.display = 'none';
+    
     // 뒤로가기 버튼 텍스트 변경
     document.getElementById('backButton').onclick = function() {
         backToIntro();
@@ -4510,7 +4555,6 @@ function backToMain() {
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 // 인트로용 파티 일정 로드
 // 인트로용 파티 일정 로드 - 완전 수정 버전
 async function loadPartyDatesForIntro() {
@@ -5641,6 +5685,25 @@ document.addEventListener('DOMContentLoaded', function() {
             scrollToMain();
         });
     });
+});
+</script>
+    <script>
+// 전역 함수로 등록 (혹시 누락된 경우를 대비)
+window.goToMain = goToMain;
+window.showQuickCategory = showQuickCategory;
+window.showCategory = showCategory;
+window.backToMain = backToMain;
+window.backToIntro = backToIntro;
+window.scrollToMain = scrollToMain;
+
+// 페이지 로드 후 초기화
+document.addEventListener('DOMContentLoaded', function() {
+    // 초기 상태: 네비게이션 숨기기
+    document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('mobileBottomNav').style.display = 'none';
+    
+    // 뒤로가기 버튼 초기 숨김
+    document.getElementById('backButton').style.display = 'none';
 });
 </script>
 </body>
