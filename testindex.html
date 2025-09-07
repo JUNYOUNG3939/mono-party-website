@@ -1409,19 +1409,16 @@
     justify-content: center;
 ">
 <!-- 프리미엄 배경 효과 -->
-<div class="premium-bg-wrapper">
-    <!-- 그라디언트 오버레이 -->
-    <div style="
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: radial-gradient(ellipse at center, rgba(0, 255, 136, 0.15) 0%, transparent 40%),
-                    radial-gradient(ellipse at top right, rgba(255, 0, 102, 0.15) 0%, transparent 40%),
-                    radial-gradient(ellipse at bottom left, rgba(0, 229, 255, 0.15) 0%, transparent 40%);
-        z-index: 1;
-    "></div>
+<!-- 프리미엄 배경 효과 -->
+<div class="premium-bg-wrapper" style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+"></div>
     
     <!-- 움직이는 광선 효과 -->
     <div class="light-beams">
@@ -1530,21 +1527,26 @@
             "></div>
         </p>
         
-        <!-- CTA 버튼 -->
-        <button onclick="scrollToMain()" class="premium-button" style="
-            padding: 20px 60px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border: none;
-            border-radius: 50px;
-            color: #000;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.4);
-        ">
-            <span style="position: relative; z-index: 2;">ENTER EXPERIENCE</span>
-        </button>
+<!-- CTA 버튼 -->
+<button onclick="scrollToMain()" class="premium-button" style="
+    padding: 20px 60px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    color: #000;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 10px 40px rgba(0, 255, 136, 0.4);
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+    display: inline-block;
+">
+    <span style="position: relative; z-index: 2; pointer-events: none;">ENTER EXPERIENCE</span>
+</button>
+        
         
         <!-- 스크롤 인디케이터 -->
         <div style="
@@ -4737,6 +4739,31 @@ document.querySelectorAll('.category-card').forEach(card => {
         
         card.style.setProperty('--mouse-x', `${x}%`);
         card.style.setProperty('--mouse-y', `${y}%`);
+    });
+});
+</script>
+    <script>
+// scrollToMain 함수 재정의 (안전장치)
+window.scrollToMain = function() {
+    console.log('버튼 클릭됨!'); // 디버깅용
+    document.getElementById('introPage').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'block';
+    loadPartyDatesForIntro(); // 파티 일정 로드
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 버튼에 이벤트 리스너 직접 추가 (백업)
+document.addEventListener('DOMContentLoaded', function() {
+    const premiumButtons = document.querySelectorAll('.premium-button');
+    premiumButtons.forEach(button => {
+        button.style.cursor = 'pointer';
+        button.style.pointerEvents = 'auto';
+        
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            scrollToMain();
+        });
     });
 });
 </script>
