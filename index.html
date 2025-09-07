@@ -3254,6 +3254,7 @@ function updateViewerCount() {
         }
         
 // 파티 날짜 불러오기
+// 🟢 새 코드로 완전히 교체
 async function loadPartyDates() {
     try {
         const { data, error } = await supabaseClient
@@ -3280,32 +3281,37 @@ async function loadPartyDates() {
                 const isSaturday = date.getDay() === 6;
                 const borderColor = isSaturday ? 'var(--neon-pink)' : 'var(--neon-accent)';
                 
-                // 실제 잔여석 계산 - 데이터베이스에서 가져온 값 사용
-                const remainingSeats = party.remaining_seats !== undefined ? party.remaining_seats : 70;
-                const maxCapacity = party.max_capacity || 70;
-                const occupancyRate = ((maxCapacity - remainingSeats) / maxCapacity) * 100;
+                // 남녀 잔여석 계산
+                const maleRemaining = party.male_remaining_seats !== undefined ? party.male_remaining_seats : 35;
+                const femaleRemaining = party.female_remaining_seats !== undefined ? party.female_remaining_seats : 35;
+                const maleMax = party.male_max_capacity || 35;
+                const femaleMax = party.female_max_capacity || 35;
                 
-                // 잔여석에 따른 상태 표시
-                let seatStatusColor = 'var(--neon-accent)';
-                let seatStatusText = `잔여 ${remainingSeats}석`;
+                // 전체 잔여석 (호환성 유지)
+                const totalRemaining = maleRemaining + femaleRemaining;
+                const totalMax = maleMax + femaleMax;
+                
+                // 남녀 점유율 계산
+                const maleOccupancyRate = ((maleMax - maleRemaining) / maleMax) * 100;
+                const femaleOccupancyRate = ((femaleMax - femaleRemaining) / femaleMax) * 100;
+                
+                // 매진 여부 체크
+                const isSoldOut = maleRemaining === 0 && femaleRemaining === 0;
+                const isAlmostFull = totalRemaining <= 10 && totalRemaining > 0;
+                const isHot = totalRemaining <= 20 && totalRemaining > 10;
+                
+                // 긴급도 배지
                 let urgencyBadge = '';
-                
-                if (remainingSeats === 0) {
-                    seatStatusColor = 'var(--neon-pink)';
-                    seatStatusText = '🔥 마감';
+                if (isSoldOut) {
                     urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: var(--neon-pink); color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700;">SOLD OUT</div>';
-                } else if (remainingSeats <= 5) {
-                    seatStatusColor = 'var(--neon-pink)';
-                    seatStatusText = `🔥 마감임박! ${remainingSeats}석`;
+                } else if (isAlmostFull) {
                     urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: var(--neon-pink); color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700; animation: pulse 1s infinite;">마감임박</div>';
-                } else if (remainingSeats <= 10) {
-                    seatStatusColor = '#ffaa00';
-                    seatStatusText = `⚡ 잔여 ${remainingSeats}석`;
+                } else if (isHot) {
                     urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: #ffaa00; color: var(--bg-primary); padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700;">HOT</div>';
                 }
                 
                 return `
-                    <div class="party-card ${isSaturday ? 'saturday' : ''}" style="border-color: ${borderColor}; position: relative; ${remainingSeats === 0 ? 'opacity: 0.7; pointer-events: none;' : ''}">
+                    <div class="party-card ${isSaturday ? 'saturday' : ''}" style="border-color: ${borderColor}; position: relative; ${isSoldOut ? 'opacity: 0.7; pointer-events: none;' : ''}">
                         ${urgencyBadge}
                         <div style="font-size: 2.5rem; margin-bottom: 10px;">
                             ${isSaturday ? '🎉' : '✨'}
@@ -3316,15 +3322,44 @@ async function loadPartyDates() {
                         <div style="font-size: 1.2rem; color: var(--text-secondary); margin-top: 5px;">
                             ${dayOfWeek}요일
                         </div>
+                        
+                        <!-- 남녀 잔여석 표시 -->
                         <div style="margin-top: 15px;">
-                            <div style="background: rgba(255, 255, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px; margin-bottom: 10px;">
-                                <div style="background: ${seatStatusColor}; height: 100%; width: ${occupancyRate}%; transition: all 0.3s ease;"></div>
+                            <!-- 남성 잔여석 -->
+                            <div style="margin-bottom: 8px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                                    <span style="color: #00e5ff; font-size: 0.85rem; font-weight: 600;">♂ 남성</span>
+                                    <span style="color: ${maleRemaining <= 5 ? 'var(--neon-pink)' : maleRemaining <= 10 ? '#ffaa00' : 'var(--text-secondary)'}; font-size: 0.85rem; font-weight: 600;">
+                                        ${maleRemaining === 0 ? '마감' : `${maleRemaining}/${maleMax}석`}
+                                    </span>
+                                </div>
+                                <div style="background: rgba(0, 229, 255, 0.1); border-radius: 5px; overflow: hidden; height: 6px;">
+                                    <div style="background: #00e5ff; height: 100%; width: ${maleOccupancyRate}%; transition: all 0.3s ease;"></div>
+                                </div>
                             </div>
-                            <div style="padding: 8px; background: rgba(0, 255, 136, 0.1); border-radius: 20px; border: 1px solid ${seatStatusColor};">
-                                <span style="color: ${seatStatusColor}; font-size: 0.9rem; font-weight: 600;">${seatStatusText}</span>
+                            
+                            <!-- 여성 잔여석 -->
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                                    <span style="color: #ff0066; font-size: 0.85rem; font-weight: 600;">♀ 여성</span>
+                                    <span style="color: ${femaleRemaining <= 5 ? 'var(--neon-pink)' : femaleRemaining <= 10 ? '#ffaa00' : 'var(--text-secondary)'}; font-size: 0.85rem; font-weight: 600;">
+                                        ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}/${femaleMax}석`}
+                                    </span>
+                                </div>
+                                <div style="background: rgba(255, 0, 102, 0.1); border-radius: 5px; overflow: hidden; height: 6px;">
+                                    <div style="background: #ff0066; height: 100%; width: ${femaleOccupancyRate}%; transition: all 0.3s ease;"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- 전체 잔여석 요약 -->
+                            <div style="margin-top: 10px; padding: 8px; background: rgba(0, 255, 136, 0.1); border-radius: 20px; border: 1px solid ${totalRemaining <= 10 ? 'var(--neon-pink)' : totalRemaining <= 20 ? '#ffaa00' : 'var(--neon-accent)'}; text-align: center;">
+                                <span style="color: ${totalRemaining <= 10 ? 'var(--neon-pink)' : totalRemaining <= 20 ? '#ffaa00' : 'var(--neon-accent)'}; font-size: 0.9rem; font-weight: 700;">
+                                    ${isSoldOut ? '🔥 매진' : totalRemaining <= 5 ? `🔥 총 ${totalRemaining}석 남음!` : `전체 ${totalRemaining}/${totalMax}석`}
+                                </span>
                             </div>
                         </div>
-                        ${remainingSeats === 0 ? '<div style="margin-top: 10px; color: var(--text-secondary); font-size: 0.85rem;">다음 파티를 기다려주세요!</div>' : ''}
+                        
+                        ${isSoldOut ? '<div style="margin-top: 10px; color: var(--text-secondary); font-size: 0.85rem; text-align: center;">다음 파티를 기다려주세요!</div>' : ''}
                     </div>
                 `;
             }).join('');
