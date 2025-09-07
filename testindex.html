@@ -1175,7 +1175,70 @@
 .main-page {
     animation: slideIn 0.5s ease;
 }
-</style>
+/* 네비게이션 버튼 스타일 */
+.nav-btn:hover {
+    background: rgba(0, 255, 136, 0.1) !important;
+    border-color: var(--neon-accent) !important;
+    transform: translateY(-2px);
+}
+
+.section-nav-btn {
+    padding: 12px 30px;
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.section-nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+}
+
+.mobile-nav-btn:active {
+    transform: scale(0.95);
+}
+
+/* 네비게이션 애니메이션 */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    #floatingNav {
+        bottom: 70px !important;
+        padding: 10px 15px !important;
+        width: calc(100% - 40px);
+        max-width: 400px;
+    }
+    
+    #floatingNav .nav-btn {
+        padding: 8px 15px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    /* 챗봇 버튼 위치 조정 */
+    #chatbotContainer {
+        bottom: 140px !important;
+    }
+}
+
+@media (min-width: 769px) {
+    #mobileBottomNav {
+        display: none !important;
+    }
+}
+    </style>
 
 
 </head>
@@ -1206,6 +1269,163 @@
     <div id="notificationContainer" style="position: fixed; top: 70px; right: 20px; z-index: 1000; max-width: 300px;">
         <!-- 알림이 여기에 추가됩니다 -->
     </div>
+    <!-- 플로팅 네비게이션 메뉴 -->
+<div id="floatingNav" style="
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9998;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid var(--neon-accent);
+    border-radius: 30px;
+    padding: 15px 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
+    display: none;
+    animation: slideUp 0.3s ease;
+">
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <button onclick="goToMain()" class="nav-btn" style="
+            background: transparent;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--neon-accent);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        ">🏠 메인</button>
+        
+        <button onclick="showQuickCategory('party-intro')" class="nav-btn" style="
+            background: transparent;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        ">🎉 파티소개</button>
+        
+        <button onclick="showQuickCategory('reviews')" class="nav-btn" style="
+            background: transparent;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        ">💬 후기</button>
+        
+        <button onclick="showQuickCategory('seats')" class="nav-btn" style="
+            background: transparent;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        ">🎟️ 잔여석</button>
+    </div>
+</div>
+
+<!-- 모바일용 하단 네비게이션 -->
+<div id="mobileBottomNav" style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9997;
+    background: rgba(0, 0, 0, 0.98);
+    border-top: 1px solid var(--neon-accent);
+    padding: 10px 0;
+    backdrop-filter: blur(10px);
+    display: none;
+">
+    <div style="display: flex; justify-content: space-around; align-items: center;">
+        <button onclick="goToMain()" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--neon-accent);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">🏠</span>
+            <span style="font-size: 0.7rem;">메인</span>
+        </button>
+        
+        <button onclick="showQuickCategory('party-intro')" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">🎉</span>
+            <span style="font-size: 0.7rem;">파티</span>
+        </button>
+        
+        <button onclick="showQuickCategory('gallery')" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">📸</span>
+            <span style="font-size: 0.7rem;">갤러리</span>
+        </button>
+        
+        <button onclick="showQuickCategory('seats')" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">🎟️</span>
+            <span style="font-size: 0.7rem;">예약</span>
+        </button>
+        
+        <button onclick="openApplicationModal()" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--neon-pink);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">✨</span>
+            <span style="font-size: 0.7rem;">신청</span>
+        </button>
+    </div>
+</div>
 <!-- YouTube 음악 플레이어 시작 -->
     <div id="youtubePlayer" style="
         position: fixed;
@@ -1573,6 +1793,42 @@
             </div>
         </div>
     </div>
+<!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
 </section>
 
 <style>
@@ -1828,6 +2084,42 @@
             <p style="color: var(--text-secondary); font-size: 0.9rem;">Q&A</p>
         </div>
     </div>
+    <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
 </section>    
     <!-- Why MONO PARTY Section -->
     <section class="section" id="whyMonoParty" style="display: none; background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);">
@@ -1869,6 +2161,42 @@
                 </p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Visual Experience Section -->
@@ -1900,6 +2228,42 @@
                 </div>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Dopamine Rush Section -->
@@ -1958,6 +2322,42 @@
                 <p style="font-size: 0.95rem; color: var(--text-secondary);">- 실제 참가자 후기</p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Concept Section -->
@@ -1992,6 +2392,42 @@
                 </p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Flow Section -->
@@ -2023,6 +2459,42 @@
                 <p>2부에서 만나는<br>진짜 연결의 가능성</p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Features Section -->
@@ -2078,6 +2550,42 @@
                 <p>파티 후에도 이어지는 인연</p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Testimonials Section -->
@@ -2109,6 +2617,42 @@
                 <p>소개팅은 부담스럽고 클럽은 시끄러운데, 여기는 딱 제가 원하던 분위기예요!</p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Video Section with TOP 3 -->
@@ -2264,6 +2808,42 @@
                 </div>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Host Introduction Section -->
@@ -2416,6 +2996,42 @@
                 </div>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Real Party Gallery Section -->
@@ -2514,6 +3130,42 @@
                 <a href="application.html" class="cta-button neon-glow">지금 바로 참가 신청하기</a>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Space Gallery Section -->
@@ -2540,7 +3192,42 @@
                 </svg>
                 @mono_party_ 인스타그램 보기
             </a>
-        </div>
+        </div><!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- 파티 일정 섹션 (새로 추가) -->
@@ -2561,6 +3248,42 @@
             <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">지금 참가 신청하기</a>
 
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- FAQ Section -->
@@ -2610,7 +3333,42 @@
                     보통 전체 인원의 50-60%가 2부까지 함께해요.
                 </p>
             </div>
-        </div>
+        </div><!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Special Offer Section -->
@@ -2654,6 +3412,42 @@
                 <span style="color: var(--text-secondary);">매회차 마감되니 서둘러 신청하세요!</span>
             </p>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Info Section -->
@@ -2701,6 +3495,42 @@
         <div style="text-align: center; margin-top: 50px;">
             <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">지금 참가 신청하기</a>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     <!-- AI 챗봇 시작 -->
 <div id="chatbotContainer" style="
@@ -3614,6 +4444,12 @@ function backToIntro() {
 function showCategory(category) {
     // 메인 페이지 숨기기
     document.getElementById('mainPage').style.display = 'none';
+    
+    // ⭐️ 네비게이션 표시 추가 ⭐️
+    document.getElementById('floatingNav').style.display = 'block';
+    if (window.innerWidth <= 768) {
+        document.getElementById('mobileBottomNav').style.display = 'block';
+    }
     
     // 모든 섹션 먼저 숨기기
     document.querySelectorAll('.section').forEach(section => {
