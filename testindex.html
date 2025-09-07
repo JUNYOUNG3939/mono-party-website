@@ -8,7 +8,7 @@
     <title>MONO PARTY | 감정이 흐르는 무드 파티</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@300;400;600;800;900&family=Nanum+Myeongjo:wght@400;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Playfair+Display:wght@400;700;900&display=swap');
         
         * {
             margin: 0;
@@ -18,9 +18,9 @@
         }
         
         :root {
-    --neon-accent: #ffffff;  /* 흰색으로 변경 */
-    --neon-pink: #888888;    /* 회색으로 변경 */
-    --neon-blue: #cccccc;    /* 밝은 회색 */
+    --neon-accent: #00ff88;
+    --neon-pink: #ff0066;
+    --neon-blue: #00e5ff;
     --text-primary: #ffffff;
     --text-secondary: #999999;
     --bg-primary: #000000;
@@ -124,7 +124,7 @@
 }
         
         body {
-            font-family: ''Montserrat', 'Nanum Myeongjo', sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-primary);
             overflow-x: hidden;
@@ -1472,138 +1472,81 @@
 </div>
     
     <!-- 인트로 콘텐츠 -->
-    <!-- 인트로 콘텐츠 -->
-<div style="position: relative; z-index: 2; text-align: center; padding: 20px;">
-    
-    <!-- 미니멀한 경고 -->
-    <div style="margin-bottom: 30px;">
-        <span style="
-            color: #ffffff;
-            font-size: clamp(0.8rem, 2vw, 1rem);
-            font-weight: 300;
-            letter-spacing: 5px;
-            opacity: 0.5;
-            font-family: 'Montserrat', sans-serif;
-        ">BLACK OR WHITE ONLY</span>
-    </div>
-    
-    <!-- 메인 로고 - 흑백 -->
-    <h1 style="
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: clamp(4rem, 12vw, 10rem); 
-        margin-bottom: 20px;
-        letter-spacing: 0.3em;
-        color: #ffffff;
-        text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+    <div style="
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        padding: 20px;
     ">
-        MONO PARTY
-    </h1>
-    
-    <!-- 시크한 서브타이틀 -->
-    <div style="margin-bottom: 40px;">
-        <p style="
-            font-size: clamp(1.2rem, 3vw, 2rem);
-            font-weight: 100;
-            margin-bottom: 20px;
-            font-family: 'Montserrat', sans-serif;
-            color: #999999;
-            letter-spacing: 2px;
+        <!-- 프리미엄 로고 -->
+        <div class="logo-wrapper" style="position: relative; display: inline-block;">
+            <h1 class="logo floating neon-text-premium" style="
+                font-size: clamp(3rem, 10vw, 8rem); 
+                margin-bottom: 30px;
+                position: relative;
+                z-index: 2;
+            ">
+                MONO PARTY
+            </h1>
+            <!-- 로고 백라이트 효과 -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 120%;
+                height: 120%;
+                background: radial-gradient(circle, rgba(0, 255, 136, 0.4) 0%, transparent 60%);
+                filter: blur(40px);
+                z-index: 1;
+                animation: glow-pulse 3s ease-in-out infinite;
+            "></div>
+        </div>
+        
+        <!-- 서브타이틀 -->
+        <p class="glass-effect" style="
+            display: inline-block;
+            font-size: clamp(1.2rem, 3vw, 2rem); 
+            color: var(--neon-accent); 
+            margin-bottom: 50px;
+            padding: 15px 40px;
+            border-radius: 50px;
+            position: relative;
+            overflow: hidden;
         ">
-            <span style="color: #ffffff;">검은 옷을 입은 70명</span><br>
-            <span style="color: #666666;">
-                새벽까지 헤어지지 못하는 이유
-            </span>
+            <span style="position: relative; z-index: 2;">Black or White, 감정이 흐르는 무드 파티</span>
+            <!-- 쉬머 효과 -->
+            <div style="
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+                animation: shimmer 3s infinite;
+            "></div>
         </p>
         
-        <!-- 미니멀한 통계 -->
-        <div style="
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin: 40px 0;
-            flex-wrap: wrap;
-        ">
-            <div style="text-align: center;">
-                <div style="
-                    font-size: 2rem;
-                    font-weight: 100;
-                    color: #ffffff;
-                    font-family: 'Montserrat', sans-serif;
-                ">87%</div>
-                <div style="font-size: 0.7rem; color: #444; letter-spacing: 2px;">RETURN</div>
-            </div>
-            <div style="text-align: center;">
-                <div style="
-                    font-size: 2rem;
-                    font-weight: 100;
-                    color: #ffffff;
-                    font-family: 'Montserrat', sans-serif;
-                ">3-5</div>
-                <div style="font-size: 0.7rem; color: #444; letter-spacing: 2px;">CONTACTS</div>
-            </div>
-            <div style="text-align: center;">
-                <div style="
-                    font-size: 2rem;
-                    font-weight: 100;
-                    color: #ffffff;
-                    font-family: 'Montserrat', sans-serif;
-                ">99%</div>
-                <div style="font-size: 0.7rem; color: #444; letter-spacing: 2px;">SATISFIED</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 미니멀한 설명 -->
-    <div style="
-        display: inline-block;
-        padding: 30px 50px;
-        border: 1px solid #222;
-        margin-bottom: 40px;
-    ">
-        <p style="
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            line-height: 2;
-            font-weight: 300;
-            color: #666;
-            letter-spacing: 1px;
-        ">
-            소개팅도 아니고<br>
-            클럽도 아닌<br>
-            <span style="color: #ffffff; font-weight: 500;">무채색 감성의 무드 파티</span>
-        </p>
-    </div>
-    
-    <!-- 미니멀한 CTA 버튼 -->
-    <button onclick="scrollToMain()" style="
-        padding: 20px 60px;
-        font-size: 1rem;
-        font-weight: 300;
-        font-family: 'Montserrat', sans-serif;
-        letter-spacing: 3px;
-        background: #000;
-        color: #fff;
-        border: 1px solid #333;
-        cursor: pointer;
-        transition: all 0.5s ease;
-        position: relative;
-    " 
-    onmouseover="this.style.background='#fff'; this.style.color='#000';"
-    onmouseout="this.style.background='#000'; this.style.color='#fff';">
-        ENTER
-    </button>
-    
-    <!-- 미니멀한 인디케이터 -->
-    <div style="margin-top: 40px;">
-        <p style="
-            color: #333;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            font-weight: 300;
-        ">
-            SCROLL TO EXPLORE
-        </p>
-    </div>
-</div>    
+<!-- CTA 버튼 -->
+<button onclick="scrollToMain()" class="premium-button" style="
+    padding: 20px 60px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 50px;
+    color: #000;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 10px 40px rgba(0, 255, 136, 0.4);
+    position: relative;
+    z-index: 10;
+    pointer-events: auto;
+    display: inline-block;
+">
+    <span style="position: relative; z-index: 2; pointer-events: none;">ENTER EXPERIENCE</span>
+</button>
+        
         
         <!-- 스크롤 인디케이터 -->
         <div style="
@@ -1670,25 +1613,10 @@
     </button>
 
     <!-- 헤더 -->
-<!-- 헤더 부분 변경 -->
-<div style="text-align: center; margin-bottom: 50px;">
-    <h2 style="
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: clamp(3rem, 8vw, 5rem);
-        letter-spacing: 0.2em;
-        margin-bottom: 20px;
-        color: #ffffff;
-        text-shadow: none;
-    ">MONO PARTY</h2>
-    
-    <p style="
-        font-size: clamp(1rem, 2vw, 1.3rem);
-        font-weight: 300;
-        color: #666;
-        margin-bottom: 10px;
-        letter-spacing: 2px;
-    ">무엇이 궁금하신가요?</p>
-</div>
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h2 class="section-title">MONO PARTY</h2>
+        <p style="color: var(--text-secondary);">원하시는 정보를 선택해주세요</p>
+    </div>
     
     <!-- 파티 일정 표시 -->
 <div id="upcomingPartiesIntro" style="
@@ -1825,8 +1753,8 @@
             transition: all 0.3s ease;
         ">
             <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
- <h3 style="color: var(--neon-accent); margin-bottom: 10px;">도대체 뭔 파티야?</h3>
-    <p style="color: var(--text-secondary); font-size: 0.9rem;">3분 요약 🔥</p>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">파티 소개</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">정보 & 컨텐츠</p>
         </div>
         
         <!-- 호스트 소개 -->
