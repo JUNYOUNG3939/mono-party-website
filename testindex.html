@@ -1544,9 +1544,43 @@
 </div>
         
         
-
+        <!-- 스크롤 인디케이터 -->
+        <div style="
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        ">
+            <div style="
+                width: 30px;
+                height: 50px;
+                border: 2px solid var(--neon-accent);
+                border-radius: 25px;
+                position: relative;
+            ">
+                <div style="
+                    width: 4px;
+                    height: 10px;
+                    background: var(--neon-accent);
+                    border-radius: 2px;
+                    position: absolute;
+                    top: 10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    animation: scroll-down 1.5s infinite;
+                "></div>
+            </div>
+        </div>
+    </div>
 </section>
 
+<style>
+    @keyframes scroll-down {
+        0% { top: 10px; opacity: 1; }
+        100% { top: 30px; opacity: 0; }
+    }
+</style>
 <!-- 메인 페이지 (카테고리 선택) -->
 <section id="mainPage" class="main-page" style="
     min-height: 100vh;
@@ -1555,7 +1589,7 @@
     display: none;
 ">
     <!-- 뒤로가기 버튼 -->
-    <button id="backButton" onclick="handleBackButton()" style="
+    <button id="backButton" onclick="backToIntro()" style="
         position: fixed;
         top: 20px;
         left: 20px;
@@ -3553,18 +3587,10 @@ window.toggleChatbot = function() {
             }
         });
     }
-    
     // 페이지 네비게이션 함수들
 function scrollToMain() {
     document.getElementById('introPage').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
-    
-    currentPage = 'main'; // 추가
-    
-    // 뒤로가기 버튼 표시 및 설정
-    const backBtn = document.getElementById('backButton');
-    backBtn.style.display = 'flex';
-    backBtn.onclick = handleBackButton; // 수정
     
     // 파티 일정 즉시 로드
     setTimeout(() => {
@@ -3578,19 +3604,17 @@ function backToIntro() {
     document.getElementById('mainPage').style.display = 'none';
     document.getElementById('introPage').style.display = 'block';
     document.getElementById('backButton').style.display = 'none';
-    currentPage = 'intro'; // 추가
-
+    
     // 모든 섹션 숨기기
     document.querySelectorAll('.section').forEach(section => {
         section.style.display = 'none';
     });
-      window.scrollTo({ top: 0, behavior: 'smooth'); // 추가
 }
 
 function showCategory(category) {
     // 메인 페이지 숨기기
     document.getElementById('mainPage').style.display = 'none';
-    currentPage = 'category'; // 추가
+    
     // 모든 섹션 먼저 숨기기
     document.querySelectorAll('.section').forEach(section => {
         section.style.display = 'none';
@@ -3625,13 +3649,15 @@ function showCategory(category) {
             break;
     }
     
-// 뒤로가기 버튼 표시 및 설정
-    const backBtn = document.getElementById('backButton');
-    backBtn.style.display = 'flex';
-    backBtn.onclick = handleBackButton; // 수정
+    // 뒤로가기 버튼 표시
+    document.getElementById('backButton').style.display = 'flex';
+    document.getElementById('backButton').onclick = function() {
+        backToMain();
+    };
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 function backToMain() {
     // 모든 섹션 숨기기
     document.querySelectorAll('.section').forEach(section => {
@@ -3641,12 +3667,10 @@ function backToMain() {
     // 메인 페이지 표시
     document.getElementById('mainPage').style.display = 'block';
     
-    currentPage = 'main'; // 추가
-    
-    // 뒤로가기 버튼 유지
-    const backBtn = document.getElementById('backButton');
-    backBtn.style.display = 'flex';
-    backBtn.onclick = handleBackButton; // 수정
+    // 뒤로가기 버튼 텍스트 변경
+    document.getElementById('backButton').onclick = function() {
+        backToIntro();
+    };
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -3858,23 +3882,6 @@ document.head.appendChild(style);
         }
     });
 </script>
-<script>
-// 현재 페이지 위치 추적
-let currentPage = 'intro'; // 'intro', 'main', 'category' 중 하나
-
-// 통합된 뒤로가기 함수
-function handleBackButton() {
-    console.log('현재 페이지:', currentPage);
-    
-    if (currentPage === 'category') {
-        // 카테고리에서 메인으로
-        backToMain();
-    } else if (currentPage === 'main') {
-        // 메인에서 인트로로
-        backToIntro();
-    }
-}
-</script>    
 <!-- AI 챗봇 끝 -->
     
     <!-- Footer -->
