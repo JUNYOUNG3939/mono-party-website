@@ -3206,9 +3206,19 @@ async function loadPartyDatesForIntro() {
                             ${month}/${day}
                         </div>
                         <div style="color: var(--text-secondary);">${dayOfWeek}요일</div>
-                        <div style="margin-top: 10px; color: ${remainingSeats > 10 ? 'var(--neon-accent)' : 'var(--neon-pink)'};">
-                            잔여 ${remainingSeats}석
-                        </div>
+<div style="margin-top: 10px; color: ${
+    remainingSeats === 0 ? 'var(--neon-pink)' :
+    remainingSeats <= 5 ? '#ff0066' :
+    remainingSeats <= 10 ? '#ffaa00' :
+    'var(--neon-accent)'
+};">
+    ${
+        remainingSeats === 0 ? '🔥 마감완료' :
+        remainingSeats <= 5 ? `🚨 마감임박! ${remainingSeats}석` :
+        remainingSeats <= 10 ? `⚡ ${remainingSeats}석` :
+        `잔여 ${remainingSeats}석`
+    }
+</div>
                     </div>
                 `;
             }).join('');
