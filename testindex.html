@@ -3258,23 +3258,6 @@ window.toggleChatbot = function() {
             }
         });
     }
-    // ⭐ 페이지 네비게이션 함수들을 전역으로 설정
-window.navigateTo = function(page) {
-    console.log('Navigating to:', page); // 디버깅용
-    
-    if (page === 'main') {
-        document.getElementById('introPage').style.display = 'none';
-        document.getElementById('mainPage').style.display = 'block';
-        
-        // 파티 일정 로드
-        if (typeof loadPartyDatesForIntro === 'function') {
-            loadPartyDatesForIntro();
-        }
-        
-        // 스크롤 맨 위로
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-}
 
 window.showPage = function(page) {
     // 모든 섹션 숨기기
@@ -3755,7 +3738,24 @@ async function loadPartyDatesForIntro() {
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmcmFtY2hyc2ZzcGt4cnB1Z2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0OTg1NDIsImV4cCI6MjA2OTA3NDU0Mn0.62tDcKGS8eVPC92MmO6mXyfNcM6QKiaRpydaBYKsum0';
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            // ⭐ 페이지 네비게이션 함수들을 전역으로 설정
+window.navigateTo = function(page) {
+    console.log('Navigating to:', page); // 디버깅용
+    
+    if (page === 'main') {
+        document.getElementById('introPage').style.display = 'none';
+        document.getElementById('mainPage').style.display = 'block';
         
+        // 파티 일정 로드
+        if (typeof loadPartyDatesForIntro === 'function') {
+            loadPartyDatesForIntro();
+        }
+        
+        // 스크롤 맨 위로
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
 // 실시간 조회 인원 업데이트
 function updateViewerCount() {
     const count = Math.floor(Math.random() * 100) + 1;
