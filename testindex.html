@@ -3258,6 +3258,108 @@ window.toggleChatbot = function() {
             }
         });
     }
+    // ⭐ 페이지 네비게이션 함수들을 전역으로 설정
+window.navigateTo = function(page) {
+    console.log('Navigating to:', page); // 디버깅용
+    
+    if (page === 'main') {
+        document.getElementById('introPage').style.display = 'none';
+        document.getElementById('mainPage').style.display = 'block';
+        
+        // 파티 일정 로드
+        if (typeof loadPartyDatesForIntro === 'function') {
+            loadPartyDatesForIntro();
+        }
+        
+        // 스크롤 맨 위로
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+window.showPage = function(page) {
+    // 모든 섹션 숨기기
+    document.querySelectorAll('.section, #introPage, #mainPage').forEach(el => {
+        el.style.display = 'none';
+    });
+    
+    // 선택한 페이지 표시
+    if (page === 'intro') {
+        document.getElementById('introPage').style.display = 'block';
+    } else if (page === 'main') {
+        document.getElementById('mainPage').style.display = 'block';
+        loadPartyDatesForIntro(); // 메인 페이지 표시시 파티 일정 로드
+    } else {
+        showCategory(page);
+    }
+}
+
+window.backToIntro = function() {
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('introPage').style.display = 'block';
+    document.getElementById('backButton').style.display = 'none';
+    
+    // 모든 섹션 숨기기
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+}
+
+// 인트로 파티 날짜 로드 함수도 전역화
+window.loadIntroPartyDates = async function() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('party_schedules')
+            .select('*')
+            .eq('is_active', true)
+            .gte('party_date', new Date().toISOString().split('T')[0])
+            .order('party_date', { ascending: true })
+            .limit(3);
+        
+        if (error) throw error;
+        
+        const container = document.getElementById('introPartyDates');
+        if (!container) return;
+        
+        if (data && data.length > 0) {
+            container.innerHTML = data.map(party => {
+                const date = new Date(party.party_date + 'T00:00:00');
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const dayOfWeek = dayNames[date.getDay()];
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                const remainingSeats = party.remaining_seats || 0;
+                
+                return `
+                    <div style="
+                        background: linear-gradient(135deg, #111 0%, #1a1a1a 100%);
+                        border: 2px solid ${remainingSeats <= 10 ? '#ff0066' : '#00ff88'};
+                        border-radius: 20px;
+                        padding: 25px;
+                        text-align: center;
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">
+                            ${date.getDay() === 6 ? '🎉' : '✨'}
+                        </div>
+                        <div style="font-size: 1.8rem; font-weight: 900; color: #00ff88;">
+                            ${month}월 ${day}일
+                        </div>
+                        <div style="color: #999; margin-bottom: 15px;">${dayOfWeek}요일</div>
+                        <div style="color: ${remainingSeats <= 10 ? '#ff0066' : '#00ff88'};">
+                            잔여 ${remainingSeats}석
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    } catch (error) {
+        console.error('Error loading intro party dates:', error);
+    }
+}
+
+// 페이지 로드시 인트로 날짜 자동 로드
+document.addEventListener('DOMContentLoaded', function() {
+    window.loadIntroPartyDates();
+});
     // 페이지 네비게이션 함수들
 function scrollToMain() {
     document.getElementById('introPage').style.display = 'none';
