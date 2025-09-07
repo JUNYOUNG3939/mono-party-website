@@ -5584,26 +5584,126 @@ document.querySelectorAll('.category-card').forEach(card => {
 </script>
     <script>
 // scrollToMain 함수 재정의 (안전장치)
+// 함수들을 window 객체에 명시적으로 할당
 window.scrollToMain = function() {
-    console.log('버튼 클릭됨!'); // 디버깅용
     document.getElementById('introPage').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
-    loadPartyDatesForIntro(); // 파티 일정 로드
+    
+    setTimeout(() => {
+        loadPartyDatesForIntro();
+    }, 100);
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// 버튼에 이벤트 리스너 직접 추가 (백업)
-document.addEventListener('DOMContentLoaded', function() {
-    const premiumButtons = document.querySelectorAll('.premium-button');
-    premiumButtons.forEach(button => {
-        button.style.cursor = 'pointer';
-        button.style.pointerEvents = 'auto';
+window.backToIntro = function() {
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('introPage').style.display = 'block';
+    document.getElementById('backButton').style.display = 'none';
+    
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+}
+
+window.showCategory = function(category) {
+    // 메인 페이지 숨기기
+    document.getElementById('mainPage').style.display = 'none';
+    
+    // 네비게이션 표시
+    document.getElementById('floatingNav').style.display = 'block';
+    if (window.innerWidth <= 768) {
+        document.getElementById('mobileBottomNav').style.display = 'block';
+    }
+    
+    // 모든 섹션 먼저 숨기기
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // 선택한 카테고리 표시
+    switch(category) {
+        case 'party-intro':
+            document.getElementById('whyMonoParty').style.display = 'block';
+            document.getElementById('conceptSection').style.display = 'block';
+            document.getElementById('flowSection').style.display = 'block';
+            document.getElementById('dopamineSection').style.display = 'block';
+            document.getElementById('featuresSection').style.display = 'block';
+            break;
+        case 'host-intro':
+            document.getElementById('hostSection').style.display = 'block';
+            break;
+        case 'reviews':
+            document.getElementById('testimonialsSection').style.display = 'block';
+            break;
+        case 'gallery':
+            document.getElementById('videoSection').style.display = 'block';
+            document.getElementById('gallerySection').style.display = 'block';
+            document.getElementById('spaceSection').style.display = 'block';
+            break;
+        case 'seats':
+            document.getElementById('partyScheduleSection').style.display = 'block';
+            loadPartyDates();
+            break;
+        case 'qna':
+            document.getElementById('faqSection').style.display = 'block';
+            break;
+    }
+    
+    // 뒤로가기 버튼 표시
+    document.getElementById('backButton').style.display = 'flex';
+    document.getElementById('backButton').onclick = function() {
+        backToMain();
+    };
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.backToMain = function() {
+    // 모든 섹션 숨기기
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // 메인 페이지 표시
+    document.getElementById('mainPage').style.display = 'block';
+    
+    // 뒤로가기 버튼 텍스트 변경
+    document.getElementById('backButton').onclick = function() {
+        backToIntro();
+    };
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+// 빠른 네비게이션 함수들
+window.showQuickCategory = function(category) {
+    showCategory(category);
+}
+
+window.goToMain = function() {
+    backToMain();
+}
         
-        button.addEventListener('click', function(e) {
+document.addEventListener('DOMContentLoaded', function() {
+    // 버튼 클릭 이벤트 백업 설정
+    const enterButton = document.querySelector('.premium-button');
+    if (enterButton) {
+        enterButton.onclick = function(e) {
             e.preventDefault();
-            e.stopPropagation();
             scrollToMain();
-        });
+        };
+    }
+    
+    // 카테고리 카드들에 이벤트 리스너 추가 (백업)
+    document.querySelectorAll('.category-card').forEach(card => {
+        const categoryType = card.getAttribute('onclick')?.match(/showCategory\('(.+?)'\)/)?.[1];
+        if (categoryType) {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', function(e) {
+                e.stopPropagation();
+                showCategory(categoryType);
+            });
+        }
     });
 });
 </script>
