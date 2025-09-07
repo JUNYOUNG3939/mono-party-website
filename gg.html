@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MONO PARTY | 일정 관리</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Playfair+Display:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --neon-accent: #00ff88;
+            --neon-pink: #ff0066;
+            --neon-blue: #00e5ff;
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-card: #111111;
+            --input-bg: #1a1a1a;
+            --input-border: #333333;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            color: var(--neon-accent);
+            text-shadow: 0 0 20px var(--neon-accent);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+        }
+        
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--neon-accent);
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+        
+        .calendar-container {
+            background: var(--input-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-month {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .calendar-nav-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-primary);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .calendar-nav-btn:hover {
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-secondary);
+            padding: 10px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .calendar-day:hover {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: var(--neon-accent);
+        }
+        
+        .calendar-day.selected {
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            font-weight: 700;
+        }
+        
+        .calendar-day.has-party {
+            border-color: var(--neon-pink);
+            background: rgba(255, 0, 102, 0.1);
+        }
+        
+        .calendar-day.has-party::after {
+            content: '🎉';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.8rem;
+        }
+        
+        .selected-dates {
+            background: var(--input-bg);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .date-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .date-item {
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .date-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+        
+        .date-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+        
+        .remaining-seats-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--input-bg);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid var(--input-border);
+        }
+        
+        .seats-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .seats-input {
+            width: 60px;
+            padding: 5px;
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            color: var(--neon-accent);
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .date-remove {
+            background: var(--neon-pink);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .date-remove:hover {
+            transform: scale(1.1);
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+        
+        .btn-danger {
+            background: var(--neon-pink);
+        }
+        
+        .btn-danger:hover {
+            box-shadow: 0 10px 30px rgba(255, 0, 102, 0.3);
+        }
+        
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .setting-item {
+            background: var(--input-bg);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .setting-label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+        
+        .setting-input {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--input-border);
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--neon-accent);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .status-message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .status-success {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--neon-accent);
+            color: var(--neon-accent);
+        }
+        
+        .status-error {
+            background: rgba(255, 0, 102, 0.1);
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+        }
+        
+        /* Login Screen */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        
+        .login-box {
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        
+        .login-input {
+            width: 100%;
+            padding: 15px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        
+        #mainContent {
+            display: none;
+        }
+        
+        /* Quick adjust buttons */
+        .quick-adjust {
+            display: flex;
+            gap: 5px;
+            margin-left: 10px;
+        }
+        
+        .quick-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            color: var(--text-secondary);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-btn:hover {
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            border-color: var(--neon-accent);
+        }
+        
+        @media (max-width: 768px) {
+            .date-item {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .date-info {
+                width: 100%;
+            }
+            
+            .remaining-seats-control {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div class="login-container" id="loginScreen">
+        <div class="login-box">
+            <h1 class="logo">MONO PARTY</h1>
+            <p style="color: var(--text-secondary); margin-bottom: 30px;">관리자 로그인</p>
+            <input type="password" class="login-input" id="passwordInput" placeholder="비밀번호를 입력하세요" onkeypress="if(event.keyCode==13) checkPassword()">
+            <button class="btn" onclick="checkPassword()" style="width: 100%;">로그인</button>
+            <p class="status-message status-error" id="loginError" style="margin-top: 15px;">비밀번호가 틀렸습니다.</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent">
+        <div class="container">
+            <div class="header">
+                <h1 class="logo">MONO PARTY</h1>
+                <p class="subtitle">파티 일정 관리 시스템</p>
+            </div>
+            
+            <!-- Calendar Section -->
+            <div class="section">
+                <h2 class="section-title">📅 파티 날짜 선택</h2>
+                
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div class="calendar-month" id="currentMonth">2025년 1월</div>
+                        <div class="calendar-nav">
+                            <button class="calendar-nav-btn" onclick="prevMonth()">◀</button>
+                            <button class="calendar-nav-btn" onclick="nextMonth()">▶</button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="calendarGrid">
+                        <!-- Calendar will be generated by JavaScript -->
+                    </div>
+                </div>
+                
+                <div class="selected-dates">
+                    <h3>선택된 파티 날짜 & 잔여석 관리</h3>
+                    <div class="date-list" id="selectedDatesList">
+                        <!-- Selected dates will appear here -->
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="savePartyDates()">날짜 및 잔여석 저장하기</button>
+                <button class="btn btn-danger" onclick="clearAllDates()" style="margin-left: 10px;">모든 날짜 초기화</button>
+            </div>
+            
+            <!-- Settings Section -->
+            <div class="section">
+                <h2 class="section-title">⚙️ 파티 설정</h2>
+                
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label class="setting-label">참가 신청 받기</label>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="registrationToggle" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    
+<!-- 수정된 코드로 교체 -->
+<div class="setting-item">
+    <label class="setting-label">기본 남성 정원 (새로 추가되는 날짜에 적용)</label>
+    <input type="number" class="setting-input" id="maleMaxCapacity" value="35" min="5" max="100">
+</div>
+
+<div class="setting-item">
+    <label class="setting-label">기본 여성 정원 (새로 추가되는 날짜에 적용)</label>
+    <input type="number" class="setting-input" id="femaleMaxCapacity" value="35" min="5" max="100">
+</div>
+                    
+                    <div class="setting-item">
+                        <label class="setting-label">공지사항 (선택사항)</label>
+                        <textarea class="setting-input" id="announcement" rows="3" placeholder="파티 관련 공지사항을 입력하세요"></textarea>
+                    </div>
+                </div>
+                
+                <button class="btn" onclick="saveSettings()" style="margin-top: 20px;">설정 저장하기</button>
+            </div>
+            
+            <!-- Simulation Section -->
+            <div class="section">
+                <h2 class="section-title">🎮 테스트 알림 발송</h2>
+                
+                <div class="settings-grid">
+                    <div class="setting-item">
+                        <label class="setting-label">테스트 참가 알림 보내기</label>
+                        <button class="btn" onclick="sendTestNotification()">랜덤 참가 알림 발송</button>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 10px;">
+                            메인 페이지에 "여성(25세) 방금 참가" 같은 알림이 표시됩니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status Messages -->
+            <div class="status-message status-success" id="successMessage">
+                ✅ 저장되었습니다!
+            </div>
+            
+            <div class="status-message status-error" id="errorMessage">
+                ❌ 오류가 발생했습니다.
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://wframchrsfspkxrpughn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmcmFtY2hyc2ZzcGt4cnB1Z2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0OTg1NDIsImV4cCI6MjA2OTA3NDU0Mn0.62tDcKGS8eVPC92MmO6mXyfNcM6QKiaRpydaBYKsum0';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Admin password
+        const ADMIN_PASSWORD = '1234';
+        
+        // Calendar variables
+        let currentYear = 2025;
+        let currentMonth = 0; // January
+        let selectedDates = new Map(); // Map to store date and remaining seats
+        let existingDatesFromDB = new Map(); // Store original DB data
+        const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+        const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+        
+        // Check password
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            if (input === ADMIN_PASSWORD) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                loadExistingDates();
+                loadSettings();
+                generateCalendar();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+        
+        // Load existing party dates
+        async function loadExistingDates() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('party_schedules')
+                    .select('*')
+                    .order('party_date', { ascending: true });
+                
+                if (error) throw error;
+                
+                selectedDates.clear();
+                existingDatesFromDB.clear();
+                
+                if (data) {
+                    data.forEach(item => {
+                        // Active인 것만 selectedDates에 추가
+// 다음과 같이 수정
+if (item.is_active) {
+    selectedDates.set(item.party_date, {
+        id: item.id,
+        male_remaining_seats: item.male_remaining_seats || 35,
+        female_remaining_seats: item.female_remaining_seats || 35,
+        male_max_capacity: item.male_max_capacity || 35,
+        female_max_capacity: item.female_max_capacity || 35
+    });
+}
+                        // 모든 기존 데이터를 별도로 저장
+                        existingDatesFromDB.set(item.party_date, {
+                            id: item.id,
+                            is_active: item.is_active
+                        });
+                    });
+                }
+                
+                updateSelectedDatesList();
+                generateCalendar();
+            } catch (error) {
+                console.error('Error loading dates:', error);
+                showMessage('error', '데이터 로드 중 오류가 발생했습니다.');
+            }
+        }
+        
+        // Load settings
+        async function loadSettings() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('party_settings')
+                    .select('*')
+                    .single();
+                
+                if (data) {
+                    document.getElementById('registrationToggle').checked = data.is_registration_open;
+                    document.getElementById('announcement').value = data.announcement_text || '';
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
+        }
+        
+        // Generate calendar
+        function generateCalendar() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            const currentMonthElement = document.getElementById('currentMonth');
+            
+            currentMonthElement.textContent = `${currentYear}년 ${monthNames[currentMonth]}`;
+            
+            // Clear calendar
+            calendarGrid.innerHTML = '';
+            
+            // Add day headers
+            dayNames.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day-header';
+                dayHeader.textContent = day;
+                calendarGrid.appendChild(dayHeader);
+            });
+            
+            // Get first day of month and number of days
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Add days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                // Check if date is selected
+                if (selectedDates.has(dateStr)) {
+                    dayElement.classList.add('has-party');
+                }
+                
+                // Check if date is in the past
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const currentDate = new Date(currentYear, currentMonth, day);
+                
+                if (currentDate >= today) {
+                    dayElement.addEventListener('click', () => toggleDate(dateStr));
+                } else {
+                    dayElement.style.opacity = '0.3';
+                    dayElement.style.cursor = 'not-allowed';
+                }
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+        
+        // Toggle date selection
+// 수정된 코드
+function toggleDate(dateStr) {
+    if (selectedDates.has(dateStr)) {
+        selectedDates.delete(dateStr);
+    } else {
+        const maleMaxCapacity = parseInt(document.getElementById('maleMaxCapacity').value) || 35;
+        const femaleMaxCapacity = parseInt(document.getElementById('femaleMaxCapacity').value) || 35;
+        const existingDate = existingDatesFromDB.get(dateStr);
+        
+        selectedDates.set(dateStr, {
+            id: existingDate?.id || null,
+            male_remaining_seats: maleMaxCapacity,
+            female_remaining_seats: femaleMaxCapacity,
+            male_max_capacity: maleMaxCapacity,
+            female_max_capacity: femaleMaxCapacity
+        });
+    }
+    generateCalendar();
+    updateSelectedDatesList();
+}
+        
+function updateMaleRemainingSeats(dateStr, value) {
+    if (selectedDates.has(dateStr)) {
+        const dateInfo = selectedDates.get(dateStr);
+        dateInfo.male_remaining_seats = parseInt(value) || 0;
+        selectedDates.set(dateStr, dateInfo);
+    }
+}
+
+function updateFemaleRemainingSeats(dateStr, value) {
+    if (selectedDates.has(dateStr)) {
+        const dateInfo = selectedDates.get(dateStr);
+        dateInfo.female_remaining_seats = parseInt(value) || 0;
+        selectedDates.set(dateStr, dateInfo);
+    }
+}
+        
+        // Quick adjust seats
+function quickAdjustMaleSeats(dateStr, adjustment) {
+    if (selectedDates.has(dateStr)) {
+        const dateInfo = selectedDates.get(dateStr);
+        const currentSeats = dateInfo.male_remaining_seats;
+        const newSeats = Math.max(0, Math.min(dateInfo.male_max_capacity, currentSeats + adjustment));
+        dateInfo.male_remaining_seats = newSeats;
+        selectedDates.set(dateStr, dateInfo);
+        document.getElementById(`male-seats-${dateStr}`).value = newSeats;
+    }
+}
+
+function quickAdjustFemaleSeats(dateStr, adjustment) {
+    if (selectedDates.has(dateStr)) {
+        const dateInfo = selectedDates.get(dateStr);
+        const currentSeats = dateInfo.female_remaining_seats;
+        const newSeats = Math.max(0, Math.min(dateInfo.female_max_capacity, currentSeats + adjustment));
+        dateInfo.female_remaining_seats = newSeats;
+        selectedDates.set(dateStr, dateInfo);
+        document.getElementById(`female-seats-${dateStr}`).value = newSeats;
+    }
+}
+        
+        // Update selected dates list
+        function updateSelectedDatesList() {
+            const list = document.getElementById('selectedDatesList');
+            list.innerHTML = '';
+            
+            const sortedDates = Array.from(selectedDates.keys()).sort();
+            
+            sortedDates.forEach(dateStr => {
+                const dateInfo = selectedDates.get(dateStr);
+                const dateItem = document.createElement('div');
+                dateItem.className = 'date-item';
+                
+                const date = new Date(dateStr + 'T00:00:00');
+                const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
+                
+// 🟢 새 코드로 완전히 교체
+dateItem.innerHTML = `
+    <div class="date-info" style="flex-direction: column; width: 100%;">
+        <span class="date-text" style="margin-bottom: 15px;">${dateStr} (${dayOfWeek})</span>
+        
+        <!-- 남성 잔여석 -->
+        <div class="remaining-seats-control" style="background: rgba(0, 229, 255, 0.1); margin-bottom: 10px;">
+            <span class="seats-label" style="color: #00e5ff; font-weight: 600;">♂ 남성:</span>
+            <input type="number" 
+                   class="seats-input" 
+                   id="male-seats-${dateStr}"
+                   value="${dateInfo.male_remaining_seats}" 
+                   min="0" 
+                   max="${dateInfo.male_max_capacity}"
+                   onchange="updateMaleRemainingSeats('${dateStr}', this.value)"
+                   style="background: rgba(0, 229, 255, 0.2);">
+            <span class="seats-label">/ ${dateInfo.male_max_capacity}명</span>
+            <div class="quick-adjust">
+                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', -5)">-5</button>
+                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', -1)">-1</button>
+                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', 1)">+1</button>
+                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', 5)">+5</button>
+            </div>
+        </div>
+        
+        <!-- 여성 잔여석 -->
+        <div class="remaining-seats-control" style="background: rgba(255, 0, 102, 0.1);">
+            <span class="seats-label" style="color: #ff0066; font-weight: 600;">♀ 여성:</span>
+            <input type="number" 
+                   class="seats-input" 
+                   id="female-seats-${dateStr}"
+                   value="${dateInfo.female_remaining_seats}" 
+                   min="0" 
+                   max="${dateInfo.female_max_capacity}"
+                   onchange="updateFemaleRemainingSeats('${dateStr}', this.value)"
+                   style="background: rgba(255, 0, 102, 0.2);">
+            <span class="seats-label">/ ${dateInfo.female_max_capacity}명</span>
+            <div class="quick-adjust">
+                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', -5)">-5</button>
+                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', -1)">-1</button>
+                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', 1)">+1</button>
+                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', 5)">+5</button>
+            </div>
+        </div>
+    </div>
+    <button class="date-remove" onclick="removeDate('${dateStr}')">×</button>
+`;
+                
+                list.appendChild(dateItem);
+            });
+            
+            if (sortedDates.length === 0) {
+                list.innerHTML = '<p style="color: var(--text-secondary);">선택된 날짜가 없습니다.</p>';
+            }
+        }
+        
+        // Remove date
+        function removeDate(dateStr) {
+            selectedDates.delete(dateStr);
+            generateCalendar();
+            updateSelectedDatesList();
+        }
+        
+        // Navigate calendar
+        function prevMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            generateCalendar();
+        }
+        
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            generateCalendar();
+        }
+        
+        // Save party dates - 완전히 수정된 버전
+        async function savePartyDates() {
+            try {
+                showMessage('success', '저장 중...');
+                
+                // 1. 먼저 모든 기존 날짜를 비활성화
+                const { error: deactivateError } = await supabaseClient
+                    .from('party_schedules')
+                    .update({ is_active: false })
+                    .neq('id', -1); // 모든 레코드 업데이트
+                
+                if (deactivateError) throw deactivateError;
+                
+                // 2. 선택된 날짜들 처리
+                const promises = [];
+                
+                for (const [dateStr, dateInfo] of selectedDates) {
+ // 🟢 새 코드로 교체
+const partyData = {
+    party_date: dateStr,
+    is_active: true,
+    max_capacity: (dateInfo.male_max_capacity || 35) + (dateInfo.female_max_capacity || 35), // 전체 유지
+    remaining_seats: (dateInfo.male_remaining_seats || 35) + (dateInfo.female_remaining_seats || 35), // 전체 유지
+    male_max_capacity: dateInfo.male_max_capacity || 35,
+    female_max_capacity: dateInfo.female_max_capacity || 35,
+    male_remaining_seats: dateInfo.male_remaining_seats || 35,
+    female_remaining_seats: dateInfo.female_remaining_seats || 35
+};
+
+                    
+                    // 기존 레코드가 있는지 확인
+                    const existingRecord = existingDatesFromDB.get(dateStr);
+                    
+                    if (existingRecord && existingRecord.id) {
+                        // 기존 레코드 업데이트
+                        promises.push(
+                            supabaseClient
+                                .from('party_schedules')
+                                .update(partyData)
+                                .eq('id', existingRecord.id)
+                        );
+                    } else {
+                        // 새 레코드 삽입
+                        promises.push(
+                            supabaseClient
+                                .from('party_schedules')
+                                .upsert({
+                                    ...partyData,
+                                    party_date: dateStr // party_date를 unique key로 사용
+                                }, {
+                                    onConflict: 'party_date'
+                                })
+                        );
+                    }
+                }
+                
+                // 3. 모든 작업 실행
+                const results = await Promise.all(promises);
+                
+                // 에러 체크
+                results.forEach((result, index) => {
+                    if (result.error) {
+                        console.error(`Error at index ${index}:`, result.error);
+                        throw result.error;
+                    }
+                });
+                
+                showMessage('success', '✅ 파티 날짜와 잔여석이 성공적으로 저장되었습니다!');
+                
+                // 4. 데이터 다시 로드 (ID 업데이트를 위해)
+                setTimeout(() => {
+                    loadExistingDates();
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error saving dates:', error);
+                showMessage('error', `저장 중 오류가 발생했습니다: ${error.message}`);
+            }
+        }
+        
+        // Save settings
+        async function saveSettings() {
+            try {
+                const { error } = await supabaseClient
+                    .from('party_settings')
+                    .upsert({
+                        id: 1,
+                        is_registration_open: document.getElementById('registrationToggle').checked,
+                        announcement_text: document.getElementById('announcement').value,
+                        updated_at: new Date().toISOString()
+                    });
+                
+                if (error) throw error;
+                
+                showMessage('success', '설정이 저장되었습니다!');
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                showMessage('error', '저장 중 오류가 발생했습니다.');
+            }
+        }
+        
+        // Clear all dates
+        function clearAllDates() {
+            if (confirm('정말로 모든 파티 날짜를 초기화하시겠습니까?\n\n⚠️ 이 작업은 되돌릴 수 없습니다!')) {
+                selectedDates.clear();
+                generateCalendar();
+                updateSelectedDatesList();
+                showMessage('success', '모든 날짜가 초기화되었습니다. 저장 버튼을 눌러 변경사항을 적용하세요.');
+            }
+        }
+        
+        // Send test notification
+        async function sendTestNotification() {
+            try {
+                const genders = ['male', 'female'];
+                const gender = genders[Math.floor(Math.random() * genders.length)];
+                const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
+                
+                const { error } = await supabaseClient
+                    .from('live_notifications')
+                    .insert({
+                        type: 'registration',
+                        gender: gender,
+                        age: age
+                    });
+                
+                if (error) throw error;
+                
+                showMessage('success', `테스트 알림이 발송되었습니다: ${gender === 'male' ? '남성' : '여성'}(${age}세)`);
+            } catch (error) {
+                console.error('Error sending notification:', error);
+                showMessage('error', '알림 발송 중 오류가 발생했습니다.');
+            }
+        }
+        
+        // Show message
+        function showMessage(type, message) {
+            const messageEl = type === 'success' ? 
+                document.getElementById('successMessage') : 
+                document.getElementById('errorMessage');
+            
+            messageEl.textContent = message;
+            messageEl.style.display = 'block';
+            
+            setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('passwordInput').focus();
+        });
+        
+        // Make functions globally accessible
+window.updateMaleRemainingSeats = updateMaleRemainingSeats;
+window.updateFemaleRemainingSeats = updateFemaleRemainingSeats;
+window.quickAdjustMaleSeats = quickAdjustMaleSeats;
+window.quickAdjustFemaleSeats = quickAdjustFemaleSeats;
+        window.removeDate = removeDate;
+        window.prevMonth = prevMonth;
+        window.nextMonth = nextMonth;
+        window.savePartyDates = savePartyDates;
+        window.saveSettings = saveSettings;
+        window.clearAllDates = clearAllDates;
+        window.sendTestNotification = sendTestNotification;
+        window.checkPassword = checkPassword;
+    </script>
+</body>
+</html>
