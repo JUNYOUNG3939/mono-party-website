@@ -2213,7 +2213,12 @@
     
     <!-- 파티 일정 섹션 (새로 추가) -->
     <section class="section" id="partyScheduleSection" style="display: none; background: var(--bg-secondary);">
-        <h2 class="section-title">🗓️ 다가오는 파티 일정</h2>
+        <!-- 다음으로 변경 -->
+<h2 class="section-title" style="margin-bottom: 10px;">
+    <span style="font-size: 0.8rem; color: #666; display: block; margin-bottom: 10px; font-weight: 400;">📅</span>
+    다가오는 파티 일정
+</h2>
+<p style="text-align: center; color: #666; margin-bottom: 40px;">선착순 마감! 서둘러 신청하세요</p>
         
         <div id="upcomingParties" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px;">
             <!-- 파티 날짜가 여기에 동적으로 추가됩니다 -->
@@ -2539,6 +2544,157 @@
 </div>
 
 <style>
+    /* 파티 일정 카드 새 디자인 */
+.party-dates-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.party-date-card {
+    background: #0a0a0a;
+    border: 1px solid #00ff88;
+    border-radius: 20px;
+    padding: 30px;
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.party-date-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 255, 136, 0.2);
+    border-color: #00ff88;
+}
+
+.party-date-card.sold-out {
+    border-color: #ff0066;
+    opacity: 0.6;
+}
+
+.date-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.date-info {
+    display: flex;
+    align-items: baseline;
+    gap: 15px;
+}
+
+.date-month {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #00ff88;
+    line-height: 1;
+}
+
+.date-day {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.date-icon {
+    font-size: 2rem;
+}
+
+.seats-info {
+    margin-top: 25px;
+}
+
+.seats-label {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.seats-gauge {
+    position: relative;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.seats-gauge-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88 0%, #00cc70 100%);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.seats-gauge-fill.warning {
+    background: linear-gradient(90deg, #ffaa00 0%, #ff8800 100%);
+}
+
+.seats-gauge-fill.danger {
+    background: linear-gradient(90deg, #ff0066 0%, #cc0044 100%);
+}
+
+.seats-remaining {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: rgba(0, 255, 136, 0.1);
+    border-radius: 30px;
+    border: 1px solid #00ff88;
+}
+
+.seats-remaining.warning {
+    background: rgba(255, 170, 0, 0.1);
+    border-color: #ffaa00;
+}
+
+.seats-remaining.danger {
+    background: rgba(255, 0, 102, 0.1);
+    border-color: #ff0066;
+}
+
+.seats-text {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #00ff88;
+}
+
+.seats-remaining.warning .seats-text {
+    color: #ffaa00;
+}
+
+.seats-remaining.danger .seats-text {
+    color: #ff0066;
+}
+
+.party-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: #ff0066;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    box-shadow: 0 5px 15px rgba(255, 0, 102, 0.3);
+}
+
+.party-badge.hot {
+    background: #ffaa00;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
     /* 챗봇 스타일 */
     @keyframes slideUp {
         from {
@@ -3186,42 +3342,56 @@ async function loadPartyDatesForIntro() {
         const container = document.getElementById('partyScheduleGrid');
         
         if (data && data.length > 0) {
-            container.innerHTML = data.map(party => {
-                const date = new Date(party.party_date + 'T00:00:00');
-                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-                const dayOfWeek = dayNames[date.getDay()];
-                const month = date.getMonth() + 1;
-                const day = date.getDate();
-                const remainingSeats = party.remaining_seats || 0;
-                
-                return `
-                    <div style="
-                        background: rgba(0, 255, 136, 0.1);
-                        border: 1px solid var(--neon-accent);
-                        border-radius: 10px;
-                        padding: 15px;
-                        text-align: center;
-                    ">
-                        <div style="font-size: 1.5rem; font-weight: 700; color: var(--neon-accent);">
-                            ${month}/${day}
-                        </div>
-                        <div style="color: var(--text-secondary);">${dayOfWeek}요일</div>
-<div style="margin-top: 10px; color: ${
-    remainingSeats === 0 ? 'var(--neon-pink)' :
-    remainingSeats <= 5 ? '#ff0066' :
-    remainingSeats <= 10 ? '#ffaa00' :
-    'var(--neon-accent)'
-};">
-    ${
-        remainingSeats === 0 ? '🔥 마감완료' :
-        remainingSeats <= 5 ? `🚨 마감임박! ${remainingSeats}석` :
-        remainingSeats <= 10 ? `⚡ ${remainingSeats}석` :
-        `잔여 ${remainingSeats}석`
+            // container.innerHTML = 부분을 다음으로 교체
+container.innerHTML = data.map(party => {
+    const date = new Date(party.party_date + 'T00:00:00');
+    const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+    const dayOfWeek = dayNames[date.getDay()];
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const remainingSeats = party.remaining_seats || 0;
+    
+    let statusColor = '#00ff88';
+    let statusText = `${remainingSeats}석`;
+    
+    if (remainingSeats === 0) {
+        statusColor = '#ff0066';
+        statusText = '마감';
+    } else if (remainingSeats <= 5) {
+        statusColor = '#ff0066';
+        statusText = `${remainingSeats}석`;
+    } else if (remainingSeats <= 10) {
+        statusColor = '#ffaa00';
+        statusText = `${remainingSeats}석`;
     }
-</div>
-                    </div>
-                `;
-            }).join('');
+    
+    return `
+        <div style="
+            background: #0a0a0a;
+            border: 1px solid ${statusColor};
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        " onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+            <div style="font-size: 1.8rem; font-weight: 900; color: ${statusColor};">
+                ${month}/${day}
+            </div>
+            <div style="color: #666; font-size: 0.9rem; margin: 5px 0;">${dayOfWeek}요일</div>
+            <div style="
+                margin-top: 15px;
+                padding: 8px;
+                background: rgba(0, 255, 136, 0.1);
+                border-radius: 20px;
+                color: ${statusColor};
+                font-weight: 700;
+                font-size: 0.9rem;
+            ">
+                ${statusText}
+            </div>
+        </div>
+    `;
+}).join('');
         }
     } catch (error) {
         console.error('Error loading party dates:', error);
@@ -3565,6 +3735,7 @@ async function loadPartyDates() {
         const container = document.getElementById('upcomingParties');
         
         if (data && data.length > 0) {
+            container.className = 'party-dates-container';
             container.innerHTML = data.map(party => {
                 const date = new Date(party.party_date + 'T00:00:00');
                 const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
@@ -3572,80 +3743,68 @@ async function loadPartyDates() {
                 const month = date.getMonth() + 1;
                 const day = date.getDate();
                 
-                // 토요일은 특별 표시
-                const isSaturday = date.getDay() === 6;
-                const borderColor = isSaturday ? 'var(--neon-pink)' : 'var(--neon-accent)';
-                
-                // 실제 잔여석 계산 - 데이터베이스에서 가져온 값 사용
                 const remainingSeats = party.remaining_seats !== undefined ? party.remaining_seats : 70;
                 const maxCapacity = party.max_capacity || 70;
                 const occupancyRate = ((maxCapacity - remainingSeats) / maxCapacity) * 100;
                 
-                // 잔여석에 따른 상태 표시
-// 잔여석에 따른 상태 표시
-// 잔여석에 따른 상태 표시
-let seatStatusColor = 'var(--neon-accent)';
-let seatStatusText = `잔여 ${remainingSeats}석`;
-let urgencyBadge = '';
-
-if (remainingSeats === 0) {
-    seatStatusColor = 'var(--neon-pink)';
-    seatStatusText = '🔥 마감완료';
-    urgencyBadge = '<div style="position: absolute; top: -10px; right: -10px; background: var(--neon-pink); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 900; z-index: 10;">SOLD OUT</div>';
-} else if (remainingSeats <= 3) {
-    seatStatusColor = '#ff0066';
-    seatStatusText = `🚨 마감임박! 단 ${remainingSeats}석`;
-    urgencyBadge = '<div style="position: absolute; top: -10px; right: -10px; background: #ff0066; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 900; z-index: 10;">마감임박</div>';
-} else if (remainingSeats <= 5) {
-    seatStatusColor = '#ff3366';
-    seatStatusText = `⚡ 거의 마감! ${remainingSeats}석`;
-    urgencyBadge = '<div style="position: absolute; top: -10px; right: -10px; background: #ff3366; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 900; z-index: 10;">HOT🔥</div>';
-} else if (remainingSeats <= 10) {
-    seatStatusColor = '#ffaa00';
-    seatStatusText = `🔥 인기폭발! ${remainingSeats}석`;
-    urgencyBadge = '<div style="position: absolute; top: -10px; right: -10px; background: #ffaa00; color: var(--bg-primary); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 900; z-index: 10;">인기</div>';
-} else if (remainingSeats <= 20) {
-    seatStatusColor = 'var(--neon-accent)';
-    seatStatusText = `✨ ${remainingSeats}석 남음`;
-}
-
-return `
-    <div class="party-card ${isSaturday ? 'saturday' : ''}" style="border-color: ${borderColor}; position: relative; ${remainingSeats === 0 ? 'opacity: 0.7; pointer-events: none;' : ''}">
-        ${urgencyBadge}
-        <div style="font-size: 2.5rem; margin-bottom: 10px;">
-            ${isSaturday ? '🎉' : '✨'}
-        </div>
-        <div style="font-size: 1.8rem; font-weight: 700; color: ${borderColor};">
-            ${month}월 ${day}일
-        </div>
-        <div style="font-size: 1.2rem; color: var(--text-secondary); margin-top: 5px;">
-            ${dayOfWeek}요일
-        </div>
-        <div style="margin-top: 15px;">
-            <!-- 게이지 컨테이너 -->
-            <div style="position: relative; background: rgba(255, 255, 255, 0.05); border-radius: 10px; overflow: hidden; height: 12px; margin-bottom: 10px; border: 1px solid rgba(255, 255, 255, 0.1);">
-                <!-- 게이지 바 -->
-                <div style="background: linear-gradient(90deg, ${seatStatusColor} 0%, ${seatStatusColor} 100%); height: 100%; width: ${occupancyRate}%; transition: all 0.5s ease; position: relative; ${occupancyRate > 80 ? 'box-shadow: 0 0 20px ' + seatStatusColor + ';' : ''}">
-                    ${occupancyRate > 70 ? '<span style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); color: white; font-size: 0.7rem; font-weight: 700;">' + Math.floor(occupancyRate) + '%</span>' : ''}
-                </div>
-            </div>
-            
-            <!-- 상태 텍스트 -->
-            <div style="padding: 10px; background: rgba(0, 255, 136, 0.1); border-radius: 25px; border: 1px solid ${seatStatusColor}; text-align: center;">
-                <span style="color: ${seatStatusColor}; font-size: 0.9rem; font-weight: 700;">
-                    ${seatStatusText}
-                </span>
-                ${remainingSeats <= 10 && remainingSeats > 0 ? '<div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 5px;">⏰ 서둘러 신청하세요!</div>' : ''}
-            </div>
-        </div>
-        ${remainingSeats === 0 ? '<div style="margin-top: 10px; color: var(--text-secondary); font-size: 0.85rem;">다음 파티를 기다려주세요!</div>' : ''}
-    </div>
-`;
+                // 상태 결정
+                let statusClass = '';
+                let badgeText = '';
+                let seatText = `잔여 ${remainingSeats}석`;
+                let showBadge = false;
+                
+                if (remainingSeats === 0) {
+                    statusClass = 'danger';
+                    seatText = '마감';
+                    badgeText = 'SOLD OUT';
+                    showBadge = true;
+                } else if (remainingSeats <= 5) {
+                    statusClass = 'danger';
+                    seatText = `잔여 ${remainingSeats}석`;
+                    badgeText = '마감임박';
+                    showBadge = true;
+                } else if (remainingSeats <= 10) {
+                    statusClass = 'warning';
+                    seatText = `잔여 ${remainingSeats}석`;
+                    badgeText = 'HOT';
+                    showBadge = true;
+                } else if (remainingSeats <= 20) {
+                    statusClass = '';
+                    seatText = `잔여 ${remainingSeats}석`;
+                }
+                
+                return `
+                    <div class="party-date-card ${remainingSeats === 0 ? 'sold-out' : ''}">
+                        ${showBadge ? `<div class="party-badge ${statusClass === 'warning' ? 'hot' : ''}">${badgeText}</div>` : ''}
+                        
+                        <div class="date-header">
+                            <div class="date-info">
+                                <div class="date-month">${month}월 ${day}일</div>
+                                <div class="date-day">${dayOfWeek}요일</div>
+                            </div>
+                            <div class="date-icon">
+                                ${dayOfWeek === '토' || dayOfWeek === '일' ? '🎉' : '✨'}
+                            </div>
+                        </div>
+                        
+                        <div class="seats-info">
+                            <span class="seats-label">잔여석</span>
+                            
+                            <div class="seats-gauge">
+                                <div class="seats-gauge-fill ${statusClass}" style="width: ${occupancyRate}%;"></div>
+                            </div>
+                            
+                            <div class="seats-remaining ${statusClass}">
+                                <span class="seats-text">${seatText}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
             }).join('');
         } else {
             container.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                    <p style="color: var(--text-secondary); font-size: 1.1rem;">
+                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                    <p style="color: #666; font-size: 1.1rem;">
                         새로운 파티 일정을 준비중입니다.<br>
                         인스타그램에서 최신 소식을 확인하세요!
                     </p>
@@ -3654,16 +3813,6 @@ return `
         }
     } catch (error) {
         console.error('Error loading party dates:', error);
-        // 에러 시 기본 표시
-        const container = document.getElementById('upcomingParties');
-        container.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <p style="color: var(--text-secondary); font-size: 1.1rem;">
-                    파티 일정을 확인중입니다...<br>
-                    잠시만 기다려주세요!
-                </p>
-            </div>
-        `;
     }
 }
         // 실시간 알림 구독
