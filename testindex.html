@@ -756,8 +756,8 @@
             
             /* Simplify animations on mobile for better performance */
             * {
-                animation-duration: 0s !important;
-                animation-delay: 0s !important;
+                animation-duration: none !important;
+                animation-delay: none !important;
             }
             
             /* Better spacing for mobile */
@@ -1241,10 +1241,99 @@
         }
     }
 </style>
+<style>
+/* 인트로 페이지 - 전체 배경 이미지 */
+#introPage {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000000;
+    z-index: 100000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url('https://drive.google.com/uc?export=view&id=1GFnEYohpv1CIgKrOhtPNxlKp6unXOVge');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 
+/* 오버레이 효과 (선택사항) */
+#introPage::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3); /* 살짝 어둡게 */
+    z-index: 1;
+}
+
+/* Learn More 버튼 */
+.learn-more-button {
+    position: relative;
+    z-index: 2;
+    margin-top: auto;
+    margin-bottom: 80px;
+    padding: 18px 60px;
+    background: transparent;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    opacity: 0;
+    animation: buttonFadeIn 1s ease-in-out 2s forwards;
+    transition: all 0.3s ease;
+}
+
+.learn-more-button:hover {
+    background: #ffffff;
+    color: #000000;
+    transform: translateY(-2px);
+}
+
+@keyframes buttonFadeIn {
+    0% { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    100% { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
+/* 5초 후 버튼 펄스 애니메이션 */
+@keyframes buttonPulse {
+    0%, 100% { 
+        transform: scale(1); 
+    }
+    50% { 
+        transform: scale(1.05); 
+    }
+}
+
+.button-pulse {
+    animation: buttonPulse 2s ease-in-out infinite;
+}
+</style>
 
 </head>
 <body>
+        <!-- ===== 인트로 페이지 시작 ===== -->
+    <div id="introPage">
+        <div id="introBackground"></div>
+        <button id="learnMoreBtn" onclick="showMainContent()">LEARN MORE</button>
+    </div>
+    <!-- ===== 인트로 페이지 끝 ===== -->
     <!-- Particles Background - Desktop Only -->
     <div class="particles" id="particles"></div>
     
@@ -1464,7 +1553,7 @@
     <!-- YouTube 음악 플레이어 끝 -->
 
     <!-- Hero Section -->
-<section class="hero" id="mainHero">
+<section class="hero" id="mainHero" style="display: none;">
     <div class="hero-content">
         <!-- 화려한 애니메이션 로고 -->
         <h1 class="logo mega-animation">
@@ -4318,5 +4407,61 @@ window.startExperience = function() {
         });
     </script>
     <!-- 🔼 테스트 코드 끝 🔼 -->
+    <script>
+// ===== 인트로 페이지 관리 =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('페이지 로드 완료');
+    
+    // 5초 후 버튼 펄스 효과
+    setTimeout(() => {
+        const btn = document.getElementById('learnMoreBtn');
+        if (btn) {
+            btn.classList.add('pulse-effect');
+            console.log('버튼 펄스 효과 추가');
+        }
+    }, 5000);
+});
+
+// Learn More 버튼 클릭 시
+function showMainContent() {
+    console.log('Learn More 클릭됨');
+    
+    // 인트로 페이지 페이드아웃
+    const introPage = document.getElementById('introPage');
+    introPage.style.opacity = '0';
+    introPage.style.transition = 'opacity 1s ease';
+    
+    setTimeout(() => {
+        // 인트로 페이지 숨기기
+        introPage.style.display = 'none';
+        
+        // 인트로 섹션 보여주기 (카테고리가 있는 페이지)
+        const introSection = document.getElementById('introSection');
+        introSection.style.display = 'block';
+        
+        // 파티 일정 로드
+        if (typeof loadUpcomingPartiesForIntro === 'function') {
+            loadUpcomingPartiesForIntro();
+        }
+        
+        console.log('메인 컨텐츠 표시됨');
+    }, 1000);
+}
+
+// 카테고리 기능 확인
+function checkCategories() {
+    console.log('카테고리 기능 체크');
+    
+    // showCategory 함수가 정의되어 있는지 확인
+    if (typeof showCategory === 'function') {
+        console.log('showCategory 함수 존재');
+    } else {
+        console.log('showCategory 함수 없음 - 재정의 필요');
+    }
+}
+
+// 페이지 로드 시 체크
+window.addEventListener('load', checkCategories);
+</script>
 </body>
 </html>
