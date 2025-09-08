@@ -1759,7 +1759,7 @@
         overflow: hidden;
         transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
     ">
-        <span style="position: relative; z-index: 2; pointer-events: none;">ENTER EXPERIENCE</span>
+        <span style="position: relative; z-index: 2; pointer-events: none;">지금 참가하기</span>
     </button>
 </div>
         
@@ -4607,7 +4607,7 @@ async function loadPartyDatesForIntro() {
                                     ♂ 남성
                                 </span>
                                 <span style="color: ${maleRemaining <= 5 ? '#ff0066' : maleRemaining <= 10 ? '#ffaa00' : '#00e5ff'}; font-size: 0.9rem; font-weight: 700;">
-                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}/${maleMax}석`}
+                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}/`}
                                 </span>
                             </div>
                             <div style="position: relative; background: rgba(0, 229, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
@@ -4628,7 +4628,7 @@ async function loadPartyDatesForIntro() {
                                     ♀ 여성
                                 </span>
                                 <span style="color: ${femaleRemaining <= 5 ? '#ff0066' : femaleRemaining <= 10 ? '#ffaa00' : '#ff0066'}; font-size: 0.9rem; font-weight: 700;">
-                                    ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}/${femaleMax}석`}
+                                    ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}석`}
                                 </span>
                             </div>
                             <div style="position: relative; background: rgba(255, 0, 102, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
@@ -5146,7 +5146,7 @@ async function loadPartyDates() {
                                     ♂ 남성
                                 </span>
                                 <span style="color: ${maleRemaining <= 5 ? '#ff0066' : maleRemaining <= 10 ? '#ffaa00' : '#00e5ff'}; font-size: 0.9rem; font-weight: 700;">
-                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}/${maleMax}석`}
+                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}석`}
                                 </span>
                             </div>
                             <div style="position: relative; background: rgba(0, 229, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
