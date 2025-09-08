@@ -4642,23 +4642,59 @@ async function loadPartyDatesForIntro() {
                             </div>
                         </div>
                         
-                        <!-- 전체 잔여석 표시 -->
-                        <div style="
-                            background: ${totalRemaining <= 10 ? 'rgba(255, 0, 102, 0.1)' : totalRemaining <= 20 ? 'rgba(255, 170, 0, 0.1)' : 'rgba(0, 255, 136, 0.1)'};
-                            border: 1px solid ${totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
-                            border-radius: 25px;
-                            padding: 12px;
-                            text-align: center;
-                            margin-top: 5px;
-                        ">
-                            <span style="
-                                color: ${totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
-                                font-size: 1rem;
-                                font-weight: 700;
-                            ">
-                                ${totalRemaining === 0 ? '🔥 매진 🔥' : `전체 ${totalRemaining}/${totalMax}석`}
-                            </span>
-                        </div>
+<!-- 전체 잔여석 표시 (숫자 없이) -->
+${totalRemaining === 0 ? `
+    <div style="
+        background: rgba(255, 0, 102, 0.1);
+        border: 1px solid #ff0066;
+        border-radius: 25px;
+        padding: 12px;
+        text-align: center;
+        margin-top: 5px;
+    ">
+        <span style="
+            color: #ff0066;
+            font-size: 1rem;
+            font-weight: 700;
+        ">
+            🔥 매진 🔥
+        </span>
+    </div>
+` : totalRemaining <= 10 ? `
+    <div style="
+        background: rgba(255, 0, 102, 0.1);
+        border: 1px solid #ff0066;
+        border-radius: 25px;
+        padding: 12px;
+        text-align: center;
+        margin-top: 5px;
+    ">
+        <span style="
+            color: #ff0066;
+            font-size: 1rem;
+            font-weight: 700;
+        ">
+            🔥 마감 임박 🔥
+        </span>
+    </div>
+` : totalRemaining <= 20 ? `
+    <div style="
+        background: rgba(255, 170, 0, 0.1);
+        border: 1px solid #ffaa00;
+        border-radius: 25px;
+        padding: 12px;
+        text-align: center;
+        margin-top: 5px;
+    ">
+        <span style="
+            color: #ffaa00;
+            font-size: 1rem;
+            font-weight: 700;
+        ">
+            ⚡ 서둘러 신청하세요 ⚡
+        </span>
+    </div>
+` : ''}
                     </div>
                 `;
             }).join('');
