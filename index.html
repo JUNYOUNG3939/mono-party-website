@@ -1267,66 +1267,6 @@
     transform: translateY(-10px) !important;
     box-shadow: 0 20px 60px rgba(0, 255, 136, 0.5) !important;
 }
-    /* 모바일 파티 카드 최적화 */
-@media (max-width: 768px) {
-    /* 파티 일정 카드 압축 */
-    #partyScheduleGrid > div {
-        padding: 12px 8px !important;
-        font-size: 0.8rem !important;
-    }
-    
-    /* 날짜 표시 작게 */
-    #partyScheduleGrid .date-month {
-        font-size: 1.2rem !important;
-    }
-    
-    /* 아이콘 작게 */
-    #partyScheduleGrid > div > div:first-child {
-        font-size: 1.5rem !important;
-        margin-bottom: 8px !important;
-    }
-    
-    /* 게이지바 숨기기 (공간 절약) */
-    #partyScheduleGrid .seats-gauge {
-        display: none !important;
-    }
-    
-    /* 잔여석 텍스트만 표시 */
-    #partyScheduleGrid > div > div:last-child {
-        padding: 8px !important;
-        font-size: 0.7rem !important;
-    }
-    
-    /* 메인 페이지 섹션 패딩 줄이기 */
-    #mainPage {
-        padding: 30px 10px !important;
-    }
-    
-    /* 카테고리 그리드 2x3으로 변경 */
-    .category-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 10px !important;
-    }
-    
-    /* 카테고리 카드 크기 줄이기 */
-    .category-card {
-        padding: 20px 15px !important;
-    }
-    
-    .category-card > div:first-child {
-        font-size: 2rem !important;
-        margin-bottom: 10px !important;
-    }
-    
-    .category-card h3 {
-        font-size: 0.9rem !important;
-        margin-bottom: 5px !important;
-    }
-    
-    .category-card p {
-        font-size: 0.75rem !important;
-    }
-}
     </style>
 
 
@@ -1886,18 +1826,18 @@
     </button>
 
     <!-- 헤더 -->
-<div style="text-align: center; margin-bottom: ${window.innerWidth <= 768 ? '20px' : '50px'};">
-    <h2 class="section-title" style="${window.innerWidth <= 768 ? 'font-size: 1.5rem; margin-bottom: 10px;' : ''}">MONO PARTY</h2>
-    <p style="color: var(--text-secondary); ${window.innerWidth <= 768 ? 'font-size: 0.85rem;' : ''}">원하시는 정보를 선택해주세요</p>
-</div>
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h2 class="section-title">MONO PARTY</h2>
+        <p style="color: var(--text-secondary);">원하시는 정보를 선택해주세요</p>
+    </div>
     
     <!-- 파티 일정 표시 -->
 <div id="upcomingPartiesIntro" style="
     background: var(--bg-card);
     border: 2px solid var(--neon-accent);
     border-radius: 15px;
-padding: ${window.innerWidth <= 768 ? '15px' : '30px'};
-    margin-bottom: ${window.innerWidth <= 768 ? '20px' : '40px'};
+    padding: 30px;
+    margin-bottom: 40px;
 ">
     <h3 style="color: var(--neon-accent); margin-bottom: 20px;">🗓️ 다가오는 파티 일정</h3>
     <div id="partyScheduleGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
@@ -4608,9 +4548,8 @@ async function loadPartyDatesForIntro() {
         
         if (data && data.length > 0) {
             container.style.display = 'grid';
-            // 모바일에서는 3개가 한 줄에 보이도록
-container.style.gridTemplateColumns = window.innerWidth <= 768 ? 'repeat(3, 1fr)' : 'repeat(auto-fit, minmax(280px, 1fr))';            
-container.style.gap = window.innerWidth <= 768 ? '10px' : '20px';
+            container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(280px, 1fr))';
+            container.style.gap = '20px';
             
             container.innerHTML = data.map((party, index) => {
                 const date = new Date(party.party_date + 'T00:00:00');
@@ -4659,43 +4598,13 @@ container.style.gap = window.innerWidth <= 768 ? '10px' : '20px';
                         cardBorderColor = '#ff0066';
                     }
                 }
-               // ⬇️⬇️ 모바일 체크 추가 ⬇️⬇️
-if (window.innerWidth <= 768) {
-    return `
-        <div style="
-            background: rgba(17, 17, 17, 0.98);
-            border: 1px solid ${cardBorderColor};
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            position: relative;
-            transition: all 0.3s ease;
-        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-            <div style="font-size: 1.2rem; margin-bottom: 5px;">
-                ${cardIcon}
-            </div>
-            <div style="font-size: 0.9rem; font-weight: 700; color: ${cardBorderColor};">
-                ${month}/${day}
-            </div>
-            <div style="font-size: 0.65rem; color: #999;">
-                ${dayOfWeek}요일
-            </div>
-            <div style="margin-top: 8px; font-size: 0.7rem;">
-                <div style="color: #00e5ff;">♂ ${maleRemaining}석</div>
-                <div style="color: #ff0066;">♀ ${femaleRemaining}석</div>
-            </div>
-            ${totalRemaining <= 10 ? 
-                `<div style="position: absolute; top: 2px; right: 2px; background: #ff0066; color: white; width: 8px; height: 8px; border-radius: 50%; animation: pulse 1s infinite;"></div>` 
-                : ''}
-        </div>
-    `;
-} 
+                
                 return `
                     <div style="
                         background: rgba(17, 17, 17, 0.98);
                         border: 2px solid ${cardBorderColor};
                         border-radius: 20px;
-                        padding: ${window.innerWidth <= 768 ? '15px 10px' : '35px 25px 25px'};
+                        padding: 35px 25px 25px;
                         position: relative;
                         transition: all 0.3s ease;
                         box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
