@@ -4489,8 +4489,9 @@ function backToMain() {
 }
 // 인트로용 파티 일정 로드
 // 인트로용 파티 일정 로드 - 완전 수정 버전
+// 인트로용 파티 일정 로드 - 남녀 구분 표시
 async function loadPartyDatesForIntro() {
-    console.log('파티 일정 로드 시작'); // 디버깅용
+    console.log('파티 일정 로드 시작');
     
     try {
         const { data, error } = await supabaseClient
@@ -4501,7 +4502,7 @@ async function loadPartyDatesForIntro() {
             .order('party_date', { ascending: true })
             .limit(4);
         
-        console.log('받아온 데이터:', data); // 디버깅용
+        console.log('받아온 데이터:', data);
         
         if (error) {
             console.error('Supabase 에러:', error);
@@ -4516,6 +4517,10 @@ async function loadPartyDatesForIntro() {
         }
         
         if (data && data.length > 0) {
+            container.style.display = 'grid';
+            container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(280px, 1fr))';
+            container.style.gap = '20px';
+            
             container.innerHTML = data.map((party, index) => {
                 const date = new Date(party.party_date + 'T00:00:00');
                 const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
@@ -4523,84 +4528,136 @@ async function loadPartyDatesForIntro() {
                 const month = date.getMonth() + 1;
                 const day = date.getDate();
                 
-                // 잔여석 처리
-                const remainingSeats = party.remaining_seats !== undefined ? party.remaining_seats : 70;
-                const maxCapacity = party.max_capacity || 70;
+                // 토요일/일요일 특별 표시
+                const isWeekend = date.getDay() === 6 || date.getDay() === 0;
                 
-                let statusColor = '#00ff88';
-                let statusText = `잔여 ${remainingSeats}석`;
+                // 남녀 잔여석 계산
+                const maleRemaining = party.male_remaining_seats !== undefined ? party.male_remaining_seats : 35;
+                const femaleRemaining = party.female_remaining_seats !== undefined ? party.female_remaining_seats : 35;
+                const maleMax = party.male_max_capacity || 35;
+                const femaleMax = party.female_max_capacity || 35;
+                
+                // 전체 잔여석
+                const totalRemaining = maleRemaining + femaleRemaining;
+                const totalMax = maleMax + femaleMax;
+                
+                // 점유율 계산
+                const maleOccupancyRate = ((maleMax - maleRemaining) / maleMax) * 100;
+                const femaleOccupancyRate = ((femaleMax - femaleRemaining) / femaleMax) * 100;
+                
+                // 상태 결정
+                let cardBorderColor = '#00ff88';
                 let urgencyBadge = '';
+                let cardIcon = '✨';
                 
-                if (remainingSeats === 0) {
-                    statusColor = '#ff0066';
-                    statusText = '마감';
-                    urgencyBadge = 'SOLD OUT';
-                } else if (remainingSeats <= 5) {
-                    statusColor = '#ff0066';
-                    statusText = `🔥 ${remainingSeats}석`;
-                    urgencyBadge = '마감임박';
-                } else if (remainingSeats <= 10) {
-                    statusColor = '#ffaa00';
-                    statusText = `⚡ ${remainingSeats}석`;
-                    urgencyBadge = 'HOT';
+                if (totalRemaining === 0) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">SOLD OUT</div>';
+                    cardBorderColor = '#ff0066';
+                } else if (totalRemaining <= 10) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2; animation: pulse 1.5s infinite;">마감임박</div>';
+                    cardBorderColor = '#ff0066';
+                } else if (totalRemaining <= 20) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ffaa00; color: #000; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">HOT</div>';
+                    cardBorderColor = '#ffaa00';
+                    cardIcon = '🔥';
+                }
+                
+                if (isWeekend) {
+                    cardIcon = '🎉';
+                    if (totalRemaining > 20) {
+                        cardBorderColor = '#ff0066';
+                    }
                 }
                 
                 return `
                     <div style="
-                        background: rgba(17, 17, 17, 0.95);
-                        border: 2px solid ${statusColor};
-                        border-radius: 15px;
-                        padding: 25px 20px;
-                        text-align: center;
-                        transition: all 0.3s ease;
+                        background: rgba(17, 17, 17, 0.98);
+                        border: 2px solid ${cardBorderColor};
+                        border-radius: 20px;
+                        padding: 35px 25px 25px;
                         position: relative;
-                        ${remainingSeats === 0 ? 'opacity: 0.6;' : ''}
+                        transition: all 0.3s ease;
+                        box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+                        ${totalRemaining === 0 ? 'opacity: 0.7;' : ''}
                     " 
-                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(0, 255, 136, 0.3)'" 
-                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 15px 50px rgba(0, 255, 136, 0.4)'" 
+                    onmouseout="this.style.transform=''; this.style.boxShadow='0 0 30px rgba(0, 255, 136, 0.2)'">
                         
-                        ${urgencyBadge ? `
-                            <div style="
-                                position: absolute;
-                                top: -10px;
-                                right: 10px;
-                                background: ${statusColor};
-                                color: white;
-                                padding: 5px 12px;
-                                border-radius: 15px;
-                                font-size: 0.7rem;
-                                font-weight: 700;
-                            ">${urgencyBadge}</div>
-                        ` : ''}
+                        ${urgencyBadge}
                         
-                        <!-- 날짜 표시 -->
-                        <div style="
-                            font-size: 2rem;
-                            font-weight: 900;
-                            color: ${statusColor};
-                            margin-bottom: 5px;
-                        ">
-                            ${month}월 ${day}일
+                        <!-- 아이콘 -->
+                        <div style="text-align: center; font-size: 2.5rem; margin-bottom: 15px;">
+                            ${cardIcon}
                         </div>
                         
-                        <!-- 요일 -->
-                        <div style="
-                            color: rgba(255, 255, 255, 0.6);
-                            font-size: 0.9rem;
-                            margin-bottom: 15px;
-                        ">${dayOfWeek}요일</div>
+                        <!-- 날짜 표시 -->
+                        <div style="text-align: center; margin-bottom: 25px;">
+                            <div style="font-size: 2.2rem; font-weight: 900; color: ${cardBorderColor}; margin-bottom: 5px;">
+                                ${month}월 ${day}일
+                            </div>
+                            <div style="color: #999; font-size: 1rem;">
+                                ${dayOfWeek}요일
+                            </div>
+                        </div>
                         
-                        <!-- 잔여석 표시 -->
+                        <!-- 남성 잔여석 -->
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="color: #00e5ff; font-size: 0.9rem; font-weight: 600;">
+                                    ♂ 남성
+                                </span>
+                                <span style="color: ${maleRemaining <= 5 ? '#ff0066' : maleRemaining <= 10 ? '#ffaa00' : '#00e5ff'}; font-size: 0.9rem; font-weight: 700;">
+                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}/${maleMax}석`}
+                                </span>
+                            </div>
+                            <div style="position: relative; background: rgba(0, 229, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
+                                <div style="
+                                    background: linear-gradient(90deg, #00e5ff, #0099ff);
+                                    height: 100%;
+                                    width: ${maleOccupancyRate}%;
+                                    transition: width 0.5s ease;
+                                    box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+                                "></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 여성 잔여석 -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="color: #ff0066; font-size: 0.9rem; font-weight: 600;">
+                                    ♀ 여성
+                                </span>
+                                <span style="color: ${femaleRemaining <= 5 ? '#ff0066' : femaleRemaining <= 10 ? '#ffaa00' : '#ff0066'}; font-size: 0.9rem; font-weight: 700;">
+                                    ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}/${femaleMax}석`}
+                                </span>
+                            </div>
+                            <div style="position: relative; background: rgba(255, 0, 102, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
+                                <div style="
+                                    background: linear-gradient(90deg, #ff0066, #ff3388);
+                                    height: 100%;
+                                    width: ${femaleOccupancyRate}%;
+                                    transition: width 0.5s ease;
+                                    box-shadow: 0 0 10px rgba(255, 0, 102, 0.5);
+                                "></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 전체 잔여석 표시 -->
                         <div style="
-                            padding: 8px 15px;
-                            background: rgba(0, 255, 136, 0.1);
-                            border: 1px solid ${statusColor};
-                            border-radius: 20px;
-                            color: ${statusColor};
-                            font-weight: 700;
-                            font-size: 0.9rem;
+                            background: ${totalRemaining <= 10 ? 'rgba(255, 0, 102, 0.1)' : totalRemaining <= 20 ? 'rgba(255, 170, 0, 0.1)' : 'rgba(0, 255, 136, 0.1)'};
+                            border: 1px solid ${totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
+                            border-radius: 25px;
+                            padding: 12px;
+                            text-align: center;
+                            margin-top: 5px;
                         ">
-                            ${statusText}
+                            <span style="
+                                color: ${totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
+                                font-size: 1rem;
+                                font-weight: 700;
+                            ">
+                                ${totalRemaining === 0 ? '🔥 매진 🔥' : `전체 ${totalRemaining}/${totalMax}석`}
+                            </span>
                         </div>
                     </div>
                 `;
@@ -4645,8 +4702,7 @@ async function loadPartyDatesForIntro() {
         }
     }
 }
-
-// fadeInUp 애니메이션 추가
+    // fadeInUp 애니메이션 추가
 const style = document.createElement('style');
 style.textContent = `
     @keyframes fadeInUp {
@@ -4984,6 +5040,7 @@ function updateViewerCount() {
         }
         
 // 파티 날짜 불러오기
+// 파티 날짜 불러오기 - 남녀 구분 표시
 async function loadPartyDates() {
     try {
         const { data, error } = await supabaseClient
@@ -4999,68 +5056,147 @@ async function loadPartyDates() {
         const container = document.getElementById('upcomingParties');
         
         if (data && data.length > 0) {
-            container.className = 'party-dates-container';
-            container.innerHTML = data.map(party => {
+            container.style.display = 'grid';
+            container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(300px, 1fr))';
+            container.style.gap = '25px';
+            
+            container.innerHTML = data.map((party, index) => {
                 const date = new Date(party.party_date + 'T00:00:00');
                 const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
                 const dayOfWeek = dayNames[date.getDay()];
                 const month = date.getMonth() + 1;
                 const day = date.getDate();
                 
-                const remainingSeats = party.remaining_seats !== undefined ? party.remaining_seats : 70;
-                const maxCapacity = party.max_capacity || 70;
-                const occupancyRate = ((maxCapacity - remainingSeats) / maxCapacity) * 100;
+                // 토요일/일요일 특별 표시
+                const isWeekend = date.getDay() === 6 || date.getDay() === 0;
+                
+                // 남녀 잔여석 계산
+                const maleRemaining = party.male_remaining_seats !== undefined ? party.male_remaining_seats : 35;
+                const femaleRemaining = party.female_remaining_seats !== undefined ? party.female_remaining_seats : 35;
+                const maleMax = party.male_max_capacity || 35;
+                const femaleMax = party.female_max_capacity || 35;
+                
+                // 전체 잔여석
+                const totalRemaining = maleRemaining + femaleRemaining;
+                const totalMax = maleMax + femaleMax;
+                
+                // 점유율 계산
+                const maleOccupancyRate = ((maleMax - maleRemaining) / maleMax) * 100;
+                const femaleOccupancyRate = ((femaleMax - femaleRemaining) / femaleMax) * 100;
                 
                 // 상태 결정
-                let statusClass = '';
-                let badgeText = '';
-                let seatText = `잔여 ${remainingSeats}석`;
-                let showBadge = false;
+                let cardBorderColor = '#00ff88';
+                let urgencyBadge = '';
+                let cardIcon = '✨';
                 
-                if (remainingSeats === 0) {
-                    statusClass = 'danger';
-                    seatText = '마감';
-                    badgeText = 'SOLD OUT';
-                    showBadge = true;
-                } else if (remainingSeats <= 5) {
-                    statusClass = 'danger';
-                    seatText = `잔여 ${remainingSeats}석`;
-                    badgeText = '마감임박';
-                    showBadge = true;
-                } else if (remainingSeats <= 10) {
-                    statusClass = 'warning';
-                    seatText = `잔여 ${remainingSeats}석`;
-                    badgeText = 'HOT';
-                    showBadge = true;
-                } else if (remainingSeats <= 20) {
-                    statusClass = '';
-                    seatText = `잔여 ${remainingSeats}석`;
+                if (totalRemaining === 0) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">SOLD OUT</div>';
+                    cardBorderColor = '#ff0066';
+                } else if (totalRemaining <= 10) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2; animation: pulse 1.5s infinite;">마감임박</div>';
+                    cardBorderColor = '#ff0066';
+                } else if (totalRemaining <= 20) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ffaa00; color: #000; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">HOT</div>';
+                    cardBorderColor = '#ffaa00';
+                    cardIcon = '🔥';
+                }
+                
+                if (isWeekend) {
+                    cardIcon = '🎉';
+                    if (totalRemaining > 20) {
+                        cardBorderColor = '#ff0066';
+                    }
                 }
                 
                 return `
-                    <div class="party-date-card ${remainingSeats === 0 ? 'sold-out' : ''}">
-                        ${showBadge ? `<div class="party-badge ${statusClass === 'warning' ? 'hot' : ''}">${badgeText}</div>` : ''}
+                    <div style="
+                        background: rgba(17, 17, 17, 0.98);
+                        border: 2px solid ${cardBorderColor};
+                        border-radius: 20px;
+                        padding: 35px 25px 25px;
+                        position: relative;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+                        ${totalRemaining === 0 ? 'opacity: 0.7;' : ''}
+                    " 
+                    onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 15px 50px rgba(0, 255, 136, 0.4)'" 
+                    onmouseout="this.style.transform=''; this.style.boxShadow='0 0 30px rgba(0, 255, 136, 0.2)'">
                         
-                        <div class="date-header">
-                            <div class="date-info">
-                                <div class="date-month">${month}월 ${day}일</div>
-                                <div class="date-day">${dayOfWeek}요일</div>
+                        ${urgencyBadge}
+                        
+                        <!-- 아이콘 -->
+                        <div style="text-align: center; font-size: 2.5rem; margin-bottom: 15px;">
+                            ${cardIcon}
+                        </div>
+                        
+                        <!-- 날짜 표시 -->
+                        <div style="text-align: center; margin-bottom: 25px;">
+                            <div style="font-size: 2.2rem; font-weight: 900; color: ${cardBorderColor}; margin-bottom: 5px;">
+                                ${month}월 ${day}일
                             </div>
-                            <div class="date-icon">
-                                ${dayOfWeek === '토' || dayOfWeek === '일' ? '🎉' : '✨'}
+                            <div style="color: #999; font-size: 1rem;">
+                                ${dayOfWeek}요일
                             </div>
                         </div>
                         
-                        <div class="seats-info">
-                            <span class="seats-label">잔여석</span>
-                            
-                            <div class="seats-gauge">
-                                <div class="seats-gauge-fill ${statusClass}" style="width: ${occupancyRate}%;"></div>
+                        <!-- 남성 잔여석 -->
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="color: #00e5ff; font-size: 0.9rem; font-weight: 600;">
+                                    ♂ 남성
+                                </span>
+                                <span style="color: ${maleRemaining <= 5 ? '#ff0066' : maleRemaining <= 10 ? '#ffaa00' : '#00e5ff'}; font-size: 0.9rem; font-weight: 700;">
+                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}/${maleMax}석`}
+                                </span>
                             </div>
-                            
-                            <div class="seats-remaining ${statusClass}">
-                                <span class="seats-text">${seatText}</span>
+                            <div style="position: relative; background: rgba(0, 229, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
+                                <div style="
+                                    background: linear-gradient(90deg, #00e5ff, #0099ff);
+                                    height: 100%;
+                                    width: ${maleOccupancyRate}%;
+                                    transition: width 0.5s ease;
+                                    box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+                                "></div>
                             </div>
+                        </div>
+                        
+                        <!-- 여성 잔여석 -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="color: #ff0066; font-size: 0.9rem; font-weight: 600;">
+                                    ♀ 여성
+                                </span>
+                                <span style="color: ${femaleRemaining <= 5 ? '#ff0066' : femaleRemaining <= 10 ? '#ffaa00' : '#ff0066'}; font-size: 0.9rem; font-weight: 700;">
+                                    ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}/${femaleMax}석`}
+                                </span>
+                            </div>
+                            <div style="position: relative; background: rgba(255, 0, 102, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
+                                <div style="
+                                    background: linear-gradient(90deg, #ff0066, #ff3388);
+                                    height: 100%;
+                                    width: ${femaleOccupancyRate}%;
+                                    transition: width 0.5s ease;
+                                    box-shadow: 0 0 10px rgba(255, 0, 102, 0.5);
+                                "></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 전체 잔여석 표시 -->
+                        <div style="
+                            background: ${totalRemaining <= 10 ? 'rgba(255, 0, 102, 0.1)' : totalRemaining <= 20 ? 'rgba(255, 170, 0, 0.1)' : 'rgba(0, 255, 136, 0.1)'};
+                            border: 1px solid ${totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
+                            border-radius: 25px;
+                            padding: 12px;
+                            text-align: center;
+                            margin-top: 5px;
+                        ">
+                            <span style="
+                                color: ${totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
+                                font-size: 1rem;
+                                font-weight: 700;
+                            ">
+                                ${totalRemaining === 0 ? '🔥 매진 🔥' : `전체 ${totalRemaining}/${totalMax}석`}
+                            </span>
                         </div>
                     </div>
                 `;
