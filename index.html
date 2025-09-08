@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-async function loadPartyDatesForIntro() {app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>MONO PARTY | 감정이 흐르는 무드 파티</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -18,17 +18,110 @@
         }
         
         :root {
-            --neon-accent: #00ff88;
-            --neon-pink: #ff0066;
-            --neon-blue: #00e5ff;
-            --text-primary: #ffffff;
-            --text-secondary: #999999;
-            --bg-primary: #000000;
-            --bg-secondary: #0a0a0a;
-            --bg-card: #111111;
-            --safe-area-top: env(safe-area-inset-top);
-            --safe-area-bottom: env(safe-area-inset-bottom);
-        }
+    --neon-accent: rgba(0, 255, 136, 0.7);  /* 투명도 추가 */
+    --neon-pink: rgba(255, 0, 102, 0.7);
+    --neon-blue: rgba(0, 229, 255, 0.7);
+    --text-primary: #ffffff;
+    --text-secondary: #999999;
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --bg-card: #111111;
+    --safe-area-top: env(safe-area-inset-top);
+    --safe-area-bottom: env(safe-area-inset-bottom);
+    
+    /* 고급 그라디언트 */
+    --gradient-premium: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-neon: linear-gradient(135deg, #00ff88 0%, #00e5ff 50%, #ff0066 100%);
+    --gradient-dark: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    
+    /* 섀도우 */
+    --shadow-neon: 0 0 50px rgba(0, 255, 136, 0.5), 0 0 100px rgba(0, 255, 136, 0.3);
+    --shadow-premium: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 100px rgba(0, 255, 136, 0.2);
+    --shadow-float: 0 30px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* 프리미엄 애니메이션 추가 */
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+@keyframes glow-pulse {
+    0%, 100% { 
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.5),
+                    0 0 40px rgba(0, 255, 136, 0.3),
+                    0 0 60px rgba(0, 255, 136, 0.1);
+    }
+    50% { 
+        box-shadow: 0 0 30px rgba(0, 255, 136, 0.8),
+                    0 0 60px rgba(0, 255, 136, 0.5),
+                    0 0 80px rgba(0, 255, 136, 0.3);
+    }
+}
+
+@keyframes float-rotate {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-20px) rotate(5deg); }
+    75% { transform: translateY(-10px) rotate(-5deg); }
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* 글래스모피즘 효과 */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 255, 136, 0.15);
+}
+
+/* 네온 텍스트 효과 강화 */
+.neon-text-premium {
+    background: linear-gradient(45deg, #00ff88 0%, #00e5ff 50%, #ff0066 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+    filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.5));
+}
+
+/* 프리미엄 버튼 효과 */
+.premium-button {
+    position: relative;
+    background: linear-gradient(45deg, #00ff88, #00e5ff);
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+.premium-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+}
+
+.premium-button:hover::before {
+    left: 100%;
+}
+
+.premium-button:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 255, 136, 0.4),
+                0 0 60px rgba(0, 255, 136, 0.2);
+}
         
         body {
             font-family: 'Noto Sans KR', sans-serif;
@@ -47,9 +140,9 @@
         }
         
         /* Neon Glow Effect */
-        .neon-glow {
-            text-shadow: 0 0 20px var(--neon-accent), 0 0 40px var(--neon-accent);
-        }
+       .neon-glow {
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
         
         .neon-border {
             border: 1px solid var(--neon-accent);
@@ -675,26 +768,6 @@
         .party-card.saturday {
             border-color: var(--neon-pink);
         }
-        /* ✨ 여기에 새 코드 추가 ✨ */
-/* 파티 카드 남녀 잔여석 스타일 */
-@media (max-width: 768px) {
-    .party-card {
-        padding: 20px !important;
-    }
-    
-    .party-card > div {
-        font-size: 0.9rem !important;
-    }
-}
-
-/* 잔여석 바 애니메이션 */
-.party-card div[style*="transition"] {
-    animation: fillBar 1s ease;
-}
-
-@keyframes fillBar {
-    from { width: 0 !important; }
-}
         
         .floating-badge {
             position: absolute;
@@ -1080,7 +1153,121 @@
             right: 30px !important;
         }
     }
-</style>
+        /* 카테고리 카드 호버 효과 */
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+    border-color: var(--neon-accent) !important;
+}
+
+/* 페이지 전환 애니메이션 */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.main-page {
+    animation: slideIn 0.5s ease;
+}
+/* 네비게이션 버튼 스타일 */
+.nav-btn:hover {
+    background: rgba(0, 255, 136, 0.1) !important;
+    border-color: var(--neon-accent) !important;
+    transform: translateY(-2px);
+}
+
+.section-nav-btn {
+    padding: 12px 30px;
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.section-nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+}
+
+.mobile-nav-btn:active {
+    transform: scale(0.95);
+}
+
+/* 네비게이션 애니메이션 */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    #floatingNav {
+        bottom: 70px !important;
+        padding: 10px 15px !important;
+        width: calc(100% - 40px);
+        max-width: 400px;
+    }
+    
+    #floatingNav .nav-btn {
+        padding: 8px 15px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    /* 챗봇 버튼 위치 조정 */
+    #chatbotContainer {
+        bottom: 140px !important;
+    }
+}
+
+@media (min-width: 769px) {
+    #mobileBottomNav {
+        display: none !important;
+    }
+}
+    /* 파티 카드 애니메이션 */
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+/* 게이지바 애니메이션 */
+@keyframes fillGauge {
+    from { 
+        width: 0;
+        opacity: 0;
+    }
+    to { 
+        width: var(--fill-width);
+        opacity: 1;
+    }
+}
+
+/* 카드 호버 효과 */
+.party-card-enhanced:hover {
+    transform: translateY(-10px) !important;
+    box-shadow: 0 20px 60px rgba(0, 255, 136, 0.5) !important;
+}
+    </style>
 
 
 </head>
@@ -1111,6 +1298,163 @@
     <div id="notificationContainer" style="position: fixed; top: 70px; right: 20px; z-index: 1000; max-width: 300px;">
         <!-- 알림이 여기에 추가됩니다 -->
     </div>
+    <!-- 플로팅 네비게이션 메뉴 -->
+<div id="floatingNav" style="
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9998;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid var(--neon-accent);
+    border-radius: 30px;
+    padding: 15px 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
+    display: none;
+    animation: slideUp 0.3s ease;
+">
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <button onclick="goToMain()" class="nav-btn" style="
+            background: transparent;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--neon-accent);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        ">🏠 메인</button>
+        
+        <button onclick="showQuickCategory('party-intro')" class="nav-btn" style="
+            background: transparent;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        ">🎉 파티소개</button>
+        
+        <button onclick="showQuickCategory('reviews')" class="nav-btn" style="
+            background: transparent;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        ">💬 후기</button>
+        
+        <button onclick="showQuickCategory('seats')" class="nav-btn" style="
+            background: transparent;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        ">🎟️ 잔여석</button>
+    </div>
+</div>
+
+<!-- 모바일용 하단 네비게이션 -->
+<div id="mobileBottomNav" style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9997;
+    background: rgba(0, 0, 0, 0.98);
+    border-top: 1px solid var(--neon-accent);
+    padding: 10px 0;
+    backdrop-filter: blur(10px);
+    display: none;
+">
+    <div style="display: flex; justify-content: space-around; align-items: center;">
+        <button onclick="goToMain()" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--neon-accent);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">🏠</span>
+            <span style="font-size: 0.7rem;">메인</span>
+        </button>
+        
+        <button onclick="showQuickCategory('party-intro')" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">🎉</span>
+            <span style="font-size: 0.7rem;">파티</span>
+        </button>
+        
+        <button onclick="showQuickCategory('gallery')" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">📸</span>
+            <span style="font-size: 0.7rem;">갤러리</span>
+        </button>
+        
+        <button onclick="showQuickCategory('seats')" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">🎟️</span>
+            <span style="font-size: 0.7rem;">예약</span>
+        </button>
+        
+        <button onclick="openApplicationModal()" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--neon-pink);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">✨</span>
+            <span style="font-size: 0.7rem;">신청</span>
+        </button>
+    </div>
+</div>
 <!-- YouTube 음악 플레이어 시작 -->
     <div id="youtubePlayer" style="
         position: fixed;
@@ -1303,23 +1647,443 @@
     </div>
     <!-- YouTube 음악 플레이어 끝 -->
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="logo floating">MONO PARTY</h1>
-            <p class="tagline">Black or White</p>
-            <h2 class="hero-subtitle">감정이 흐르는 무드 파티</h2>
-            <p class="hero-description">
-                "혼자였던 밤, 오늘은 설레일 거예요."<br>
-                소개팅도, 클럽도, 어설픈 술자리가 아닌<br>
-                <strong>감정이 흐르는 대로 스며드는 '무드 기반 소셜링 파티'</strong>
-            </p>
-            <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">지금 바로 참가하기</a>
-        </div>
-    </section>
+    <!-- 인트로 페이지 -->
+<section id="introPage" class="intro-page" style="
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+">
+<!-- 프리미엄 배경 효과 -->
+<!-- 프리미엄 배경 효과 -->
+<div class="premium-bg-wrapper" style="
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+"></div>
     
+
+    
+<!-- 플로팅 오브 효과 -->
+<div class="floating-orbs">
+    <div style="
+        position: absolute;
+        top: 20%;
+        left: 10%;
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        filter: blur(40px);
+        animation: float-rotate 15s ease-in-out infinite;
+        opacity: 0.5;
+    "></div>
+        <div style="
+            position: absolute;
+            bottom: 20%;
+            right: 10%;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255, 0, 102, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            filter: blur(30px);
+            animation: float-rotate 20s ease-in-out infinite reverse;
+        "></div>
+    </div>
+</div>
+    
+    <!-- 인트로 콘텐츠 -->
+<div style="
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+">
+        <!-- 프리미엄 로고 -->
+        <div class="logo-wrapper" style="position: relative; display: inline-block;">
+<h1 class="logo floating" style="
+    font-size: clamp(2.5rem, 8vw, 6rem);
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 2;
+    white-space: nowrap;
+    background: linear-gradient(90deg, #ffffff 0%, rgba(0, 255, 136, 0.6) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    filter: none;
+">
+    MONO PARTY
+</h1>
+            <!-- 로고 백라이트 효과 -->
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 120%;
+                height: 120%;
+                background: radial-gradient(circle, rgba(0, 255, 136, 0.4) 0%, transparent 60%);
+                filter: blur(40px);
+                z-index: 1;
+                animation: glow-pulse 3s ease-in-out infinite;
+            "></div>
+        </div>
+        
+<!-- 매력적인 카피 문구 -->
+<div style="
+    margin-top: 40px;
+    text-align: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+">
+    <p style="
+        font-family: 'Noto Sans KR', sans-serif;
+        font-size: clamp(1rem, 2.5vw, 1.4rem);
+        font-weight: 300;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+        margin-bottom: 30px;
+        letter-spacing: 0.5px;
+    ">
+        <span style="
+            display: inline;
+            font-weight: 500;
+            font-size: clamp(1.1rem, 2.8vw, 1.5rem);
+            background: linear-gradient(90deg, #fff 0%, rgba(0, 255, 136, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        ">감정이 흐르는 대로 스며드는 '무드 기반 소셜링 파티'</span>
+    </p>
+    
+    <!-- CTA 버튼 -->
+    <button onclick="scrollToMain()" class="premium-button" style="
+        padding: 18px 50px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border: none;
+        border-radius: 50px;
+        color: #000;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        box-shadow: 0 10px 40px rgba(0, 255, 136, 0.4);
+        position: relative;
+        z-index: 10;
+        pointer-events: auto;
+        display: inline-block;
+        background: linear-gradient(45deg, #00ff88, #00e5ff);
+        background-size: 200% 200%;
+        animation: gradient-shift 3s ease infinite;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+    ">
+        <span style="position: relative; z-index: 2; pointer-events: none;">지금 참가하기</span>
+    </button>
+</div>
+        
+        
+
+
+</section>
+
+
+<!-- 메인 페이지 (카테고리 선택) -->
+<section id="mainPage" class="main-page" style="
+    min-height: 100vh;
+    padding: 60px 20px;
+    background: var(--bg-primary);
+    display: none;
+">
+    <!-- 뒤로가기 버튼 -->
+    <button id="backButton" onclick="backToIntro()" style="
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1000;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        padding: 10px 20px;
+        border-radius: 25px;
+        cursor: pointer;
+        display: none;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    ">
+        ← 뒤로가기
+    </button>
+
+    <!-- 헤더 -->
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h2 class="section-title">MONO PARTY</h2>
+        <p style="color: var(--text-secondary);">원하시는 정보를 선택해주세요</p>
+    </div>
+    
+    <!-- 파티 일정 표시 -->
+<div id="upcomingPartiesIntro" style="
+    background: var(--bg-card);
+    border: 2px solid var(--neon-accent);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 40px;
+">
+    <h3 style="color: var(--neon-accent); margin-bottom: 20px;">🗓️ 다가오는 파티 일정</h3>
+    <div id="partyScheduleGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <!-- 로딩 메시지 -->
+        <div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-secondary);">
+            파티 일정을 불러오는 중...
+        </div>
+    </div>
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">
+            지금 참가 신청하기
+        </a>
+    </div>
+</div>
+    
+    <!-- 카테고리 그리드 -->
+    <div class="category-grid" style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 40px;
+    ">
+        <!-- 카테고리 그리드 뒤에 이 스타일 추가 -->
+<style>
+.category-card {
+    background: linear-gradient(135deg, rgba(17, 17, 17, 0.9) 0%, rgba(17, 17, 17, 0.7) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 255, 136, 0.3);
+    border-radius: 20px;
+    padding: 40px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.5s cubic-bezier(0.23, 1, 0.320, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.category-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                rgba(0, 255, 136, 0.15) 0%, 
+                transparent 50%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.category-card:hover::before {
+    opacity: 1;
+}
+
+.category-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #00ff88, #00e5ff, #ff0066, #00ff88);
+    background-size: 300% 300%;
+    border-radius: 20px;
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.5s ease;
+    animation: gradient-shift 3s ease infinite;
+}
+
+.category-card:hover::after {
+    opacity: 1;
+}
+
+.category-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 30px 60px rgba(0, 255, 136, 0.3),
+                0 0 100px rgba(0, 255, 136, 0.1);
+    border-color: transparent;
+}
+
+.category-card > div:first-child {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.5));
+    transition: all 0.3s ease;
+}
+
+.category-card:hover > div:first-child {
+    transform: scale(1.2) rotate(10deg);
+    filter: drop-shadow(0 0 30px rgba(0, 255, 136, 0.8));
+}
+
+.category-card h3 {
+    background: linear-gradient(45deg, #00ff88, #00e5ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.category-card p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+
+.category-card:hover p {
+    color: rgba(255, 255, 255, 0.9);
+}
+</style>
+        <!-- 파티소개 -->
+        <div class="category-card" onclick="showCategory('party-intro')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">파티 소개</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">정보 & 컨텐츠</p>
+        </div>
+        
+        <!-- 호스트 소개 -->
+        <div class="category-card" onclick="showCategory('host-intro')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">👤</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">호스트 소개</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">HOST MOOD</p>
+        </div>
+        
+        <!-- 후기 -->
+        <div class="category-card" onclick="showCategory('reviews')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">💬</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">참가자 후기</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">생생한 리뷰</p>
+        </div>
+        
+        <!-- 파티 분위기 -->
+        <div class="category-card" onclick="showCategory('gallery')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">📸</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">파티 분위기</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">사진 & 영상</p>
+        </div>
+        
+        <!-- 잔여석 -->
+        <div class="category-card" onclick="showCategory('seats')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">🎟️</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">잔여석 확인</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">실시간 현황</p>
+        </div>
+        
+        <!-- Q&A -->
+        <div class="category-card" onclick="showCategory('qna')" style="
+            background: var(--bg-card);
+            border: 1px solid var(--neon-accent);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 15px;">❓</div>
+            <h3 style="color: var(--neon-accent); margin-bottom: 10px;">자주 묻는 질문</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">Q&A</p>
+        </div>
+    </div>
+    <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
+</section>    
     <!-- Why MONO PARTY Section -->
-    <section class="section" style="background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);">
+    <section class="section" id="whyMonoParty" style="display: none; background: linear-gradient(180deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);">
         <div style="max-width: 900px; margin: 0 auto; text-align: center;">
             <h2 style="font-size: clamp(2rem, 6vw, 4rem); margin-bottom: 30px; font-weight: 900; line-height: 1.3;">
                 다른 파티는 잊어라.<br>
@@ -1358,10 +2122,46 @@
                 </p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Visual Experience Section -->
-    <section class="section">
+    <section class="section" id="visualSection" style="display: none;">
         <h2 class="section-title">무채색 속에서 빛나는<br>네온의 유혹</h2>
         
         <div style="display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 50px;">
@@ -1389,10 +2189,46 @@
                 </div>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Dopamine Rush Section -->
-    <section class="section" style="background: var(--bg-secondary); position: relative; overflow: hidden;">
+    <section class="section" id="dopamineSection" style="display: none; background: var(--bg-secondary); position: relative; overflow: hidden;">
         <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 20% 50%, rgba(255, 0, 102, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(0, 229, 255, 0.1) 0%, transparent 50%);"></div>
         
         <div style="position: relative; z-index: 1;">
@@ -1447,10 +2283,46 @@
                 <p style="font-size: 0.95rem; color: var(--text-secondary);">- 실제 참가자 후기</p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Concept Section -->
-    <section class="section">
+    <section class="section" id="conceptSection" style="display: none;">
         <h2 class="section-title">우리는 사람을 소개하지 않아요.<br><span class="neon-glow">감정</span>을 소개합니다.</h2>
         
         <div class="concept-grid">
@@ -1481,10 +2353,46 @@
                 </p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Flow Section -->
-    <section class="section" style="background: var(--bg-secondary);">
+    <section class="section" id="flowSection" style="display: none; background: var(--bg-secondary);">
         <h2 class="section-title">감정의 흐름에 맞춘 플로우</h2>
         
         <div class="flow-container">
@@ -1512,10 +2420,46 @@
                 <p>2부에서 만나는<br>진짜 연결의 가능성</p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Features Section -->
-    <section class="section">
+    <section class="section" id="featuresSection" style="display: none;">
         <h2 class="section-title">왜 사람들이 다시 오는가?</h2>
         
         <div class="features-grid">
@@ -1567,10 +2511,46 @@
                 <p>파티 후에도 이어지는 인연</p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Testimonials Section -->
-    <section class="section" style="background: var(--bg-secondary);">
+    <section class="section" id="testimonialsSection" style="display: none; background: var(--bg-secondary);">
         <h2 class="section-title">실참여자 생생 리뷰</h2>
         
         <div class="testimonials-container">
@@ -1598,10 +2578,46 @@
                 <p>소개팅은 부담스럽고 클럽은 시끄러운데, 여기는 딱 제가 원하던 분위기예요!</p>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Video Section with TOP 3 -->
-    <section class="section" style="background: var(--bg-primary); position: relative; overflow: hidden;">
+    <section class="section" id="videoSection" style="display: none; background: var(--bg-primary); position: relative; overflow: hidden;">
         <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 30% 50%, rgba(255, 0, 102, 0.1) 0%, transparent 50%), radial-gradient(circle at 70% 50%, rgba(0, 229, 255, 0.1) 0%, transparent 50%);"></div>
         
         <div style="position: relative; z-index: 1;">
@@ -1753,10 +2769,46 @@
                 </div>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Host Introduction Section -->
-    <section class="section" style="background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); position: relative; overflow: hidden;">
+    <section class="section" id="hostSection" style="display: none; background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%); position: relative; overflow: hidden;">
         <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 70% 30%, rgba(255, 0, 102, 0.1) 0%, transparent 50%);"></div>
         
         <div style="position: relative; z-index: 1;">
@@ -1905,10 +2957,46 @@
                 </div>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Real Party Gallery Section -->
-    <section class="section" style="background: var(--bg-secondary); padding-bottom: 0; overflow: hidden;">
+    <section class="section" id="gallerySection" style="display: none; background: var(--bg-secondary); padding-bottom: 0; overflow: hidden;">
         <h2 class="section-title">실제 파티 현장,<br><span class="neon-glow">도파민이 터지는 순간들</span></h2>
         
         <div class="party-gallery" style="margin-top: 50px;">
@@ -2003,10 +3091,46 @@
                 <a href="application.html" class="cta-button neon-glow">지금 바로 참가 신청하기</a>
             </div>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Space Gallery Section -->
-    <section class="section">
+    <section class="section" id="spaceSection" style="display: none;">
         <h2 class="section-title">프라이빗한 감성 공간</h2>
         
         <div style="position: relative; height: 400px; margin: 0 -15px; overflow: hidden; margin-bottom: 30px; border-radius: 15px;">
@@ -2029,12 +3153,52 @@
                 </svg>
                 @mono_party_ 인스타그램 보기
             </a>
-        </div>
+        </div><!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- 파티 일정 섹션 (새로 추가) -->
-    <section class="section" style="background: var(--bg-secondary);">
-        <h2 class="section-title">🗓️ 다가오는 파티 일정</h2>
+    <section class="section" id="partyScheduleSection" style="display: none; background: var(--bg-secondary);">
+        <!-- 다음으로 변경 -->
+<h2 class="section-title" style="margin-bottom: 10px;">
+    <span style="font-size: 0.8rem; color: #666; display: block; margin-bottom: 10px; font-weight: 400;">📅</span>
+    다가오는 파티 일정
+</h2>
+<p style="text-align: center; color: #666; margin-bottom: 40px;">선착순 마감! 서둘러 신청하세요</p>
         
         <div id="upcomingParties" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 40px;">
             <!-- 파티 날짜가 여기에 동적으로 추가됩니다 -->
@@ -2045,10 +3209,46 @@
             <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">지금 참가 신청하기</a>
 
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- FAQ Section -->
-    <section class="section" style="background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);">
+    <section class="section" id="faqSection" style="display: none; background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);">
         <h2 class="section-title">자주 묻는 질문</h2>
         
         <div class="faq-container">
@@ -2094,11 +3294,46 @@
                     보통 전체 인원의 50-60%가 2부까지 함께해요.
                 </p>
             </div>
-        </div>
+        </div><!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Special Offer Section -->
-    <section class="section" style="position: relative; overflow: hidden;">
+    <section class="section" id="specialOfferSection" style="display: none; position: relative; overflow: hidden;">
         <div style="position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(0, 255, 136, 0.2) 0%, transparent 70%);"></div>
         
         <div style="position: relative; z-index: 1; text-align: center; max-width: 800px; margin: 0 auto;">
@@ -2138,10 +3373,46 @@
                 <span style="color: var(--text-secondary);">매회차 마감되니 서둘러 신청하세요!</span>
             </p>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     
     <!-- Info Section -->
-    <section class="section" id="register">
+    <section class="section" id="register" style="display: none;">
         <h2 class="section-title">파티 정보</h2>
         
         <div class="info-grid neon-border">
@@ -2185,6 +3456,42 @@
         <div style="text-align: center; margin-top: 50px;">
             <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">지금 참가 신청하기</a>
         </div>
+        <!-- 섹션 네비게이션 -->
+<div class="section-navigation" style="
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+">
+    <button onclick="goToMain()" style="
+        padding: 12px 30px;
+        background: var(--bg-card);
+        border: 1px solid var(--neon-accent);
+        color: var(--neon-accent);
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        ← 메인으로
+    </button>
+    
+    <button onclick="openApplicationModal()" style="
+        padding: 12px 30px;
+        background: var(--neon-accent);
+        color: var(--bg-primary);
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+        지금 신청하기 →
+    </button>
+</div>
     </section>
     <!-- AI 챗봇 시작 -->
 <div id="chatbotContainer" style="
@@ -2360,6 +3667,157 @@
 </div>
 
 <style>
+    /* 파티 일정 카드 새 디자인 */
+.party-dates-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.party-date-card {
+    background: #0a0a0a;
+    border: 1px solid #00ff88;
+    border-radius: 20px;
+    padding: 30px;
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.party-date-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 255, 136, 0.2);
+    border-color: #00ff88;
+}
+
+.party-date-card.sold-out {
+    border-color: #ff0066;
+    opacity: 0.6;
+}
+
+.date-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.date-info {
+    display: flex;
+    align-items: baseline;
+    gap: 15px;
+}
+
+.date-month {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #00ff88;
+    line-height: 1;
+}
+
+.date-day {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.date-icon {
+    font-size: 2rem;
+}
+
+.seats-info {
+    margin-top: 25px;
+}
+
+.seats-label {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.seats-gauge {
+    position: relative;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.seats-gauge-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88 0%, #00cc70 100%);
+    border-radius: 10px;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.seats-gauge-fill.warning {
+    background: linear-gradient(90deg, #ffaa00 0%, #ff8800 100%);
+}
+
+.seats-gauge-fill.danger {
+    background: linear-gradient(90deg, #ff0066 0%, #cc0044 100%);
+}
+
+.seats-remaining {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: rgba(0, 255, 136, 0.1);
+    border-radius: 30px;
+    border: 1px solid #00ff88;
+}
+
+.seats-remaining.warning {
+    background: rgba(255, 170, 0, 0.1);
+    border-color: #ffaa00;
+}
+
+.seats-remaining.danger {
+    background: rgba(255, 0, 102, 0.1);
+    border-color: #ff0066;
+}
+
+.seats-text {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #00ff88;
+}
+
+.seats-remaining.warning .seats-text {
+    color: #ffaa00;
+}
+
+.seats-remaining.danger .seats-text {
+    color: #ff0066;
+}
+
+.party-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: #ff0066;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    box-shadow: 0 5px 15px rgba(255, 0, 102, 0.3);
+}
+
+.party-badge.hot {
+    background: #ffaa00;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
     /* 챗봇 스타일 */
     @keyframes slideUp {
         from {
@@ -2439,6 +3897,18 @@
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {
+    /* 인트로 페이지 모바일 최적화 */
+    .logo {
+        font-size: clamp(2rem, 12vw, 4rem) !important;
+        white-space: normal !important;
+    }
+    
+    /* 카피 문구 위치 조정 */
+    div[style*="margin-top: 40px"] {
+        margin-top: 30px !important;
+        padding: 0 20px;
+    }
+}
     /* 챗봇 컨테이너 - 버튼 위치 */
     #chatbotContainer {
         position: fixed !important;
@@ -2908,6 +4378,429 @@ window.toggleChatbot = function() {
             }
         });
     }
+    // 페이지 네비게이션 함수들
+// 페이지 네비게이션 함수들
+function scrollToMain() {
+    document.getElementById('introPage').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'block';
+    
+    // 네비게이션 숨기기
+    document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('mobileBottomNav').style.display = 'none';
+    
+    // 파티 일정 즉시 로드
+    setTimeout(() => {
+        loadPartyDatesForIntro();
+    }, 100);
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function backToIntro() {
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('introPage').style.display = 'block';
+    document.getElementById('backButton').style.display = 'none';
+    
+    // 네비게이션 숨기기
+    document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('mobileBottomNav').style.display = 'none';
+    
+    // 모든 섹션 숨기기
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+}
+
+// 메인으로 돌아가기 함수 추가
+function goToMain() {
+    // 모든 섹션 숨기기
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // 인트로 숨기기
+    document.getElementById('introPage').style.display = 'none';
+    
+    // 메인 페이지 표시
+    document.getElementById('mainPage').style.display = 'block';
+    
+    // 네비게이션 숨기기
+    document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('mobileBottomNav').style.display = 'none';
+    
+    // 뒤로가기 버튼 숨기기
+    document.getElementById('backButton').style.display = 'none';
+    
+    // 파티 일정 로드
+    loadPartyDatesForIntro();
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 퀵 카테고리 보기 함수 추가
+function showQuickCategory(category) {
+    // 카테고리 표시 함수 재사용
+    showCategory(category);
+}
+
+function showCategory(category) {
+    // 메인 페이지 숨기기
+    document.getElementById('mainPage').style.display = 'none';
+    
+    // 네비게이션 표시
+    document.getElementById('floatingNav').style.display = 'block';
+    if (window.innerWidth <= 768) {
+        document.getElementById('mobileBottomNav').style.display = 'block';
+    }
+    
+    // 모든 섹션 먼저 숨기기
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // 선택한 카테고리 표시
+    switch(category) {
+        case 'party-intro':
+            document.getElementById('whyMonoParty').style.display = 'block';
+            document.getElementById('conceptSection').style.display = 'block';
+            document.getElementById('flowSection').style.display = 'block';
+            document.getElementById('dopamineSection').style.display = 'block';
+            document.getElementById('featuresSection').style.display = 'block';
+            break;
+        case 'host-intro':
+            document.getElementById('hostSection').style.display = 'block';
+            break;
+        case 'reviews':
+            document.getElementById('testimonialsSection').style.display = 'block';
+            break;
+        case 'gallery':
+            document.getElementById('videoSection').style.display = 'block';
+            document.getElementById('gallerySection').style.display = 'block';
+            document.getElementById('spaceSection').style.display = 'block';
+            break;
+        case 'seats':
+            document.getElementById('partyScheduleSection').style.display = 'block';
+            loadPartyDates(); // 파티 일정 로드
+            break;
+        case 'qna':
+            document.getElementById('faqSection').style.display = 'block';
+            break;
+    }
+    
+    // 뒤로가기 버튼 표시
+    document.getElementById('backButton').style.display = 'flex';
+    document.getElementById('backButton').onclick = function() {
+        backToMain();
+    };
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function backToMain() {
+    // 모든 섹션 숨기기
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.display = 'none';
+    });
+    
+    // 메인 페이지 표시
+    document.getElementById('mainPage').style.display = 'block';
+    
+    // 네비게이션 숨기기
+    document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('mobileBottomNav').style.display = 'none';
+    
+    // 뒤로가기 버튼 텍스트 변경
+    document.getElementById('backButton').onclick = function() {
+        backToIntro();
+    };
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+// 인트로용 파티 일정 로드
+// 인트로용 파티 일정 로드 - 완전 수정 버전
+// 인트로용 파티 일정 로드 - 남녀 구분 표시
+// 인트로용 파티 일정 로드 - 남녀 구분 표시
+async function loadPartyDatesForIntro() {
+    console.log('파티 일정 로드 시작');
+    
+    try {
+        const { data, error } = await supabaseClient
+            .from('party_schedules')
+            .select('*')
+            .eq('is_active', true)
+            .gte('party_date', new Date().toISOString().split('T')[0])
+            .order('party_date', { ascending: true })
+            .limit(4);
+        
+        console.log('받아온 데이터:', data);
+        
+        if (error) {
+            console.error('Supabase 에러:', error);
+            throw error;
+        }
+        
+        const container = document.getElementById('partyScheduleGrid');
+        
+        if (!container) {
+            console.error('partyScheduleGrid 컨테이너를 찾을 수 없습니다');
+            return;
+        }
+        
+        if (data && data.length > 0) {
+            container.style.display = 'grid';
+            container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(280px, 1fr))';
+            container.style.gap = '20px';
+            
+            container.innerHTML = data.map((party, index) => {
+                const date = new Date(party.party_date + 'T00:00:00');
+                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+                const dayOfWeek = dayNames[date.getDay()];
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                
+                // 토요일/일요일 특별 표시
+                const isWeekend = date.getDay() === 6 || date.getDay() === 0;
+                
+                // 남녀 잔여석 계산
+                const maleRemaining = party.male_remaining_seats !== undefined ? party.male_remaining_seats : 35;
+                const femaleRemaining = party.female_remaining_seats !== undefined ? party.female_remaining_seats : 35;
+                const maleMax = party.male_max_capacity || 35;
+                const femaleMax = party.female_max_capacity || 35;
+                
+                // 전체 잔여석
+                const totalRemaining = maleRemaining + femaleRemaining;
+                const totalMax = maleMax + femaleMax;
+                
+                // 점유율 계산
+                const maleOccupancyRate = ((maleMax - maleRemaining) / maleMax) * 100;
+                const femaleOccupancyRate = ((femaleMax - femaleRemaining) / femaleMax) * 100;
+                
+                // 상태 결정
+                let cardBorderColor = '#00ff88';
+                let urgencyBadge = '';
+                let cardIcon = '✨';
+                
+                if (totalRemaining === 0) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">SOLD OUT</div>';
+                    cardBorderColor = '#ff0066';
+                } else if (totalRemaining <= 10) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2; animation: pulse 1.5s infinite;">마감임박</div>';
+                    cardBorderColor = '#ff0066';
+                } else if (totalRemaining <= 20) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ffaa00; color: #000; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">HOT</div>';
+                    cardBorderColor = '#ffaa00';
+                    cardIcon = '🔥';
+                }
+                
+                if (isWeekend) {
+                    cardIcon = '🎉';
+                    if (totalRemaining > 20) {
+                        cardBorderColor = '#ff0066';
+                    }
+                }
+                
+                return `
+                    <div style="
+                        background: rgba(17, 17, 17, 0.98);
+                        border: 2px solid ${cardBorderColor};
+                        border-radius: 20px;
+                        padding: 35px 25px 25px;
+                        position: relative;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+                        ${totalRemaining === 0 ? 'opacity: 0.7;' : ''}
+                    " 
+                    onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 15px 50px rgba(0, 255, 136, 0.4)'" 
+                    onmouseout="this.style.transform=''; this.style.boxShadow='0 0 30px rgba(0, 255, 136, 0.2)'">
+                        
+                        ${urgencyBadge}
+                        
+                        <!-- 아이콘 -->
+                        <div style="text-align: center; font-size: 2.5rem; margin-bottom: 15px;">
+                            ${cardIcon}
+                        </div>
+                        
+                        <!-- 날짜 표시 -->
+                        <div style="text-align: center; margin-bottom: 25px;">
+                            <div style="font-size: 2.2rem; font-weight: 900; color: ${cardBorderColor}; margin-bottom: 5px;">
+                                ${month}월 ${day}일
+                            </div>
+                            <div style="color: #999; font-size: 1rem;">
+                                ${dayOfWeek}요일
+                            </div>
+                        </div>
+                        
+                        <!-- 남성 잔여석 -->
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="color: #00e5ff; font-size: 0.9rem; font-weight: 600;">
+                                    ♂ 남성
+                                </span>
+                                <span style="color: ${maleRemaining <= 5 ? '#ff0066' : maleRemaining <= 10 ? '#ffaa00' : '#00e5ff'}; font-size: 0.9rem; font-weight: 700;">
+                                   ${maleRemaining === 0 ? '마감' : `${maleRemaining}석`}
+                                </span>
+                            </div>
+                            <div style="position: relative; background: rgba(0, 229, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
+                                <div style="
+                                    background: linear-gradient(90deg, #00e5ff, #0099ff);
+                                    height: 100%;
+                                    width: ${maleOccupancyRate}%;
+                                    transition: width 0.5s ease;
+                                    box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+                                "></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 여성 잔여석 -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="color: #ff0066; font-size: 0.9rem; font-weight: 600;">
+                                    ♀ 여성
+                                </span>
+                                <span style="color: ${femaleRemaining <= 5 ? '#ff0066' : femaleRemaining <= 10 ? '#ffaa00' : '#ff0066'}; font-size: 0.9rem; font-weight: 700;">
+                                   ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}석`}
+                                </span>
+                            </div>
+                            <div style="position: relative; background: rgba(255, 0, 102, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
+                                <div style="
+                                    background: linear-gradient(90deg, #ff0066, #ff3388);
+                                    height: 100%;
+                                    width: ${femaleOccupancyRate}%;
+                                    transition: width 0.5s ease;
+                                    box-shadow: 0 0 10px rgba(255, 0, 102, 0.5);
+                                "></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 전체 잔여석 표시 (숫자 없이) -->
+<!-- 전체 잔여석 표시 -->
+${totalRemaining === 0 ? `
+    <div style="
+        background: rgba(255, 0, 102, 0.1);
+        border: 1px solid #ff0066;
+        border-radius: 25px;
+        padding: 12px;
+        text-align: center;
+        margin-top: 5px;
+    ">
+        <span style="
+            color: #ff0066;
+            font-size: 1rem;
+            font-weight: 700;
+        ">
+            🔥 매진 🔥
+        </span>
+    </div>
+` : totalRemaining <= 10 ? `
+    <div style="
+        background: rgba(255, 0, 102, 0.1);
+        border: 1px solid #ff0066;
+        border-radius: 25px;
+        padding: 12px;
+        text-align: center;
+        margin-top: 5px;
+    ">
+        <span style="
+            color: #ff0066;
+            font-size: 1rem;
+            font-weight: 700;
+        ">
+            ⚠️ 마감임박! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석
+        </span>
+    </div>
+` : totalRemaining <= 20 ? `
+    <div style="
+        background: rgba(255, 170, 0, 0.1);
+        border: 1px solid #ffaa00;
+        border-radius: 25px;
+        padding: 12px;
+        text-align: center;
+        margin-top: 5px;
+    ">
+        <span style="
+            color: #ffaa00;
+            font-size: 1rem;
+            font-weight: 700;
+        ">
+            ⚡ 서둘러요! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석
+        </span>
+    </div>
+` : `
+    <div style="
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid #00ff88;
+        border-radius: 25px;
+        padding: 12px;
+        text-align: center;
+        margin-top: 5px;
+    ">
+        <span style="
+            color: #00ff88;
+            font-size: 1rem;
+            font-weight: 700;
+        ">
+            잔여석: 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석
+        </span>
+    </div>
+`}
+                    </div>
+                `;
+            }).join('');
+            
+        } else {
+            // 데이터가 없을 때
+            container.innerHTML = `
+                <div style="
+                    grid-column: 1 / -1;
+                    text-align: center;
+                    padding: 40px 20px;
+                    background: rgba(255, 0, 102, 0.1);
+                    border: 1px solid var(--neon-pink);
+                    border-radius: 10px;
+                ">
+                    <p style="color: var(--neon-pink); font-size: 1.1rem; margin-bottom: 10px;">
+                        📅 현재 예약 가능한 파티가 없습니다
+                    </p>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                        새로운 파티 일정은 인스타그램에서 확인해주세요!
+                    </p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('파티 일정 로드 실패:', error);
+        
+        const container = document.getElementById('partyScheduleGrid');
+        if (container) {
+            container.innerHTML = `
+                <div style="
+                    grid-column: 1 / -1;
+                    text-align: center;
+                    padding: 30px;
+                    color: var(--text-secondary);
+                ">
+                    <p>파티 일정을 불러오는데 실패했습니다.</p>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">잠시 후 다시 시도해주세요.</p>
+                </div>
+            `;
+        }
+    }
+}
+    // fadeInUp 애니메이션 추가
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+`;
+document.head.appendChild(style);
         // 모바일 화면 대응
     document.addEventListener('DOMContentLoaded', function() {
         if (window.innerWidth <= 768) {
@@ -3003,50 +4896,7 @@ window.toggleChatbot = function() {
         </iframe>
     </div>
 </div>
-    <!-- 자동재생 유도 오버레이 -->
-    <div id="autoplayOverlay" style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.9);
-        z-index: 9998;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(5px);
-        cursor: pointer;
-    ">
-        <div style="
-            text-align: center;
-            padding: 40px;
-            background: var(--bg-card);
-            border: 2px solid var(--neon-accent);
-            border-radius: 20px;
-            max-width: 400px;
-            animation: fadeIn 0.5s ease;
-        ">
-            <div style="font-size: 3rem; margin-bottom: 20px;">🎵</div>
-            <h2 style="color: var(--neon-accent); margin-bottom: 15px; font-size: 1.8rem;">MONO PARTY VIBES</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 25px; line-height: 1.6;">
-                최고의 경험을 위해 음악과 함께 즐겨주세요
-            </p>
-            <button onclick="startExperience()" style="
-                padding: 15px 40px;
-                background: var(--neon-accent);
-                color: var(--bg-primary);
-                border: none;
-                border-radius: 50px;
-                font-size: 1.1rem;
-                font-weight: 700;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                음악과 함께 시작하기
-            </button>
-        </div>
-    </div>
+   
        <!-- ⬇️⬇️⬇️ YouTube API 스크립트 추가 ⬇️⬇️⬇️ -->
 <script src="https://www.youtube.com/iframe_api"></script>
 
@@ -3274,7 +5124,7 @@ function updateViewerCount() {
         }
         
 // 파티 날짜 불러오기
-// 🟢 새 코드로 완전히 교체
+// 파티 날짜 불러오기 - 남녀 구분 표시
 async function loadPartyDates() {
     try {
         const { data, error } = await supabaseClient
@@ -3290,16 +5140,19 @@ async function loadPartyDates() {
         const container = document.getElementById('upcomingParties');
         
         if (data && data.length > 0) {
-            container.innerHTML = data.map(party => {
+            container.style.display = 'grid';
+            container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(300px, 1fr))';
+            container.style.gap = '25px';
+            
+            container.innerHTML = data.map((party, index) => {
                 const date = new Date(party.party_date + 'T00:00:00');
                 const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
                 const dayOfWeek = dayNames[date.getDay()];
                 const month = date.getMonth() + 1;
                 const day = date.getDate();
                 
-                // 토요일은 특별 표시
-                const isSaturday = date.getDay() === 6;
-                const borderColor = isSaturday ? 'var(--neon-pink)' : 'var(--neon-accent)';
+                // 토요일/일요일 특별 표시
+                const isWeekend = date.getDay() === 6 || date.getDay() === 0;
                 
                 // 남녀 잔여석 계산
                 const maleRemaining = party.male_remaining_seats !== undefined ? party.male_remaining_seats : 35;
@@ -3307,86 +5160,142 @@ async function loadPartyDates() {
                 const maleMax = party.male_max_capacity || 35;
                 const femaleMax = party.female_max_capacity || 35;
                 
-                // 전체 잔여석 (호환성 유지)
+                // 전체 잔여석
                 const totalRemaining = maleRemaining + femaleRemaining;
                 const totalMax = maleMax + femaleMax;
                 
-                // 남녀 점유율 계산
+                // 점유율 계산
                 const maleOccupancyRate = ((maleMax - maleRemaining) / maleMax) * 100;
                 const femaleOccupancyRate = ((femaleMax - femaleRemaining) / femaleMax) * 100;
                 
-                // 매진 여부 체크
-                const isSoldOut = maleRemaining === 0 && femaleRemaining === 0;
-                const isAlmostFull = totalRemaining <= 10 && totalRemaining > 0;
-                const isHot = totalRemaining <= 20 && totalRemaining > 10;
-                
-                // 긴급도 배지
+                // 상태 결정
+                let cardBorderColor = '#00ff88';
                 let urgencyBadge = '';
-                if (isSoldOut) {
-                    urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: var(--neon-pink); color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700;">SOLD OUT</div>';
-                } else if (isAlmostFull) {
-                    urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: var(--neon-pink); color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700; animation: pulse 1s infinite;">마감임박</div>';
-                } else if (isHot) {
-                    urgencyBadge = '<div style="position: absolute; top: 10px; right: 10px; background: #ffaa00; color: var(--bg-primary); padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: 700;">HOT</div>';
+                let cardIcon = '✨';
+                
+                if (totalRemaining === 0) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">SOLD OUT</div>';
+                    cardBorderColor = '#ff0066';
+                } else if (totalRemaining <= 10) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2; animation: pulse 1.5s infinite;">마감임박</div>';
+                    cardBorderColor = '#ff0066';
+                } else if (totalRemaining <= 20) {
+                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ffaa00; color: #000; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">HOT</div>';
+                    cardBorderColor = '#ffaa00';
+                    cardIcon = '🔥';
+                }
+                
+                if (isWeekend) {
+                    cardIcon = '🎉';
+                    if (totalRemaining > 20) {
+                        cardBorderColor = '#ff0066';
+                    }
                 }
                 
                 return `
-                    <div class="party-card ${isSaturday ? 'saturday' : ''}" style="border-color: ${borderColor}; position: relative; ${isSoldOut ? 'opacity: 0.7; pointer-events: none;' : ''}">
+                    <div style="
+                        background: rgba(17, 17, 17, 0.98);
+                        border: 2px solid ${cardBorderColor};
+                        border-radius: 20px;
+                        padding: 35px 25px 25px;
+                        position: relative;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
+                        ${totalRemaining === 0 ? 'opacity: 0.7;' : ''}
+                    " 
+                    onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 15px 50px rgba(0, 255, 136, 0.4)'" 
+                    onmouseout="this.style.transform=''; this.style.boxShadow='0 0 30px rgba(0, 255, 136, 0.2)'">
+                        
                         ${urgencyBadge}
-                        <div style="font-size: 2.5rem; margin-bottom: 10px;">
-                            ${isSaturday ? '🎉' : '✨'}
-                        </div>
-                        <div style="font-size: 1.8rem; font-weight: 700; color: ${borderColor};">
-                            ${month}월 ${day}일
-                        </div>
-                        <div style="font-size: 1.2rem; color: var(--text-secondary); margin-top: 5px;">
-                            ${dayOfWeek}요일
+                        
+                        <!-- 아이콘 -->
+                        <div style="text-align: center; font-size: 2.5rem; margin-bottom: 15px;">
+                            ${cardIcon}
                         </div>
                         
-                        <!-- 남녀 잔여석 표시 -->
-                        <div style="margin-top: 15px;">
-                            <!-- 남성 잔여석 -->
-                            <div style="margin-bottom: 8px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                                    <span style="color: #00e5ff; font-size: 0.85rem; font-weight: 600;">♂ 남성</span>
-                                    <span style="color: ${maleRemaining <= 5 ? 'var(--neon-pink)' : maleRemaining <= 10 ? '#ffaa00' : 'var(--text-secondary)'}; font-size: 0.85rem; font-weight: 600;">
-                                        ${maleRemaining === 0 ? '마감' : `${maleRemaining}/${maleMax}석`}
-                                    </span>
-                                </div>
-                                <div style="background: rgba(0, 229, 255, 0.1); border-radius: 5px; overflow: hidden; height: 6px;">
-                                    <div style="background: #00e5ff; height: 100%; width: ${maleOccupancyRate}%; transition: all 0.3s ease;"></div>
-                                </div>
+                        <!-- 날짜 표시 -->
+                        <div style="text-align: center; margin-bottom: 25px;">
+                            <div style="font-size: 2.2rem; font-weight: 900; color: ${cardBorderColor}; margin-bottom: 5px;">
+                                ${month}월 ${day}일
                             </div>
-                            
-                            <!-- 여성 잔여석 -->
-                            <div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                                    <span style="color: #ff0066; font-size: 0.85rem; font-weight: 600;">♀ 여성</span>
-                                    <span style="color: ${femaleRemaining <= 5 ? 'var(--neon-pink)' : femaleRemaining <= 10 ? '#ffaa00' : 'var(--text-secondary)'}; font-size: 0.85rem; font-weight: 600;">
-                                        ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}/${femaleMax}석`}
-                                    </span>
-                                </div>
-                                <div style="background: rgba(255, 0, 102, 0.1); border-radius: 5px; overflow: hidden; height: 6px;">
-                                    <div style="background: #ff0066; height: 100%; width: ${femaleOccupancyRate}%; transition: all 0.3s ease;"></div>
-                                </div>
+                            <div style="color: #999; font-size: 1rem;">
+                                ${dayOfWeek}요일
                             </div>
-                            
-                            <!-- 전체 잔여석 요약 -->
-                            <div style="margin-top: 10px; padding: 8px; background: rgba(0, 255, 136, 0.1); border-radius: 20px; border: 1px solid ${totalRemaining <= 10 ? 'var(--neon-pink)' : totalRemaining <= 20 ? '#ffaa00' : 'var(--neon-accent)'}; text-align: center;">
-                                <span style="color: ${totalRemaining <= 10 ? 'var(--neon-pink)' : totalRemaining <= 20 ? '#ffaa00' : 'var(--neon-accent)'}; font-size: 0.9rem; font-weight: 700;">
-                                    ${isSoldOut ? '🔥 매진' : totalRemaining <= 5 ? `🔥 총 ${totalRemaining}석 남음!` : `전체 ${totalRemaining}/${totalMax}석`}
+                        </div>
+                        
+                        <!-- 남성 잔여석 -->
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="color: #00e5ff; font-size: 0.9rem; font-weight: 600;">
+                                    ♂ 남성
+                                </span>
+                                <span style="color: ${maleRemaining <= 5 ? '#ff0066' : maleRemaining <= 10 ? '#ffaa00' : '#00e5ff'}; font-size: 0.9rem; font-weight: 700;">
+                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}석`}
                                 </span>
                             </div>
+                            <div style="position: relative; background: rgba(0, 229, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
+                                <div style="
+                                    background: linear-gradient(90deg, #00e5ff, #0099ff);
+                                    height: 100%;
+                                    width: ${maleOccupancyRate}%;
+                                    transition: width 0.5s ease;
+                                    box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+                                "></div>
+                            </div>
                         </div>
                         
-                        ${isSoldOut ? '<div style="margin-top: 10px; color: var(--text-secondary); font-size: 0.85rem; text-align: center;">다음 파티를 기다려주세요!</div>' : ''}
+                        <!-- 여성 잔여석 -->
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="color: #ff0066; font-size: 0.9rem; font-weight: 600;">
+                                    ♀ 여성
+                                </span>
+                                <span style="color: ${femaleRemaining <= 5 ? '#ff0066' : femaleRemaining <= 10 ? '#ffaa00' : '#ff0066'}; font-size: 0.9rem; font-weight: 700;">
+                                    ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}석`}
+                                </span>
+                            </div>
+                            <div style="position: relative; background: rgba(255, 0, 102, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
+                                <div style="
+                                    background: linear-gradient(90deg, #ff0066, #ff3388);
+                                    height: 100%;
+                                    width: ${femaleOccupancyRate}%;
+                                    transition: width 0.5s ease;
+                                    box-shadow: 0 0 10px rgba(255, 0, 102, 0.5);
+                                "></div>
+                            </div>
+                        </div>
+                        
+<!-- 전체 잔여석 표시 -->
+<div style="
+    background: ${totalRemaining === 0 ? 'rgba(255, 0, 102, 0.1)' : totalRemaining <= 10 ? 'rgba(255, 0, 102, 0.1)' : totalRemaining <= 20 ? 'rgba(255, 170, 0, 0.1)' : 'rgba(0, 255, 136, 0.1)'};
+    border: 1px solid ${totalRemaining === 0 ? '#ff0066' : totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
+    border-radius: 25px;
+    padding: 12px;
+    text-align: center;
+    margin-top: 5px;
+">
+    <span style="
+        color: ${totalRemaining === 0 ? '#ff0066' : totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
+        font-size: 0.95rem;
+        font-weight: 700;
+    ">
+            ${totalRemaining === 0 ? 
+        '🔥 매진 🔥' : 
+        totalRemaining <= 10 ?
+        `⚠️ 마감임박! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석` :
+        totalRemaining <= 20 ?
+        `⚡ 서둘러요! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석` :
+        `잔여석: 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석`
+    }
+    </span>
+</div>
                     </div>
                 `;
             }).join('');
         } else {
             container.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                    <p style="color: var(--text-secondary); font-size: 1.1rem;">
+                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                    <p style="color: #666; font-size: 1.1rem;">
                         새로운 파티 일정을 준비중입니다.<br>
                         인스타그램에서 최신 소식을 확인하세요!
                     </p>
@@ -3395,16 +5304,6 @@ async function loadPartyDates() {
         }
     } catch (error) {
         console.error('Error loading party dates:', error);
-        // 에러 시 기본 표시
-        const container = document.getElementById('upcomingParties');
-        container.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <p style="color: var(--text-secondary); font-size: 1.1rem;">
-                    파티 일정을 확인중입니다...<br>
-                    잠시만 기다려주세요!
-                </p>
-            </div>
-        `;
     }
 }
         // 실시간 알림 구독
@@ -3510,6 +5409,23 @@ async function loadPartyDates() {
             subscribeToApplications();
             generateRandomNotifications();
             updateViewerCount();
+                // 메인 페이지가 보이면 파티 일정 로드
+    const mainPageObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.target.id === 'mainPage' && mutation.target.style.display === 'block') {
+                console.log('메인 페이지 표시됨 - 파티 일정 로드');
+                loadPartyDatesForIntro();
+            }
+        });
+    });
+    
+    const mainPage = document.getElementById('mainPage');
+    if (mainPage) {
+        mainPageObserver.observe(mainPage, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+    }
             // 버튼 초기 상태 설정
 setTimeout(() => {
     if (window.updateButtonDisplay) {
@@ -3852,5 +5768,102 @@ window.startExperience = function() {
         });
     </script>
     <!-- 🔼 테스트 코드 끝 🔼 -->
+    <!-- 커스텀 커서 효과 -->
+<div id="cursor-glow" style="
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, rgba(0, 255, 136, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: all 0.1s ease;
+    transform: translate(-50%, -50%);
+    display: none;
+"></div>
+
+<script>
+// 프리미엄 커서 효과
+if (window.innerWidth > 768) {
+    const cursorGlow = document.getElementById('cursor-glow');
+    
+    document.addEventListener('mousemove', (e) => {
+        cursorGlow.style.display = 'block';
+        cursorGlow.style.left = e.clientX + 'px';
+        cursorGlow.style.top = e.clientY + 'px';
+    });
+    
+    // 호버 시 커서 확대
+    document.querySelectorAll('button, .category-card, .cta-button, a').forEach(el => {
+        el.addEventListener('mouseenter', () => {
+            cursorGlow.style.width = '60px';
+            cursorGlow.style.height = '60px';
+            cursorGlow.style.background = 'radial-gradient(circle, rgba(0, 255, 136, 0.5) 0%, transparent 70%)';
+        });
+        
+        el.addEventListener('mouseleave', () => {
+            cursorGlow.style.width = '40px';
+            cursorGlow.style.height = '40px';
+            cursorGlow.style.background = 'radial-gradient(circle, rgba(0, 255, 136, 0.3) 0%, transparent 70%)';
+        });
+    });
+}
+
+// 카드 마우스 추적 효과
+document.querySelectorAll('.category-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        
+        card.style.setProperty('--mouse-x', `${x}%`);
+        card.style.setProperty('--mouse-y', `${y}%`);
+    });
+});
+</script>
+    <script>
+// scrollToMain 함수 재정의 (안전장치)
+window.scrollToMain = function() {
+    console.log('버튼 클릭됨!'); // 디버깅용
+    document.getElementById('introPage').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'block';
+    loadPartyDatesForIntro(); // 파티 일정 로드
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 버튼에 이벤트 리스너 직접 추가 (백업)
+document.addEventListener('DOMContentLoaded', function() {
+    const premiumButtons = document.querySelectorAll('.premium-button');
+    premiumButtons.forEach(button => {
+        button.style.cursor = 'pointer';
+        button.style.pointerEvents = 'auto';
+        
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            scrollToMain();
+        });
+    });
+});
+</script>
+    <script>
+// 전역 함수로 등록 (혹시 누락된 경우를 대비)
+window.goToMain = goToMain;
+window.showQuickCategory = showQuickCategory;
+window.showCategory = showCategory;
+window.backToMain = backToMain;
+window.backToIntro = backToIntro;
+window.scrollToMain = scrollToMain;
+
+// 페이지 로드 후 초기화
+document.addEventListener('DOMContentLoaded', function() {
+    // 초기 상태: 네비게이션 숨기기
+    document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('mobileBottomNav').style.display = 'none';
+    
+    // 뒤로가기 버튼 초기 숨김
+    document.getElementById('backButton').style.display = 'none';
+});
+</script>
 </body>
 </html>
