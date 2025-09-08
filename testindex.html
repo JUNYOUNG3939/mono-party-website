@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-async function loadPartyDatesForIntro() {app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>MONO PARTY | 감정이 흐르는 무드 파티</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1237,6 +1237,35 @@
     #mobileBottomNav {
         display: none !important;
     }
+}
+    /* 파티 카드 애니메이션 */
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+/* 게이지바 애니메이션 */
+@keyframes fillGauge {
+    from { 
+        width: 0;
+        opacity: 0;
+    }
+    to { 
+        width: var(--fill-width);
+        opacity: 1;
+    }
+}
+
+/* 카드 호버 효과 */
+.party-card-enhanced:hover {
+    transform: translateY(-10px) !important;
+    box-shadow: 0 20px 60px rgba(0, 255, 136, 0.5) !important;
 }
     </style>
 
@@ -4490,6 +4519,7 @@ function backToMain() {
 // 인트로용 파티 일정 로드
 // 인트로용 파티 일정 로드 - 완전 수정 버전
 // 인트로용 파티 일정 로드 - 남녀 구분 표시
+// 인트로용 파티 일정 로드 - 남녀 구분 표시
 async function loadPartyDatesForIntro() {
     console.log('파티 일정 로드 시작');
     
@@ -4607,7 +4637,7 @@ async function loadPartyDatesForIntro() {
                                     ♂ 남성
                                 </span>
                                 <span style="color: ${maleRemaining <= 5 ? '#ff0066' : maleRemaining <= 10 ? '#ffaa00' : '#00e5ff'}; font-size: 0.9rem; font-weight: 700;">
-                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}석`}
+                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}/${maleMax}석`}
                                 </span>
                             </div>
                             <div style="position: relative; background: rgba(0, 229, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
@@ -4628,7 +4658,7 @@ async function loadPartyDatesForIntro() {
                                     ♀ 여성
                                 </span>
                                 <span style="color: ${femaleRemaining <= 5 ? '#ff0066' : femaleRemaining <= 10 ? '#ffaa00' : '#ff0066'}; font-size: 0.9rem; font-weight: 700;">
-                                    ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}석`}
+                                    ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}/${femaleMax}석`}
                                 </span>
                             </div>
                             <div style="position: relative; background: rgba(255, 0, 102, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
@@ -4642,7 +4672,8 @@ async function loadPartyDatesForIntro() {
                             </div>
                         </div>
                         
-<!-- 전체 잔여석 표시 (숫자 없이) -->
+                        <!-- 전체 잔여석 표시 (숫자 없이) -->
+<!-- 전체 잔여석 표시 -->
 ${totalRemaining === 0 ? `
     <div style="
         background: rgba(255, 0, 102, 0.1);
@@ -4674,7 +4705,7 @@ ${totalRemaining === 0 ? `
             font-size: 1rem;
             font-weight: 700;
         ">
-            🔥 마감 임박 🔥
+            ⚠️ 마감임박! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석
         </span>
     </div>
 ` : totalRemaining <= 20 ? `
@@ -4691,10 +4722,27 @@ ${totalRemaining === 0 ? `
             font-size: 1rem;
             font-weight: 700;
         ">
-            ⚡ 서둘러 신청하세요 ⚡
+            ⚡ 서둘러요! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석
         </span>
     </div>
-` : ''}
+` : `
+    <div style="
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid #00ff88;
+        border-radius: 25px;
+        padding: 12px;
+        text-align: center;
+        margin-top: 5px;
+    ">
+        <span style="
+            color: #00ff88;
+            font-size: 1rem;
+            font-weight: 700;
+        ">
+            잔여석: 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석
+        </span>
+    </div>
+`}
                     </div>
                 `;
             }).join('');
