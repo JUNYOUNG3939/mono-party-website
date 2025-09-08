@@ -4607,7 +4607,7 @@ async function loadPartyDatesForIntro() {
                                     ♂ 남성
                                 </span>
                                 <span style="color: ${maleRemaining <= 5 ? '#ff0066' : maleRemaining <= 10 ? '#ffaa00' : '#00e5ff'}; font-size: 0.9rem; font-weight: 700;">
-                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}/`}
+                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}석`}
                                 </span>
                             </div>
                             <div style="position: relative; background: rgba(0, 229, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
@@ -5217,23 +5217,30 @@ async function loadPartyDates() {
                             </div>
                         </div>
                         
-                        <!-- 전체 잔여석 표시 -->
-                        <div style="
-                            background: ${totalRemaining <= 10 ? 'rgba(255, 0, 102, 0.1)' : totalRemaining <= 20 ? 'rgba(255, 170, 0, 0.1)' : 'rgba(0, 255, 136, 0.1)'};
-                            border: 1px solid ${totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
-                            border-radius: 25px;
-                            padding: 12px;
-                            text-align: center;
-                            margin-top: 5px;
-                        ">
-                            <span style="
-                                color: ${totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
-                                font-size: 1rem;
-                                font-weight: 700;
-                            ">
-                                ${totalRemaining === 0 ? '🔥 매진 🔥' : `전체 ${totalRemaining}/${totalMax}석`}
-                            </span>
-                        </div>
+<!-- 전체 잔여석 표시 -->
+<div style="
+    background: ${totalRemaining === 0 ? 'rgba(255, 0, 102, 0.1)' : totalRemaining <= 10 ? 'rgba(255, 0, 102, 0.1)' : totalRemaining <= 20 ? 'rgba(255, 170, 0, 0.1)' : 'rgba(0, 255, 136, 0.1)'};
+    border: 1px solid ${totalRemaining === 0 ? '#ff0066' : totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
+    border-radius: 25px;
+    padding: 12px;
+    text-align: center;
+    margin-top: 5px;
+">
+    <span style="
+        color: ${totalRemaining === 0 ? '#ff0066' : totalRemaining <= 10 ? '#ff0066' : totalRemaining <= 20 ? '#ffaa00' : '#00ff88'};
+        font-size: 0.95rem;
+        font-weight: 700;
+    ">
+            ${totalRemaining === 0 ? 
+        '🔥 매진 🔥' : 
+        totalRemaining <= 10 ?
+        `⚠️ 마감임박! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석` :
+        totalRemaining <= 20 ?
+        `⚡ 서둘러요! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석` :
+        `잔여석: 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석`
+    }
+    </span>
+</div>
                     </div>
                 `;
             }).join('');
