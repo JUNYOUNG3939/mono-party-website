@@ -1252,21 +1252,23 @@
 /* 모바일 반응형 */
 @media (max-width: 768px) {
         /* 모바일에서 챗봇 버튼 숨기기 */
-    #chatbotContainer {
+    #chatbotToggle {
         display: none !important;
     }
     
     /* 챗봇 윈도우는 열렸을 때만 표시 */
-    #chatbotWindow.active {
-        display: flex !important;
-        position: fixed !important;
-        top: 20px !important;
-        left: 10px !important;
-        right: 10px !important;
-        bottom: 70px !important;
-        width: calc(100% - 20px) !important;
-        height: calc(100% - 90px) !important;
-    }
+#chatbotWindow {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    z-index: 99999 !important;
+}
     #floatingNav {
         bottom: 70px !important;
         padding: 10px 15px !important;
@@ -4324,23 +4326,36 @@ ${fortune.lucky}
     
     // 챗봇 토글
 window.toggleChatbot = function() {
-    const window = document.getElementById('chatbotWindow');
+    const chatWindow = document.getElementById('chatbotWindow');
     const toggle = document.getElementById('chatbotToggle');
+    const isMobile = window.innerWidth <= 768;
     
-    if (window.style.display === 'none' || window.style.display === '') {
-        window.style.display = 'flex';
-        toggle.innerHTML = '✕';
-        toggle.style.background = 'linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-accent) 100%)';
-        // 모바일에서 버튼 위치 유지
-        toggle.style.visibility = 'visible';
-        toggle.style.display = 'flex';
+    if (chatWindow.style.display === 'none' || chatWindow.style.display === '') {
+        chatWindow.style.display = 'flex';
+        
+        // 모바일일 때는 버튼 조작 안 함
+        if (!isMobile && toggle) {
+            toggle.innerHTML = '✕';
+            toggle.style.background = 'linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-accent) 100%)';
+        }
+        
+        // 모바일에서 body 스크롤 방지
+        if (isMobile) {
+            document.body.style.overflow = 'hidden';
+        }
     } else {
-        window.style.display = 'none';
-        toggle.innerHTML = '💬';
-        toggle.style.background = 'linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%)';
-        // 모바일에서도 버튼 계속 표시
-        toggle.style.visibility = 'visible';
-        toggle.style.display = 'flex';
+        chatWindow.style.display = 'none';
+        
+        // 모바일일 때는 버튼 조작 안 함
+        if (!isMobile && toggle) {
+            toggle.innerHTML = '💬';
+            toggle.style.background = 'linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%)';
+        }
+        
+        // 모바일에서 body 스크롤 복구
+        if (isMobile) {
+            document.body.style.overflow = 'auto';
+        }
     }
 }
     
@@ -4450,26 +4465,7 @@ window.toggleChatbot = function() {
             toggle.style.animation = 'pulse 2s infinite, bounce 1s ease';
         }
     }, 3000);
-        // 모바일에서 챗봇 버튼 위치 강제 조정
-    if (window.innerWidth <= 768) {
-        window.addEventListener('load', function() {
-            const container = document.getElementById('chatbotContainer');
-            const toggle = document.getElementById('chatbotToggle');
-            
-            if (container) {
-                container.style.position = 'fixed';
-                container.style.bottom = '120px';
-                container.style.right = '15px';
-                container.style.zIndex = '99999';
-            }
-            
-            if (toggle) {
-                toggle.style.display = 'flex';
-                toggle.style.visibility = 'visible';
-                console.log('✅ 모바일 챗봇 버튼 위치 조정 완료');
-            }
-        });
-    }
+
     // 페이지 네비게이션 함수들
 // 페이지 네비게이션 함수들
 function scrollToMain() {
