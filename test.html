@@ -5003,7 +5003,7 @@ function updateViewerCount() {
                 setTimeout(() => {
                     notification.remove();
                 }, 500);
-            }, 5000);
+            }, 2000);
             
             // 최대 3개까지만 표시
             const notifications = container.children;
@@ -5228,22 +5228,34 @@ async function loadPartyDates() {
         
         // 랜덤 알림 생성 (초기 활성화를 위해)
         function generateRandomNotifications() {
-            // 페이지 로드 후 3-10초 사이에 첫 알림
-            setTimeout(() => {
-                const gender = Math.random() > 0.5 ? 'male' : 'female';
-                const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
-                showNotification(gender, age);
-            }, Math.random() * 7000 + 3000);
-            
-            // 이후 20-60초마다 랜덤 알림
-            setInterval(() => {
-                if (Math.random() > 0.7) { // 30% 확률로 알림 생성
-                    const gender = Math.random() > 0.5 ? 'male' : 'female';
-                    const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
-                    showNotification(gender, age);
-                }
-            }, Math.random() * 40000 + 20000);
+    let notificationCount = 0;  // 알림 카운트 추가
+    const maxNotifications = 3;  // 최대 3개만 표시
+    
+    // 페이지 로드 후 5-15초 사이에 첫 알림 (더 늦게)
+    setTimeout(() => {
+        if (notificationCount < maxNotifications) {
+            const gender = Math.random() > 0.5 ? 'male' : 'female';
+            const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
+            showNotification(gender, age);
+            notificationCount++;
         }
+    }, Math.random() * 10000 + 5000);  // 5-15초로 변경
+    
+    // 60-120초마다 10% 확률로만 알림 (훨씬 희박하게)
+    const intervalId = setInterval(() => {
+        if (notificationCount >= maxNotifications) {
+            clearInterval(intervalId);  // 3개 이후 중지
+            return;
+        }
+        
+        if (Math.random() > 0.9) { // 10% 확률로만 알림 생성
+            const gender = Math.random() > 0.5 ? 'male' : 'female';
+            const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
+            showNotification(gender, age);
+            notificationCount++;
+        }
+    }, Math.random() * 60000 + 60000);  // 60-120초로 변경
+}
         
         // Create floating particles - Desktop only
         if (window.innerWidth > 768) {
