@@ -1105,6 +1105,28 @@
             left: auto !important;
             max-width: 200px;
         }
+            /* YouTube 플레이어 위치 조정 - 하단 네비 위로 */
+    #youtubePlayer {
+        bottom: 80px !important;
+        left: 50% !important;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 350px;
+        min-width: auto;
+    }
+    
+    #miniYoutubePlayer {
+        bottom: 80px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        max-width: 90%;
+    }
+    
+    #musicToggleBtn {
+        bottom: 80px !important;
+        left: 15px !important;
+    }
+
         /* 재생 버튼 호버 효과 */
     #playPauseBtn:hover {
         transform: scale(1.1);
@@ -1504,7 +1526,7 @@
 <!-- YouTube 음악 플레이어 시작 -->
     <div id="youtubePlayer" style="
     position: fixed;
-    bottom: 30px;
+    bottom: 80px;
     left: 30px;
     z-index: 999;
     background: rgba(0, 0, 0, 0.95);
@@ -1548,20 +1570,6 @@
                 justify-content: center;
                 transition: all 0.3s ease;
             ">－</button>
-            <button onclick="toggleYoutubePlayer()" style="
-                background: none;
-                border: none;
-                color: var(--text-secondary);
-                cursor: pointer;
-                font-size: 1.2rem;
-                padding: 0;
-                width: 25px;
-                height: 25px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
-            ">▼</button>
         </div>
     </div>
         
@@ -5595,21 +5603,17 @@ if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
             
             // ⬇️⬇️ 여기에 추가 ⬇️⬇️
             // 음악 플레이어 최소화/복원
-            function minimizePlayer() {
-                const player = document.getElementById('youtubePlayer');
-                const miniPlayer = document.getElementById('miniYoutubePlayer');
-                const toggleBtn = document.getElementById('musicToggleBtn');
-                
-                if (player) {
-                    player.style.display = 'none';
-                }
-                if (miniPlayer) {
-                    miniPlayer.style.display = 'none';
-                }
-                if (toggleBtn && window.innerWidth <= 768) {
-                    toggleBtn.style.display = 'flex';
-                }
-            }
+// 음악 플레이어 최소화
+function minimizePlayer() {
+    const player = document.getElementById('youtubePlayer');
+    const miniPlayer = document.getElementById('miniYoutubePlayer');
+    const toggleBtn = document.getElementById('musicToggleBtn');
+    
+    // 모두 숨기고 토글 버튼만 표시
+    if (player) player.style.display = 'none';
+    if (miniPlayer) miniPlayer.style.display = 'none';
+    if (toggleBtn) toggleBtn.style.display = 'flex';
+}
             
             function toggleMusicPlayer() {
                 const player = document.getElementById('youtubePlayer');
@@ -5648,18 +5652,21 @@ if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
                 }
             });
 // YouTube 플레이어 토글 기능
-            window.toggleYoutubePlayer = function() {
-                const player = document.getElementById('youtubePlayer');
-                const miniPlayer = document.getElementById('miniYoutubePlayer');
-                
-                if (player.style.display === 'none') {
-                    player.style.display = 'block';
-                    miniPlayer.style.display = 'none';
-                } else {
-                    player.style.display = 'none';
-                    miniPlayer.style.display = 'block';
-                }
-            }
+// YouTube 플레이어 토글 기능 (미니 <-> 전체)
+window.toggleYoutubePlayer = function() {
+    const player = document.getElementById('youtubePlayer');
+    const miniPlayer = document.getElementById('miniYoutubePlayer');
+    
+    if (miniPlayer.style.display === 'block' || miniPlayer.style.display === 'flex') {
+        // 미니에서 전체로
+        miniPlayer.style.display = 'none';
+        player.style.display = 'block';
+    } else {
+        // 전체에서 미니로
+        player.style.display = 'none';
+        miniPlayer.style.display = 'block';
+    }
+}
 
                         // 5초 후 미니플레이어로 자동 전환
             setTimeout(() => {
