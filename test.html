@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1366,7 +1367,95 @@
 </div>
 
 <!-- 모바일용 하단 네비게이션 -->
-
+<div id="mobileBottomNav" style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9997;
+    background: rgba(0, 0, 0, 0.98);
+    border-top: 1px solid var(--neon-accent);
+    padding: 10px 0;
+    backdrop-filter: blur(10px);
+    display: none;
+">
+    <div style="display: flex; justify-content: space-around; align-items: center;">
+        <button onclick="goToMain()" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--neon-accent);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">🏠</span>
+            <span style="font-size: 0.7rem;">메인</span>
+        </button>
+        
+        <button onclick="showQuickCategory('party-intro')" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">🎉</span>
+            <span style="font-size: 0.7rem;">파티</span>
+        </button>
+        
+        <button onclick="showQuickCategory('gallery')" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">📸</span>
+            <span style="font-size: 0.7rem;">갤러리</span>
+        </button>
+        
+        <button onclick="showQuickCategory('seats')" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">🎟️</span>
+            <span style="font-size: 0.7rem;">예약</span>
+        </button>
+        
+        <button onclick="openApplicationModal()" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--neon-pink);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">✨</span>
+            <span style="font-size: 0.7rem;">신청</span>
+        </button>
+    </div>
+</div>
 <!-- YouTube 음악 플레이어 시작 -->
     <div id="youtubePlayer" style="
         position: fixed;
@@ -1738,10 +1827,10 @@
     </button>
 
     <!-- 헤더 -->
-<div style="text-align: center; margin-bottom: ${window.innerWidth <= 768 ? '20px' : '50px'};">
-    <h2 class="section-title" style="${window.innerWidth <= 768 ? 'font-size: 1.5rem; margin-bottom: 10px;' : ''}">MONO PARTY</h2>
-    <p style="color: var(--text-secondary); ${window.innerWidth <= 768 ? 'font-size: 0.85rem;' : ''}">원하시는 정보를 선택해주세요</p>
-</div>
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h2 class="section-title">MONO PARTY</h2>
+        <p style="color: var(--text-secondary);">원하시는 정보를 선택해주세요</p>
+    </div>
     
     <!-- 파티 일정 표시 -->
 <div id="upcomingPartiesIntro" style="
@@ -4360,7 +4449,10 @@ function showCategory(category) {
     document.getElementById('mainPage').style.display = 'none';
     
     // 네비게이션 표시
-   document.getElementById('floatingNav').style.display = 'block';
+    document.getElementById('floatingNav').style.display = 'block';
+    if (window.innerWidth <= 768) {
+        document.getElementById('mobileBottomNav').style.display = 'block';
+    }
     
     // 모든 섹션 먼저 숨기기
     document.querySelectorAll('.section').forEach(section => {
@@ -4457,8 +4549,7 @@ async function loadPartyDatesForIntro() {
         
         if (data && data.length > 0) {
             container.style.display = 'grid';
-            // 모바일에서는 3개가 한 줄에 보이도록
-container.style.gridTemplateColumns = window.innerWidth <= 768 ? 'repeat(3, 1fr)' : 'repeat(auto-fit, minmax(280px, 1fr))';
+            container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(280px, 1fr))';
             container.style.gap = '20px';
             
             container.innerHTML = data.map((party, index) => {
@@ -4513,8 +4604,8 @@ container.style.gridTemplateColumns = window.innerWidth <= 768 ? 'repeat(3, 1fr)
                     <div style="
                         background: rgba(17, 17, 17, 0.98);
                         border: 2px solid ${cardBorderColor};
-                        border-radius: 15px;
-                        padding: ${window.innerWidth <= 768 ? '15px 10px' : '35px 25px 25px'};
+                        border-radius: 20px;
+                        padding: 35px 25px 25px;
                         position: relative;
                         transition: all 0.3s ease;
                         box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
