@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -1012,6 +1013,19 @@
                 background: rgba(0, 255, 136, 0.1);
             }
         }
+        /* 플로팅 네비게이션 - 데스크탑만 표시 */
+@media (max-width: 768px) {
+    #floatingNav {
+        display: none !important;
+    }
+}
+
+/* 데스크탑에서만 플로팅 네비게이션 표시 */
+@media (min-width: 769px) {
+    #floatingNav.active {
+        display: block !important;
+    }
+}
         
         /* Optimize for iPhone X and newer */
         @supports (padding: max(0px)) {
@@ -1049,6 +1063,18 @@
         50% { height: 20px; }
         100% { height: 5px; }
     }
+        /* 음악 버튼 펄스 애니메이션 */
+@keyframes musicPulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+    }
+    50% { 
+        transform: scale(1.08);
+        box-shadow: 0 8px 30px rgba(0, 255, 136, 0.7);
+    }
+}
+        
 /* 버튼 호버 효과 */
 #playBtn:hover, #miniPlayBtn:hover {
     transform: scale(1.1);
@@ -1091,6 +1117,28 @@
             left: auto !important;
             max-width: 200px;
         }
+            /* YouTube 플레이어 위치 조정 - 하단 네비 위로 */
+    #youtubePlayer {
+        bottom: 80px !important;
+        left: 50% !important;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 350px;
+        min-width: auto;
+    }
+    
+    #miniYoutubePlayer {
+        bottom: 80px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        max-width: 90%;
+    }
+    
+    #musicToggleBtn {
+        bottom: 80px !important;
+        left: 15px !important;
+    }
+
         /* 재생 버튼 호버 효과 */
     #playPauseBtn:hover {
         transform: scale(1.1);
@@ -1215,6 +1263,24 @@
 
 /* 모바일 반응형 */
 @media (max-width: 768px) {
+        /* 모바일에서 챗봇 버튼 숨기기 */
+    #chatbotToggle {
+        display: none !important;
+    }
+    
+    /* 챗봇 윈도우는 열렸을 때만 표시 */
+#chatbotWindow {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    z-index: 99999 !important;
+}
     #floatingNav {
         bottom: 70px !important;
         padding: 10px 15px !important;
@@ -1439,6 +1505,22 @@
             <span style="font-size: 0.7rem;">예약</span>
         </button>
         
+        <!-- 챗봇 버튼 추가 -->
+        <button onclick="toggleChatbot()" class="mobile-nav-btn" style="
+            background: none;
+            border: none;
+            color: var(--neon-pink);
+            padding: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        ">
+            <span style="font-size: 1.5rem;">💬</span>
+            <span style="font-size: 0.7rem;">AI챗</span>
+        </button>
+        
         <button onclick="openApplicationModal()" class="mobile-nav-btn" style="
             background: none;
             border: none;
@@ -1456,125 +1538,6 @@
     </div>
 </div>
 <!-- YouTube 음악 플레이어 시작 -->
-    <div id="youtubePlayer" style="
-        position: fixed;
-        bottom: 30px;
-        left: 30px;
-        z-index: 999;
-        background: rgba(0, 0, 0, 0.95);
-        border: 1px solid var(--neon-accent);
-        border-radius: 15px;
-        padding: 20px;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
-        transition: all 0.3s ease;
-        min-width: 320px;
-    ">
-        <div style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        ">
-            <span style="
-                color: var(--neon-accent);
-                font-size: 0.9rem;
-                font-weight: 600;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            ">
-                🎵 NOW PLAYING
-            </span>
-            <button onclick="toggleYoutubePlayer()" style="
-                background: none;
-                border: none;
-                color: var(--text-secondary);
-                cursor: pointer;
-                font-size: 1.2rem;
-                padding: 0;
-                width: 25px;
-                height: 25px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
-            ">▼</button>
-        </div>
-        
-        <!-- 노래 정보 표시 -->
-        <div style="
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        ">
- <!-- 재생/일시정지 버튼 영역 -->
-<div style="display: flex; gap: 10px; align-items: center;">
-    <!-- 재생 버튼 -->
-    <button id="playBtn" onclick="playMusic()" title="음악 재생" style="
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, #00ff88 0%, #00cc70 100%);
-        border: none;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
-    ">
-        ▶️
-    </button>
-    
-    <!-- 일시정지 버튼 -->
-    <button id="pauseBtn" onclick="pauseMusic()" title="일시정지" style="
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, #ff0066 0%, #cc0044 100%);
-        border: none;
-        border-radius: 50%;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 15px rgba(255, 0, 102, 0.3);
-    ">
-        ⏸️
-    </button>
-</div>
-            
-            <div style="flex: 1;">
-                <div style="
-                    color: var(--text-primary);
-                    font-size: 1rem;
-                    font-weight: 600;
-                    margin-bottom: 5px;
-                ">MONO PARTY MIX(Youtube)</div>
-                <div style="
-                    color: var(--text-secondary);
-                    font-size: 0.85rem;
-                ">플리메이커(Youtube)</div>
-                <!-- 음악 바 애니메이션 -->
-                <div id="musicBars" style="
-                    display: flex;
-                    gap: 3px;
-                    margin-top: 10px;
-                    align-items: flex-end;
-                    height: 20px;
-                ">
-                    <div class="music-bar" style="width: 3px; background: var(--neon-accent); height: 10px; animation: musicWave 0.5s ease infinite alternate;"></div>
-                    <div class="music-bar" style="width: 3px; background: var(--neon-accent); height: 15px; animation: musicWave 0.5s ease infinite alternate 0.1s;"></div>
-                    <div class="music-bar" style="width: 3px; background: var(--neon-accent); height: 8px; animation: musicWave 0.5s ease infinite alternate 0.2s;"></div>
-                    <div class="music-bar" style="width: 3px; background: var(--neon-accent); height: 18px; animation: musicWave 0.5s ease infinite alternate 0.3s;"></div>
-                    <div class="music-bar" style="width: 3px; background: var(--neon-accent); height: 12px; animation: musicWave 0.5s ease infinite alternate 0.4s;"></div>
-                </div>
-            </div>
-        </div>
-        
 <!-- 숨겨진 YouTube iframe (오디오만) -->
 <div style="position: absolute; left: -9999px; top: -9999px;">
     <iframe 
@@ -1586,66 +1549,30 @@
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
     </iframe>
 </div>
-    </div>
 
-    <div id="miniYoutubePlayer" style="
-        position: fixed;
-        bottom: 30px;
-        left: 30px;
-        z-index: 999;
-        background: rgba(0, 0, 0, 0.95);
-        border: 1px solid var(--neon-accent);
-        border-radius: 50px;
-        padding: 12px 20px;
-        backdrop-filter: blur(10px);
-        display: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 5px 20px rgba(0, 255, 136, 0.2);
-    " onclick="toggleYoutubePlayer()">
-        <div style="display: flex; align-items: center; gap: 12px;">
-<!-- 미니 플레이어 버튼들 -->
-<div style="display: flex; gap: 8px; align-items: center;">
-    <!-- 미니 재생 버튼 -->
-    <button id="miniPlayBtn" onclick="event.stopPropagation(); playMusic();" title="재생" style="
-        background: #00ff88;
-        border: none;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 0.8rem;
-        transition: all 0.3s ease;
-    ">
-        ▶️
-    </button>
-    
-    <!-- 미니 일시정지 버튼 -->
-    <button id="miniPauseBtn" onclick="event.stopPropagation(); pauseMusic();" title="일시정지" style="
-        background: #ff0066;
-        border: none;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        font-size: 0.8rem;
-        transition: all 0.3s ease;
-    ">
-        ⏸️
-    </button>
-</div>
-            <span style="color: var(--text-primary); font-size: 0.85rem; font-weight: 500;">
-                🎵 MONO PARTY MIX - 플리메이커(Youtube)
-            </span>
-        </div>
-    </div>
-    <!-- YouTube 음악 플레이어 끝 -->
+<!-- 음악 토글 버튼 (음표 아이콘) -->
+<button id="musicToggleButton" onclick="toggleMusic()" style="
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 999;
+    background: linear-gradient(135deg, #00ff88, #00cc70);
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+    transition: all 0.3s ease;
+">
+    🎵
+</button>
+<!-- YouTube 음악 플레이어 끝 -->
+
 
     <!-- 인트로 페이지 -->
 <section id="introPage" class="intro-page" style="
@@ -4232,23 +4159,36 @@ ${fortune.lucky}
     
     // 챗봇 토글
 window.toggleChatbot = function() {
-    const window = document.getElementById('chatbotWindow');
+    const chatWindow = document.getElementById('chatbotWindow');
     const toggle = document.getElementById('chatbotToggle');
+    const isMobile = window.innerWidth <= 768;
     
-    if (window.style.display === 'none' || window.style.display === '') {
-        window.style.display = 'flex';
-        toggle.innerHTML = '✕';
-        toggle.style.background = 'linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-accent) 100%)';
-        // 모바일에서 버튼 위치 유지
-        toggle.style.visibility = 'visible';
-        toggle.style.display = 'flex';
+    if (chatWindow.style.display === 'none' || chatWindow.style.display === '') {
+        chatWindow.style.display = 'flex';
+        
+        // 모바일일 때는 버튼 조작 안 함
+        if (!isMobile && toggle) {
+            toggle.innerHTML = '✕';
+            toggle.style.background = 'linear-gradient(135deg, var(--neon-pink) 0%, var(--neon-accent) 100%)';
+        }
+        
+        // 모바일에서 body 스크롤 방지
+        if (isMobile) {
+            document.body.style.overflow = 'hidden';
+        }
     } else {
-        window.style.display = 'none';
-        toggle.innerHTML = '💬';
-        toggle.style.background = 'linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%)';
-        // 모바일에서도 버튼 계속 표시
-        toggle.style.visibility = 'visible';
-        toggle.style.display = 'flex';
+        chatWindow.style.display = 'none';
+        
+        // 모바일일 때는 버튼 조작 안 함
+        if (!isMobile && toggle) {
+            toggle.innerHTML = '💬';
+            toggle.style.background = 'linear-gradient(135deg, var(--neon-accent) 0%, var(--neon-pink) 100%)';
+        }
+        
+        // 모바일에서 body 스크롤 복구
+        if (isMobile) {
+            document.body.style.overflow = 'auto';
+        }
     }
 }
     
@@ -4358,26 +4298,7 @@ window.toggleChatbot = function() {
             toggle.style.animation = 'pulse 2s infinite, bounce 1s ease';
         }
     }, 3000);
-        // 모바일에서 챗봇 버튼 위치 강제 조정
-    if (window.innerWidth <= 768) {
-        window.addEventListener('load', function() {
-            const container = document.getElementById('chatbotContainer');
-            const toggle = document.getElementById('chatbotToggle');
-            
-            if (container) {
-                container.style.position = 'fixed';
-                container.style.bottom = '120px';
-                container.style.right = '15px';
-                container.style.zIndex = '99999';
-            }
-            
-            if (toggle) {
-                toggle.style.display = 'flex';
-                toggle.style.visibility = 'visible';
-                console.log('✅ 모바일 챗봇 버튼 위치 조정 완료');
-            }
-        });
-    }
+
     // 페이지 네비게이션 함수들
 // 페이지 네비게이션 함수들
 function scrollToMain() {
@@ -4426,6 +4347,7 @@ function goToMain() {
     
     // 네비게이션 숨기기
     document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('floatingNav').classList.remove('active');
     document.getElementById('mobileBottomNav').style.display = 'none';
     
     // 뒤로가기 버튼 숨기기
@@ -4447,9 +4369,11 @@ function showCategory(category) {
     // 메인 페이지 숨기기
     document.getElementById('mainPage').style.display = 'none';
     
-    // 네비게이션 표시
-    document.getElementById('floatingNav').style.display = 'block';
-    if (window.innerWidth <= 768) {
+   // 네비게이션 표시 - 데스크탑만 플로팅 네비게이션 표시
+    if (window.innerWidth > 768) {
+        document.getElementById('floatingNav').style.display = 'block';
+        document.getElementById('floatingNav').classList.add('active');
+    } else {
         document.getElementById('mobileBottomNav').style.display = 'block';
     }
     
@@ -4507,6 +4431,7 @@ function backToMain() {
     
     // 네비게이션 숨기기
     document.getElementById('floatingNav').style.display = 'none';
+    document.getElementById('floatingNav').classList.remove('active');
     document.getElementById('mobileBottomNav').style.display = 'none';
     
     // 뒤로가기 버튼 텍스트 변경
@@ -4899,7 +4824,6 @@ document.head.appendChild(style);
    
        <!-- ⬇️⬇️⬇️ YouTube API 스크립트 추가 ⬇️⬇️⬇️ -->
 <script src="https://www.youtube.com/iframe_api"></script>
-
 <script>
     // YouTube 플레이어 변수
     var player;
@@ -4939,127 +4863,92 @@ document.head.appendChild(style);
             document.addEventListener('click', function unmuteMobile() {
                 if (player && player.isMuted()) {
                     player.unMute();
-                    showMusicNotification();
                 }
             }, { once: true });
         } else {
             // 데스크톱에서는 바로 재생
             player.playVideo();
         }
-    }
-    
-    // 음악 재생 알림 표시
-    function showMusicNotification() {
-        const notification = document.createElement('div');
-        notification.style.cssText = `
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 255, 136, 0.9);
-            color: #000;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-weight: 700;
-            z-index: 10000;
-            animation: fadeInOut 2s ease;
-        `;
-        notification.textContent = '🎵 음악이 재생됩니다';
-        document.body.appendChild(notification);
         
-        setTimeout(() => {
-            notification.remove();
-        }, 2000);
+        // 버튼 상태 업데이트
+        updateMusicButton();
     }
     
     // 재생 상태 변경
     function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.PLAYING) {
             isPlaying = true;
-            updateButtonDisplay();
-            // 음악바 애니메이션 시작
-            const musicBars = document.getElementById('musicBars');
-            if (musicBars) {
-                musicBars.classList.add('playing');
-            }
+            updateMusicButton();
         } else if (event.data == YT.PlayerState.PAUSED) {
             isPlaying = false;
-            updateButtonDisplay();
-            // 음악바 애니메이션 중지
-            const musicBars = document.getElementById('musicBars');
-            if (musicBars) {
-                musicBars.classList.remove('playing');
-            }
+            updateMusicButton();
         } else if (event.data == YT.PlayerState.ENDED) {
             // 반복재생
             player.playVideo();
         }
     }
     
-    // 재생 함수
-    function playMusic() {
-        console.log('Play music called');
-        if (player && player.playVideo) {
+    // 음악 토글 함수
+    function toggleMusic() {
+        const button = document.getElementById('musicToggleButton');
+        
+        if (!player || !player.playVideo) {
+            console.log('Player not ready');
+            return;
+        }
+        
+        if (isPlaying) {
+            // 일시정지
+            player.pauseVideo();
+            isPlaying = false;
+        } else {
+            // 재생
             player.playVideo();
             // 모바일에서 음소거 상태면 해제
             if (isMobile && player.isMuted && player.isMuted()) {
                 player.unMute();
-                showMusicNotification();
             }
             isPlaying = true;
-            updateButtonDisplay();
         }
-    }
-    
-    // 일시정지 함수
-    function pauseMusic() {
-        console.log('Pause music called');
-        if (player && player.pauseVideo) {
-            player.pauseVideo();
-            isPlaying = false;
-            updateButtonDisplay();
-        }
-    }
-    
-    // 토글 함수 (기존 호환성 유지)
-    function togglePlayPause() {
-        if (isPlaying) {
-            pauseMusic();
-        } else {
-            playMusic();
-        }
-    }
-    
-    // 버튼 표시 업데이트
-    function updateButtonDisplay() {
-        const playBtn = document.getElementById('playBtn');
-        const pauseBtn = document.getElementById('pauseBtn');
-        const miniPlayBtn = document.getElementById('miniPlayBtn');
-        const miniPauseBtn = document.getElementById('miniPauseBtn');
         
-        console.log('Updating buttons, isPlaying:', isPlaying);
-        
-        if (isPlaying) {
-            // 재생 중: 일시정지 버튼만 표시
-            if (playBtn) playBtn.style.display = 'none';
-            if (pauseBtn) pauseBtn.style.display = 'flex';
-            if (miniPlayBtn) miniPlayBtn.style.display = 'none';
-            if (miniPauseBtn) miniPauseBtn.style.display = 'flex';
-        } else {
-            // 일시정지 중: 재생 버튼만 표시
-            if (playBtn) playBtn.style.display = 'flex';
-            if (pauseBtn) pauseBtn.style.display = 'none';
-            if (miniPlayBtn) miniPlayBtn.style.display = 'flex';
-            if (miniPauseBtn) miniPauseBtn.style.display = 'none';
-        }
+        updateMusicButton();
     }
+    
+
+// 버튼 상태 업데이트
+function updateMusicButton() {
+    const button = document.getElementById('musicToggleButton');
+    if (!button) return;
+    
+    if (isPlaying) {
+        // 재생 중 - 기존 pulse 애니메이션 사용
+        button.style.animation = 'pulse 2s infinite';
+        button.style.background = 'linear-gradient(135deg, #00ff88, #00cc70)';
+        button.style.opacity = '1';
+    } else {
+        // 일시정지 중
+        button.style.animation = 'none';
+        button.style.background = 'linear-gradient(135deg, #666, #444)';
+        button.style.opacity = '0.7';
+    }
+}
     
     // 전역 함수로 등록
-    window.togglePlayPause = togglePlayPause;
-    window.playMusic = playMusic;
-    window.pauseMusic = pauseMusic;
-    window.updateButtonDisplay = updateButtonDisplay;
-</script>
+    window.toggleMusic = toggleMusic;
+    
+    // 모바일에서 버튼 위치 조정
+    if (window.innerWidth <= 768) {
+        document.addEventListener('DOMContentLoaded', function() {
+            const button = document.getElementById('musicToggleButton');
+            if (button) {
+                button.style.bottom = '90px';  // 하단 네비게이션 위로
+                button.style.width = '50px';
+                button.style.height = '50px';
+                button.style.fontSize = '1.5rem';
+            }
+        });
+    }
+</script>   
     <script>
         // Supabase 초기화
         const SUPABASE_URL = 'https://wframchrsfspkxrpughn.supabase.co';
@@ -5114,7 +5003,7 @@ function updateViewerCount() {
                 setTimeout(() => {
                     notification.remove();
                 }, 500);
-            }, 5000);
+            }, 2000);
             
             // 최대 3개까지만 표시
             const notifications = container.children;
@@ -5339,22 +5228,34 @@ async function loadPartyDates() {
         
         // 랜덤 알림 생성 (초기 활성화를 위해)
         function generateRandomNotifications() {
-            // 페이지 로드 후 3-10초 사이에 첫 알림
-            setTimeout(() => {
-                const gender = Math.random() > 0.5 ? 'male' : 'female';
-                const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
-                showNotification(gender, age);
-            }, Math.random() * 7000 + 3000);
-            
-            // 이후 20-60초마다 랜덤 알림
-            setInterval(() => {
-                if (Math.random() > 0.7) { // 30% 확률로 알림 생성
-                    const gender = Math.random() > 0.5 ? 'male' : 'female';
-                    const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
-                    showNotification(gender, age);
-                }
-            }, Math.random() * 40000 + 20000);
+    let notificationCount = 0;  // 알림 카운트 추가
+    const maxNotifications = 3;  // 최대 3개만 표시
+    
+    // 페이지 로드 후 5-15초 사이에 첫 알림 (더 늦게)
+    setTimeout(() => {
+        if (notificationCount < maxNotifications) {
+            const gender = Math.random() > 0.5 ? 'male' : 'female';
+            const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
+            showNotification(gender, age);
+            notificationCount++;
         }
+    }, Math.random() * 10000 + 5000);  // 5-15초로 변경
+    
+    // 60-120초마다 10% 확률로만 알림 (훨씬 희박하게)
+    const intervalId = setInterval(() => {
+        if (notificationCount >= maxNotifications) {
+            clearInterval(intervalId);  // 3개 이후 중지
+            return;
+        }
+        
+        if (Math.random() > 0.9) { // 10% 확률로만 알림 생성
+            const gender = Math.random() > 0.5 ? 'male' : 'female';
+            const age = Math.floor(Math.random() * (37 - 20 + 1)) + 20;
+            showNotification(gender, age);
+            notificationCount++;
+        }
+    }, Math.random() * 60000 + 60000);  // 60-120초로 변경
+}
         
         // Create floating particles - Desktop only
         if (window.innerWidth > 768) {
@@ -5493,6 +5394,51 @@ if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
                 // 스크롤 복구
                 document.body.style.overflow = 'auto';
             }
+                        // 모달 닫기
+            window.closeApplicationModal = function() {
+                const modal = document.getElementById('applicationModal');
+                const iframe = document.getElementById('applicationFrame');
+                
+                modal.style.display = 'none';
+                iframe.src = ''; // iframe 초기화
+                
+                // 스크롤 복구
+                document.body.style.overflow = 'auto';
+            }
+            
+            // ⬇️⬇️ 여기에 추가 ⬇️⬇️
+            // 음악 플레이어 최소화/복원
+// 음악 플레이어 최소화
+function minimizePlayer() {
+    const player = document.getElementById('youtubePlayer');
+    const miniPlayer = document.getElementById('miniYoutubePlayer');
+    const toggleBtn = document.getElementById('musicToggleBtn');
+    
+    // 모두 숨기고 토글 버튼만 표시
+    if (player) player.style.display = 'none';
+    if (miniPlayer) miniPlayer.style.display = 'none';
+    if (toggleBtn) toggleBtn.style.display = 'flex';
+}
+            
+            function toggleMusicPlayer() {
+                const player = document.getElementById('youtubePlayer');
+                const miniPlayer = document.getElementById('miniYoutubePlayer');
+                const toggleBtn = document.getElementById('musicToggleBtn');
+                
+                if (toggleBtn.style.display === 'flex') {
+                    // 플레이어 복원
+                    toggleBtn.style.display = 'none';
+                    if (window.innerWidth <= 768) {
+                        miniPlayer.style.display = 'block';
+                    } else {
+                        player.style.display = 'block';
+                    }
+                }
+            }
+            
+            // 전역 함수로 등록
+            window.minimizePlayer = minimizePlayer;
+            window.toggleMusicPlayer = toggleMusicPlayer
             
             // ESC 키로 모달 닫기
             document.addEventListener('keydown', function(e) {
@@ -5511,18 +5457,21 @@ if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
                 }
             });
 // YouTube 플레이어 토글 기능
-            window.toggleYoutubePlayer = function() {
-                const player = document.getElementById('youtubePlayer');
-                const miniPlayer = document.getElementById('miniYoutubePlayer');
-                
-                if (player.style.display === 'none') {
-                    player.style.display = 'block';
-                    miniPlayer.style.display = 'none';
-                } else {
-                    player.style.display = 'none';
-                    miniPlayer.style.display = 'block';
-                }
-            }
+// YouTube 플레이어 토글 기능 (미니 <-> 전체)
+window.toggleYoutubePlayer = function() {
+    const player = document.getElementById('youtubePlayer');
+    const miniPlayer = document.getElementById('miniYoutubePlayer');
+    
+    if (miniPlayer.style.display === 'block' || miniPlayer.style.display === 'flex') {
+        // 미니에서 전체로
+        miniPlayer.style.display = 'none';
+        player.style.display = 'block';
+    } else {
+        // 전체에서 미니로
+        player.style.display = 'none';
+        miniPlayer.style.display = 'block';
+    }
+}
 
                         // 5초 후 미니플레이어로 자동 전환
             setTimeout(() => {
