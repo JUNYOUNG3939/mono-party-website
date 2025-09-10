@@ -890,12 +890,14 @@ fields: [
             male: {
                 allNight: 57000,
                 part1: 42000,
-                part2: 25000
+                part2: 25000,
+                allNightWithCompanion: 55000
             },
             female: {
                 allNight: 47000,
                 part1: 34000,
-                part2: 25000
+                part2: 25000,
+                allNightWithCompanion: 42000
             }
         };
         
@@ -1013,54 +1015,77 @@ fields: [
         function updatePrices() {
             const gender = document.querySelector('input[name="gender"]:checked');
             const priceOptions = document.getElementById('priceOptions');
+            const companion = document.getElementById('companion').value;
             
             if (!gender) return;
             
             const genderPrices = prices[gender.value];
+            const allNightPrice = companion === 'yes' 
+        ? genderPrices.allNightWithCompanion 
+        : genderPrices.allNight;
             
-            priceOptions.innerHTML = `
-                <label class="price-option">
-                    <input type="radio" name="ticketType" value="allNight" required>
-                    <div class="price-option-name">ALL NIGHT<br>(1부 + 2부)</div>
-                    <div class="price-option-price">${genderPrices.allNight.toLocaleString()}원</div>
-                </label>
-                <label class="price-option">
-                    <input type="radio" name="ticketType" value="part1" required>
-                    <div class="price-option-name">1부</div>
-                    <div class="price-option-price">${genderPrices.part1.toLocaleString()}원</div>
-                </label>
-                <label class="price-option">
-                    <input type="radio" name="ticketType" value="part2" required>
-                    <div class="price-option-name">2부</div>
-                    <div class="price-option-price">${genderPrices.part2.toLocaleString()}원</div>
-                </label>
-            `;
-            
-            // Add click events to price options
-            document.querySelectorAll('.price-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    document.querySelectorAll('.price-option').forEach(opt => opt.classList.remove('selected'));
-                    this.classList.add('selected');
-                });
-            });
-        }
+    priceOptions.innerHTML = `
+        <label class="price-option">
+            <input type="radio" name="ticketType" value="allNight" required>
+            <div class="price-option-name">
+                ALL NIGHT<br>(1부 + 2부)
+                ${companion === 'yes' ? '<br><span style="color: var(--neon-accent); font-size: 0.8rem;">동반인 할인 적용</span>' : ''}
+            </div>
+            <div class="price-option-price">
+                ${companion === 'yes' ? '<span style="text-decoration: line-through; opacity: 0.5; font-size: 0.9rem;">' + genderPrices.allNight.toLocaleString() + '원</span><br>' : ''}
+                ${allNightPrice.toLocaleString()}원
+            </div>
+        </label>
+        <label class="price-option">
+            <input type="radio" name="ticketType" value="part1" required>
+            <div class="price-option-name">1부</div>
+            <div class="price-option-price">${genderPrices.part1.toLocaleString()}원</div>
+        </label>
+        <label class="price-option">
+            <input type="radio" name="ticketType" value="part2" required>
+            <div class="price-option-name">2부</div>
+            <div class="price-option-price">${genderPrices.part2.toLocaleString()}원</div>
+        </label>
+    `;
+    
+    // Add click events to price options
+    document.querySelectorAll('.price-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.price-option').forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+        });
+    });
+}
         
         // Toggle companion name field
-        function toggleCompanionName() {
-            const companionSelect = document.getElementById('companion');
-            const companionNameGroup = document.getElementById('companionNameGroup');
-            const companionNameInput = document.getElementById('companionName');
-            
-            if (companionSelect.value === 'yes') {
-                companionNameGroup.style.display = 'block';
-                companionNameInput.required = true;
-            } else {
-                companionNameGroup.style.display = 'none';
-                companionNameInput.required = false;
-                companionNameInput.value = '';
-            }
-        }
+        // Toggle companion name field
+function toggleCompanionName() {
+    const companionSelect = document.getElementById('companion');
+    const companionNameGroup = document.getElementById('companionNameGroup');
+    const companionNameInput = document.getElementById('companionName');
+    
+    if (companionSelect.value === 'yes') {
+        companionNameGroup.style.display = 'block';
+        companionNameInput.required = true;
         
+        // 가격 업데이트 (동반인 할인 적용)
+        updatePrices();
+        
+        // 동반인 할인 안내 메시지 표시
+        const gender = document.querySelector('input[name="gender"]:checked');
+        if (gender) {
+            const discountAmount = gender.value === 'male' ? '2,000' : '5,000';
+            alert(`✨ 동반인 할인이 적용됩니다!\nALL NIGHT 티켓에서 ${discountAmount}원 할인`);
+        }
+    } else {
+        companionNameGroup.style.display = 'none';
+        companionNameInput.required = false;
+        companionNameInput.value = '';
+        
+        // 가격 원복
+        updatePrices();
+    }
+}
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             // Load available party dates first
@@ -1074,6 +1099,10 @@ fields: [
                     updatePrices();
                 });
             });
+            // Companion selection change event
+document.getElementById('companion').addEventListener('change', function() {
+    toggleCompanionName();
+});
             
             // Calendar navigation
             document.getElementById('prevMonth').addEventListener('click', function() {
@@ -1216,24 +1245,36 @@ if (photoFile) {
 }
 // ===== 사진 업로드 처리 추가 끝 =====
     
-    const applicationData = {
-        // Basic info
-        gender: formData.get('gender'),
-        selected_date: formData.get('selectedDate'),
-        ticket_type: formData.get('ticketType'),
+const applicationData = {
+    // Basic info
+    gender: formData.get('gender'),
+    selected_date: formData.get('selectedDate'),
+    ticket_type: formData.get('ticketType'),
+    
+    // Personal info
+    name: formData.get('name'),
+    height: parseInt(formData.get('height')),
+    age: parseInt(formData.get('age')),
+    phone: formData.get('phone'),
+    job: formData.get('job'),
+    instagram: formData.get('instagram'),
+    companion: formData.get('companion'),
+    companion_name: formData.get('companionName') || null,
+    
+    // Calculate price (동반인 할인 적용)
+    price: (() => {
+        const gender = formData.get('gender');
+        const ticketType = formData.get('ticketType');
+        const hasCompanion = formData.get('companion') === 'yes';
         
-        // Personal info
-        name: formData.get('name'),
-        height: parseInt(formData.get('height')),
-        age: parseInt(formData.get('age')),
-        phone: formData.get('phone'),
-        job: formData.get('job'),
-        instagram: formData.get('instagram'),
-        companion: formData.get('companion'),
-        companion_name: formData.get('companionName') || null,
-        
-        // Calculate price
-        price: prices[formData.get('gender')][formData.get('ticketType')],
+        if (ticketType === 'allNight' && hasCompanion) {
+            // 동반인이 있고 ALL NIGHT인 경우 할인 가격 적용
+            return prices[gender].allNightWithCompanion;
+        } else {
+            // 일반 가격 적용
+            return prices[gender][ticketType];
+        }
+    })(),
         
         // Party type is always 'provided' now
         party_type: 'provided',
