@@ -1286,7 +1286,27 @@ function updatePrices() {
             ${companion === 'yes' ? '<p style="color: var(--neon-pink); margin-top: 10px; font-size: 0.95rem;">💑 동반인 특별 할인 적용중!</p>' : ''}
         </div>
         
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch;">
+       // 1. 모바일에서는 1열, 데스크탑에서는 3열로 변경
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+
+// 2. 각 가격 카드에서 불필요한 텍스트 제거
+// "1부 + 2부" → 제거
+// "오후 8시 - 11시" → 더 작은 글씨로 또는 제거
+// "오후 11시 - 새벽" → 더 작은 글씨로 또는 제거
+
+// 3. 가격 표시 개선
+// 현재: ${allNightPrice.toLocaleString()}원
+// 개선: 
+<div style="font-size: 1.8rem; color: var(--neon-accent); font-weight: 900;">
+    ${allNightPrice.toLocaleString()}
+    <span style="font-size: 1rem;">원</span>
+</div>
+
+// 4. 카드 최소 높이 증가
+min-height: 180px; → min-height: 200px;
+
+// 5. 패딩 증가로 여백 확보
+padding: 25px 15px; → padding: 30px 20px;
             <label class="price-option" style="
                 background: var(--input-bg);
                 border: 2px solid var(--input-border);
