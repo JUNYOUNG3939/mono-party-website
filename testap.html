@@ -164,6 +164,43 @@
         }
         
         /* Gender Selection */
+        /* Gender Selection Disabled State */
+.gender-selection.locked {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.gender-selection.locked::after {
+    content: '🔒 성별 변경 불가';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: var(--neon-pink);
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: 2px solid var(--neon-pink);
+    font-weight: 700;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+.gender-lock-warning {
+    background: rgba(255, 0, 102, 0.1);
+    border: 2px solid var(--neon-pink);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.01); }
+}
         .gender-selection {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -698,9 +735,21 @@
                 
 
             
-            <!-- Personal Information Section -->
-            <div class="form-section">
-                <h2 class="section-title">개인 정보</h2>
+            
+<!-- Personal Information Section -->
+<div class="form-section">
+    <h2 class="section-title">개인 정보</h2>
+    
+    <!-- 성별 변경 불가 경고 메시지 추가 -->
+    <div class="gender-lock-warning" id="genderLockWarning" style="display: none;">
+        <p style="color: var(--neon-pink); font-weight: 700; margin-bottom: 10px;">
+            ⚠️ 주의: 개인정보 입력 시작 후 성별 변경 불가 ⚠️
+        </p>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            선택하신 성별: <span id="selectedGenderText" style="color: var(--neon-accent); font-weight: 700;"></span><br>
+            성별을 변경하려면 페이지를 새로고침 해야 합니다.
+        </p>
+    </div>
                 
                 <div class="form-group">
                     <label class="form-label" for="name">성함 (본명) <span class="required">*</span></label>
@@ -781,9 +830,12 @@
                     *얼굴 모자이크 진행</p>
                 </div>
                 
-                <div class="checkbox-container">
-                    <input type="checkbox" id="agreeAll" name="agreeAll" required>
-                    <label for="agreeAll">위 내용을 모두 확인했으며, 동의합니다.</label>
+    <label for="agreeAll">
+    위 내용을 모두 확인했으며, 동의합니다.
+    <span style="color: var(--neon-accent); font-size: 0.85rem;">
+        (동의 시 참가비가 표시됩니다)
+    </span>
+</label>
                 </div>
                 <!-- 여기에 새로운 가격 표시 섹션 추가 -->
 <div class="price-display" id="agreedPriceDisplay" style="display: none; margin-top: 30px;">
@@ -1258,6 +1310,13 @@ alert(`✨ 동반인 특별 할인이 적용됩니다!\nALL NIGHT 티켓 특별�
 }
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
+               window.addEventListener('beforeunload', function(e) {
+        if (genderLocked || hasStartedPersonalInfo) {
+            const message = '작성 중인 신청서가 있습니다. 페이지를 나가시겠습니까?';
+            e.returnValue = message;
+            return message;
+        }
+    }); 
             // Load available party dates first
             loadAvailablePartyDates();
                 // ✅ 초기 가격 표시 추가
@@ -1309,19 +1368,151 @@ alert(`✨ 동반인 특별 할인이 적용됩니다!\nALL NIGHT 티켓 특별�
         });
     });
             
-            // Gender selection
-            document.querySelectorAll('input[name="gender"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    document.querySelectorAll('.gender-card').forEach(card => card.classList.remove('selected'));
-                    this.parentElement.classList.add('selected');
+// Gender selection with lock warning
+let genderLocked = false;  // 성별 잠금 상태 플래그
 
-                                const companion = document.querySelector('input[name="companion"]:checked');
-            if (companion) {
-                updatePrices();
-            }
-                    
+document.querySelectorAll('input[name="gender"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        // 이미 잠긴 상태면 변경 불가
+        if (genderLocked) {
+            alert('⚠️ 개인정보 입력을 시작하여 성별을 변경할 수 없습니다.\n변경이 필요하면 페이지를 새로고침 해주세요.');
+            return false;
+        }
+        
+        document.querySelectorAll('.gender-card').forEach(card => card.classList.remove('selected'));
+        this.parentElement.classList.add('selected');
+        
+        // 성별 선택 시 확인 메시지
+        const genderText = this.value === 'male' ? '남성' : '여성';
+        const confirmMessage = `
+━━━━━━━━━━━━━━━━━━━━━
+⚠️ 성별 확인 ⚠️
+━━━━━━━━━━━━━━━━━━━━━
+
+선택하신 성별: ${genderText}
+
+개인정보 입력을 시작하면 
+성별을 변경할 수 없습니다.
+
+정말 ${genderText}이(가) 맞으신가요?
+━━━━━━━━━━━━━━━━━━━━━`;
+        
+        if (!confirm(confirmMessage)) {
+            // 취소 시 선택 해제
+            this.checked = false;
+            this.parentElement.classList.remove('selected');
+            return;
+        }
+        
+        const companion = document.querySelector('input[name="companion"]:checked');
+        if (companion) {
+            updatePrices();
+        }
+    });
+});
+            // 개인정보 입력 필드들에 대한 이벤트 리스너
+const personalInfoFields = ['name', 'height', 'age', 'phone', 'job', 'instagram'];
+let hasStartedPersonalInfo = false;
+
+personalInfoFields.forEach(fieldId => {
+    const field = document.getElementById(fieldId);
+    if (field) {
+        // focus 이벤트로 입력 시작 감지
+        field.addEventListener('focus', function() {
+            const gender = document.querySelector('input[name="gender"]:checked');
+            
+            // 성별이 선택되지 않았으면 경고
+            if (!gender) {
+                alert('⚠️ 먼저 성별을 선택해주세요!');
+                this.blur();  // 포커스 제거
+                
+                // 성별 섹션으로 스크롤
+                document.querySelector('.gender-selection').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
                 });
-            });
+                return;
+            }
+            
+            // 처음 개인정보 입력을 시작할 때만 실행
+            if (!hasStartedPersonalInfo && !genderLocked) {
+                hasStartedPersonalInfo = true;
+                
+                // 마지막 확인
+                const genderText = gender.value === 'male' ? '남성' : '여성';
+                const finalConfirm = confirm(
+                    `📝 개인정보 입력을 시작합니다.\n\n` +
+                    `선택된 성별: ${genderText}\n\n` +
+                    `이후 성별 변경이 불가능합니다.\n계속하시겠습니까?`
+                );
+                
+                if (!finalConfirm) {
+                    this.blur();
+                    hasStartedPersonalInfo = false;
+                    return;
+                }
+                
+                // 성별 잠금 실행
+                lockGenderSelection(genderText);
+            }
+        });
+        
+        // 실제 입력이 발생했을 때도 잠금 (백업)
+        field.addEventListener('input', function() {
+            if (!genderLocked && this.value.length > 0) {
+                const gender = document.querySelector('input[name="gender"]:checked');
+                if (gender) {
+                    const genderText = gender.value === 'male' ? '남성' : '여성';
+                    lockGenderSelection(genderText);
+                }
+            }
+        });
+    }
+});
+
+// 파일 업로드도 개인정보로 간주
+document.getElementById('photo').addEventListener('change', function() {
+    if (this.files.length > 0 && !genderLocked) {
+        const gender = document.querySelector('input[name="gender"]:checked');
+        if (gender) {
+            const genderText = gender.value === 'male' ? '남성' : '여성';
+            lockGenderSelection(genderText);
+        }
+    }
+});
+
+// 성별 선택 잠금 함수
+function lockGenderSelection(genderText) {
+    if (genderLocked) return;  // 이미 잠긴 경우 중복 실행 방지
+    
+    genderLocked = true;
+    
+    // 성별 선택 섹션 비활성화
+    const genderSelection = document.querySelector('.gender-selection');
+    genderSelection.classList.add('locked');
+    
+    // 라디오 버튼 비활성화
+    document.querySelectorAll('input[name="gender"]').forEach(radio => {
+        radio.disabled = true;
+    });
+    
+    // 경고 메시지 표시
+    const warningBox = document.getElementById('genderLockWarning');
+    const selectedGenderText = document.getElementById('selectedGenderText');
+    
+    if (warningBox && selectedGenderText) {
+        selectedGenderText.textContent = genderText;
+        warningBox.style.display = 'block';
+        warningBox.style.animation = 'slideDown 0.5s ease';
+    }
+    
+    // 시각적 피드백
+    document.querySelectorAll('.gender-card').forEach(card => {
+        card.style.cursor = 'not-allowed';
+    });
+    
+    console.log('성별 선택이 잠금되었습니다:', genderText);
+}
             
             // Calendar navigation
             document.getElementById('prevMonth').addEventListener('click', function() {
@@ -1393,11 +1584,22 @@ document.getElementById('agreeAll').addEventListener('change', function() {
     }
 });
             // Form submission
-            document.getElementById('applicationForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-
-                // 확인함 텍스트 검증
-const confirmText = document.getElementById('confirmText').value.trim();
+document.getElementById('applicationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    // 성별 선택 확인
+    const gender = document.querySelector('input[name="gender"]:checked');
+    if (!gender) {
+        alert('⚠️ 성별을 선택해주세요!');
+        document.querySelector('.gender-selection').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+        return;
+    }
+    
+    // 확인함 텍스트 검증
+    const confirmText = document.getElementById('confirmText').value.trim();
 const confirmError = document.getElementById('confirmError');
 
 if (confirmText !== '확인함') {
