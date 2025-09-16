@@ -853,12 +853,12 @@
                 
 <div class="checkbox-container">
     <input type="checkbox" id="agreeAll" name="agreeAll" required>
-    <label for="agreeAll">
-        위 내용을 모두 확인했으며, 동의합니다.
-        <span style="color: var(--neon-accent); font-size: 0.85rem;">
-            (동의 시 참가비가 표시됩니다)
-        </span>
-    </label>
+<label for="agreeAll">
+    위 내용을 모두 확인했으며, 동의합니다.
+    <span style="color: var(--neon-accent); font-size: 0.85rem;">
+        (개인정보 입력 완료 후 동의 시 참가비가 표시됩니다)
+    </span>
+</label>
 </div>
                 </div>
                 <!-- 여기에 새로운 가격 표시 섹션 추가 -->
@@ -1249,7 +1249,63 @@ function selectDate(day, dateStr, isMoodKing = false) {
         notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
+// 개인정보 필드가 모두 채워졌는지 확인하는 함수
+function checkAllPersonalInfoFilled() {
+    const requiredFields = [
+        'name',
+        'height', 
+        'age',
+        'phone',
+        'job',
+        'instagram'
+    ];
+    
+    // 모든 필드가 채워졌는지 확인
+    for (let fieldId of requiredFields) {
+        const field = document.getElementById(fieldId);
+        if (!field || !field.value || field.value.trim() === '') {
+            return false;
+        }
+    }
+    
+    // 사진 파일도 확인
+    const photoField = document.getElementById('photo');
+    if (!photoField || !photoField.files || photoField.files.length === 0) {
+        return false;
+    }
+    
+    return true;
+}
+
+// 가격 표시 여부를 결정하는 함수
+function checkAndShowPrices() {
+    const agreeCheckbox = document.getElementById('agreeAll');
+    const priceDisplay = document.getElementById('agreedPriceDisplay');
+    const gender = document.querySelector('input[name="gender"]:checked');
+    
+    // 약관 동의 체크 && 모든 개인정보 입력 && 성별 선택
+    if (agreeCheckbox.checked && checkAllPersonalInfoFilled() && gender) {
+        updatePrices();
+        priceDisplay.style.display = 'block';
         
+        // 부드러운 스크롤 애니메이션
+        setTimeout(() => {
+            priceDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+        
+        priceDisplay.style.animation = 'slideDown 0.5s ease';
+    } else {
+        priceDisplay.style.display = 'none';
+        
+        // 티켓 선택 초기화
+        document.querySelectorAll('input[name="ticketType"]').forEach(radio => {
+            radio.checked = false;
+        });
+        document.querySelectorAll('.price-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+    }
+}        
 // Update price display
 function updatePrices() {
     const gender = document.querySelector('input[name="gender"]:checked');
@@ -1610,35 +1666,38 @@ function lockGenderSelection(genderText) {
         }
     });
             // 약관 동의 체크박스 이벤트 - 가격 표시
+// 약관 동의 체크박스 이벤트 - 가격 표시
 document.getElementById('agreeAll').addEventListener('change', function() {
-    const priceDisplay = document.getElementById('agreedPriceDisplay');
-    const gender = document.querySelector('input[name="gender"]:checked');
-    const companion = document.querySelector('input[name="companion"]:checked');
-    
-    if (this.checked && gender) {
-        // 약관 동의하고 성별이 선택된 경우에만 가격 표시
-        updatePrices();  // 가격 업데이트 함수 호출
-        priceDisplay.style.display = 'block';
-        
-        // 부드러운 스크롤 애니메이션으로 가격 섹션 표시
-        setTimeout(() => {
-            priceDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }, 100);
-        
-        // 애니메이션 효과 추가
-        priceDisplay.style.animation = 'slideDown 0.5s ease';
-    } else {
-        // 체크 해제 시 가격 숨김
-        priceDisplay.style.display = 'none';
-        
-        // 티켓 선택도 초기화
-        document.querySelectorAll('input[name="ticketType"]').forEach(radio => {
-            radio.checked = false;
-        });
-        document.querySelectorAll('.price-option').forEach(opt => {
-            opt.classList.remove('selected');
-        });
+    if (this.checked) {
+        // 개인정보가 모두 입력되었는지 확인
+        if (!checkAllPersonalInfoFilled()) {
+            alert('💡 가격을 확인하려면 모든 개인정보를 먼저 입력해주세요!');
+            this.checked = false; // 체크 해제
+            
+            // 첫 번째 빈 필드로 포커스 이동
+            const requiredFields = ['name', 'height', 'age', 'phone', 'job', 'instagram'];
+            for (let fieldId of requiredFields) {
+                const field = document.getElementById(fieldId);
+                if (!field.value || field.value.trim() === '') {
+                    field.focus();
+                    field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    break;
+                }
+            }
+            
+            // 사진 파일 체크
+            const photoField = document.getElementById('photo');
+            if (!photoField.files || photoField.files.length === 0) {
+                alert('📷 사진도 업로드해주세요!');
+                photoField.focus();
+                photoField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            return;
+        }
     }
+    
+    checkAndShowPrices();
 });
             // Form submission
 document.getElementById('applicationForm').addEventListener('submit', async function(e) {
