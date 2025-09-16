@@ -407,43 +407,15 @@
             gap: 15px;
         }
         
-.price-option {
-    background: var(--input-bg);
-    border: 2px solid var(--input-border);
-    border-radius: 12px;
-    padding: 25px 15px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 180px;
-    position: relative;
-    overflow: hidden;
-}
-
-.price-option::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, var(--neon-accent), var(--neon-pink), var(--neon-blue));
-    border-radius: 12px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: -1;
-}
-
-.price-option:hover::before {
-    opacity: 0.3;
-}
-
-.price-option.selected::before {
-    opacity: 1;
-}
+        .price-option {
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
         
         .price-option:hover {
             transform: translateY(-3px);
@@ -638,11 +610,7 @@
             .price-options {
                 grid-template-columns: 1fr;
             }
-               /* 가격 옵션 모바일 최적화 */
-    #priceOptions > div:last-of-type {
-        grid-template-columns: 1fr !important;
-        gap: 15px !important;
-    }
+            
             .calendar-grid {
                 gap: 5px;
             }
@@ -1262,196 +1230,87 @@ function selectDate(day, dateStr, isMoodKing = false) {
 }
         
 // Update price display
-// Update price display
 function updatePrices() {
     const gender = document.querySelector('input[name="gender"]:checked');
     const priceOptions = document.getElementById('priceOptions');
     const companion = document.querySelector('input[name="companion"]:checked')?.value || 'no';
     
-    if (!gender || !priceOptions) return;
+    if (!gender || !priceOptions) return;  // priceOptions 체크 추가
     
     const genderPrices = prices[gender.value];
     const allNightPrice = companion === 'yes' 
         ? genderPrices.allNightWithCompanion 
         : genderPrices.allNight;
     
+    // 성별에 따른 텍스트 (상대 성별 가격 완전 제외)
     const genderText = gender.value === 'male' ? '남성' : '여성';
     
-    // 개선된 디자인
     priceOptions.innerHTML = `
-        <div style="text-align: center; margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid var(--input-border);">
-            <h3 style="color: var(--neon-accent); font-size: 1.3rem; font-weight: 700;">
-                ${genderText} 참가비
-            </h3>
-            ${companion === 'yes' ? '<p style="color: var(--neon-pink); margin-top: 10px; font-size: 0.95rem;">💑 동반인 특별 할인 적용중!</p>' : ''}
+        <div style="text-align: center; margin-bottom: 20px; color: var(--text-secondary);">
+            <strong>${genderText} 참가비</strong>
         </div>
-        
-       // 1. 모바일에서는 1열, 데스크탑에서는 3열로 변경
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-
-// 2. 각 가격 카드에서 불필요한 텍스트 제거
-// "1부 + 2부" → 제거
-// "오후 8시 - 11시" → 더 작은 글씨로 또는 제거
-// "오후 11시 - 새벽" → 더 작은 글씨로 또는 제거
-
-// 3. 가격 표시 개선
-// 현재: ${allNightPrice.toLocaleString()}원
-// 개선: 
-<div style="font-size: 1.8rem; color: var(--neon-accent); font-weight: 900;">
-    ${allNightPrice.toLocaleString()}
-    <span style="font-size: 1rem;">원</span>
-</div>
-
-// 4. 카드 최소 높이 증가
-min-height: 180px; → min-height: 200px;
-
-// 5. 패딩 증가로 여백 확보
-padding: 25px 15px; → padding: 30px 20px;
-            <label class="price-option" style="
-                background: var(--input-bg);
-                border: 2px solid var(--input-border);
-                border-radius: 12px;
-                padding: 25px 15px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                min-height: 180px;
-                ${companion === 'yes' ? 'background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), rgba(0, 255, 136, 0.02));' : ''}
-            ">
-                <input type="radio" name="ticketType" value="allNight" required style="display: none;">
-                
-                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                    <div style="font-weight: 700; margin-bottom: 8px; font-size: 1.1rem; color: var(--text-primary);">
-                        ALL NIGHT
-                    </div>
-                    <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 15px;">
-                        1부 + 2부
-                    </div>
-                </div>
-                
-                <div>
-                    ${companion === 'yes' ? `
-                        <div style="text-decoration: line-through; opacity: 0.5; font-size: 0.9rem; margin-bottom: 5px;">
-                            ${genderPrices.allNight.toLocaleString()}원
-                        </div>
-                    ` : ''}
-                    <div style="font-size: 1.4rem; color: var(--neon-accent); font-weight: 700;">
-                        ${allNightPrice.toLocaleString()}원
-                    </div>
-                    ${companion === 'yes' ? `
-                        <div style="color: var(--neon-pink); font-size: 0.75rem; margin-top: 8px; font-weight: 600;">
-                            ✨ 특별가 ✨
-                        </div>
-                    ` : ''}
-                </div>
-            </label>
-            
-            <label class="price-option" style="
-                background: var(--input-bg);
-                border: 2px solid var(--input-border);
-                border-radius: 12px;
-                padding: 25px 15px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                min-height: 180px;
-            ">
-                <input type="radio" name="ticketType" value="part1" required style="display: none;">
-                
-                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                    <div style="font-weight: 700; margin-bottom: 8px; font-size: 1.1rem; color: var(--text-primary);">
-                        1부만
-                    </div>
-                    <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 15px;">
-                        오후 8시 - 11시
-                    </div>
-                </div>
-                
-                <div style="font-size: 1.4rem; color: var(--neon-accent); font-weight: 700;">
-                    ${genderPrices.part1.toLocaleString()}원
-                </div>
-            </label>
-            
-            <label class="price-option" style="
-                background: var(--input-bg);
-                border: 2px solid var(--input-border);
-                border-radius: 12px;
-                padding: 25px 15px;
-                text-align: center;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                min-height: 180px;
-            ">
-                <input type="radio" name="ticketType" value="part2" required style="display: none;">
-                
-                <div style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                    <div style="font-weight: 700; margin-bottom: 8px; font-size: 1.1rem; color: var(--text-primary);">
-                        2부만
-                    </div>
-                    <div style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 15px;">
-                        오후 11시 - 새벽
-                    </div>
-                </div>
-                
-                <div style="font-size: 1.4rem; color: var(--neon-accent); font-weight: 700;">
-                    ${genderPrices.part2.toLocaleString()}원
-                </div>
-            </label>
-        </div>
-        
-        ${companion === 'yes' ? `
-            <div style="margin-top: 25px; padding: 15px; background: rgba(255, 0, 102, 0.1); border: 1px solid var(--neon-pink); border-radius: 8px; text-align: center;">
-                <p style="color: var(--text-primary); font-size: 0.9rem;">
-                    💕 동반인과 함께 오셔서 <strong style="color: var(--neon-accent);">${gender.value === 'male' ? '2,000' : '15,000'}원</strong> 할인되었습니다!
-                </p>
+        <label class="price-option">
+            <input type="radio" name="ticketType" value="allNight" required>
+            <div class="price-option-name">
+                ALL NIGHT<br>(1부 + 2부)
+                ${companion === 'yes' ? '<br><span style="color: var(--neon-accent); font-size: 0.8rem;">✨ 동반인 특별가 ✨</span>' : ''}
             </div>
-        ` : ''}
+            <div class="price-option-price">
+                ${companion === 'yes' ? '<span style="text-decoration: line-through; opacity: 0.5; font-size: 0.9rem;">' + genderPrices.allNight.toLocaleString() + '원</span><br>' : ''}
+                ${allNightPrice.toLocaleString()}원
+            </div>
+        </label>
+        <label class="price-option">
+            <input type="radio" name="ticketType" value="part1" required>
+            <div class="price-option-name">1부만</div>
+            <div class="price-option-price">${genderPrices.part1.toLocaleString()}원</div>
+        </label>
+        <label class="price-option">
+            <input type="radio" name="ticketType" value="part2" required>
+            <div class="price-option-name">2부만</div>
+            <div class="price-option-price">${genderPrices.part2.toLocaleString()}원</div>
+        </label>
     `;
     
-    // Add click events to price options with better visual feedback
+    // Add click events to price options
     document.querySelectorAll('.price-option').forEach(option => {
         option.addEventListener('click', function() {
-            document.querySelectorAll('.price-option').forEach(opt => {
-                opt.classList.remove('selected');
-                opt.style.border = '2px solid var(--input-border)';
-                opt.style.background = 'var(--input-bg)';
-                opt.style.transform = 'scale(1)';
-            });
-            
+            document.querySelectorAll('.price-option').forEach(opt => opt.classList.remove('selected'));
             this.classList.add('selected');
-            this.style.border = '2px solid var(--neon-accent)';
-            this.style.background = 'rgba(0, 255, 136, 0.1)';
-            this.style.transform = 'scale(1.02)';
-            
-            // 선택 애니메이션
-            this.style.animation = 'pulse 0.3s ease';
-        });
-        
-        // 호버 효과
-        option.addEventListener('mouseenter', function() {
-            if (!this.classList.contains('selected')) {
-                this.style.transform = 'translateY(-5px)';
-                this.style.boxShadow = '0 10px 30px rgba(0, 255, 136, 0.2)';
-            }
-        });
-        
-        option.addEventListener('mouseleave', function() {
-            if (!this.classList.contains('selected')) {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = 'none';
-            }
         });
     });
-}        
+}
+        
+        // Toggle companion name field
+        // Toggle companion name field
+function toggleCompanionName() {
+    const companionSelect = document.querySelector('input[name="companion"]:checked');  // ✅ 수정
+    const companionNameGroup = document.getElementById('companionNameGroup');
+    const companionNameInput = document.getElementById('companionName');
+    
+    if (companionSelect.value === 'yes') {
+        companionNameGroup.style.display = 'block';
+        companionNameInput.required = true;
+        
+        // 가격 업데이트 (동반인 할인 적용)
+        updatePrices();
+        
+        // 동반인 할인 안내 메시지 표시
+        const gender = document.querySelector('input[name="gender"]:checked');
+        if (gender) {
+           
+            // 금액 표시 제거
+alert(`✨ 동반인 특별 할인이 적용됩니다!\nALL NIGHT 티켓 특별가로 제공됩니다.`);
+        }
+    } else {
+        companionNameGroup.style.display = 'none';
+        companionNameInput.required = false;
+        companionNameInput.value = '';
+        
+        // 가격 원복
+        updatePrices();
+    }
+}
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
                window.addEventListener('beforeunload', function(e) {
