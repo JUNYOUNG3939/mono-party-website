@@ -309,6 +309,36 @@
             border-color: var(--neon-pink);
             background: rgba(255, 0, 102, 0.1);
         }
+        /* 무드왕 파티 특별 스타일 */
+.calendar-day.mood-king-party {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1)) !important;
+    border: 2px solid #FFD700 !important;
+    font-weight: 700;
+    position: relative;
+    animation: goldPulse 2s infinite;
+}
+
+@keyframes goldPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+}
+
+.calendar-day.mood-king-party::after {
+    content: '👑';
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 0.9rem;
+}
+
+.mood-king-notice {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
         
         .calendar-day.has-party::after {
             content: '🎉';
@@ -996,6 +1026,18 @@ fields: [
                 
                 if (data && data.length > 0) {
                     availablePartyDates = data.map(item => item.party_date);
+                        // 무드왕 파티 날짜가 있으면 콘솔에 표시 (디버깅용)
+    availablePartyDates.forEach(dateStr => {
+        const date = new Date(dateStr);
+        const month = date.getMonth();
+        const dateNum = date.getDate();
+        const day = date.getDay();
+        
+        if ((month === 8 && dateNum === 20) || 
+            (day === 6 && new Date(date.getFullYear(), month, dateNum + 7).getMonth() !== month)) {
+            console.log('👑 무드왕 파티 날짜:', dateStr);
+        }
+    });
                     document.getElementById('calendarContent').style.display = 'block';
                     
                     // Set calendar to the month of the first available date
@@ -1053,11 +1095,27 @@ fields: [
                 
                 const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 
-                // Check if this date is available for party
-                if (availablePartyDates.includes(dateStr)) {
-                    dayElement.classList.add('has-party');
-                    dayElement.addEventListener('click', () => selectDate(day, dateStr));
-                } else {
+                
+// Check if this date is available for party
+if (availablePartyDates.includes(dateStr)) {
+    dayElement.classList.add('has-party');
+    
+    // 무드왕 파티 체크
+    const partyDate = new Date(dateStr);
+    const month = partyDate.getMonth();
+    const dateNum = partyDate.getDate();
+    const dayOfWeek = partyDate.getDay();
+    
+    // 9월 20일이거나 다른 달의 마지막 토요일인지 체크
+    const isMoodKingParty = (month === 8 && dateNum === 20) || 
+        (dayOfWeek === 6 && new Date(partyDate.getFullYear(), month, dateNum + 7).getMonth() !== month);
+    
+    if (isMoodKingParty) {
+        dayElement.classList.add('mood-king-party');
+    }
+    
+    dayElement.addEventListener('click', () => selectDate(day, dateStr, isMoodKingParty));
+} else {
                     dayElement.classList.add('disabled');
                 }
                 
@@ -1065,24 +1123,54 @@ fields: [
             }
         }
         
-        // Select date
-        function selectDate(day, dateStr) {
-            // Remove previous selection
-            document.querySelectorAll('.calendar-day.selected').forEach(el => {
-                el.classList.remove('selected');
-            });
-            
-            // Add selection to clicked date
-            const dayElements = document.querySelectorAll('.calendar-day');
-            dayElements.forEach(el => {
-                if (el.textContent == day && el.classList.contains('has-party')) {
-                    el.classList.add('selected');
-                }
-            });
-            
-            // Set hidden input value
-            document.getElementById('selectedDate').value = dateStr;
+       // Select date
+function selectDate(day, dateStr, isMoodKing = false) {
+    // Remove previous selection
+    document.querySelectorAll('.calendar-day.selected').forEach(el => {
+        el.classList.remove('selected');
+    });
+    
+    // Remove previous mood king notice
+    const existingNotice = document.getElementById('moodKingNotice');
+    if (existingNotice) {
+        existingNotice.remove();
+    }
+    
+    // Add selection to clicked date
+    const dayElements = document.querySelectorAll('.calendar-day');
+    dayElements.forEach(el => {
+        if (el.textContent == day && el.classList.contains('has-party')) {
+            el.classList.add('selected');
         }
+    });
+    
+    // Set hidden input value
+    document.getElementById('selectedDate').value = dateStr;
+    
+    // 무드왕 파티 선택 시 특별 안내 표시
+    if (isMoodKing) {
+        const priceDisplay = document.querySelector('.price-display');
+        const notice = document.createElement('div');
+        notice.id = 'moodKingNotice';
+        notice.className = 'mood-king-notice';
+        notice.innerHTML = `
+            <h3 style="color: #FFD700; margin-bottom: 10px; font-size: 1.3rem;">
+                👑 무드왕 파티를 선택하셨습니다! 👑
+            </h3>
+            <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 10px;">
+                <strong>월 1회 스페셜 이벤트</strong><br>
+                80명이 실명 투표로 선발한 매력왕들이 모이는 특별한 날
+            </p>
+            <p style="color: #FFD700; font-size: 0.9rem;">
+                ✨ 무드왕 선발자는 우선 초대 및 특별 혜택이 제공됩니다 ✨
+            </p>
+        `;
+        priceDisplay.parentNode.insertBefore(notice, priceDisplay);
+        
+        // 스크롤 애니메이션
+        notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
         
         // Update price display
         function updatePrices() {
