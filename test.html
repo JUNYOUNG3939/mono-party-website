@@ -72,7 +72,29 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
+        
+/* 스마트 시스템 카드 전용 애니메이션 */
+@keyframes slideBackground {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
 
+@keyframes sparkle {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 0.3; }
+}
+
+/* 스마트 시스템 카드 호버 효과 */
+.smart-system-card:hover {
+    transform: translateY(-10px) scale(1.02) !important;
+    box-shadow: 0 30px 60px rgba(0, 229, 255, 0.3),
+                0 30px 60px rgba(255, 0, 102, 0.3),
+                0 0 100px rgba(0, 255, 136, 0.2) !important;
+}
+
+.smart-system-card:hover > div:last-child {
+    opacity: 1 !important;
+}
 /* 글래스모피즘 효과 */
 .glass-effect {
     background: rgba(255, 255, 255, 0.05);
@@ -1881,6 +1903,163 @@
             </p>
         </div>
         <!-- 카테고리 그리드 뒤에 이 스타일 추가 -->
+        <!-- 스마트 파티 시스템 - 특별 강조 카드 -->
+        <div class="category-card smart-system-card" onclick="showCategory('smart-system')" style="
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(255, 0, 102, 0.15), rgba(17, 17, 17, 0.98));
+            border: 3px solid;
+            border-image: linear-gradient(45deg, #00e5ff, #ff0066, #00ff88) 1;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        ">
+            <!-- 애니메이션 배경 효과 -->
+            <div style="
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 200%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.1), rgba(255, 0, 102, 0.1), transparent);
+                animation: slideBackground 8s linear infinite;
+            "></div>
+            
+            <!-- NEW + HOT 배지 -->
+            <div style="
+                position: absolute;
+                top: 15px;
+                right: 20px;
+                display: flex;
+                gap: 10px;
+            ">
+                <span style="
+                    background: linear-gradient(135deg, #00e5ff, #0099ff);
+                    color: white;
+                    padding: 6px 14px;
+                    border-radius: 20px;
+                    font-size: 0.8rem;
+                    font-weight: 900;
+                    animation: pulse 2s infinite;
+                ">NEW</span>
+                <span style="
+                    background: linear-gradient(135deg, #ff0066, #ff3388);
+                    color: white;
+                    padding: 6px 14px;
+                    border-radius: 20px;
+                    font-size: 0.8rem;
+                    font-weight: 900;
+                    animation: pulse 2s infinite;
+                    animation-delay: 0.5s;
+                ">HOT</span>
+            </div>
+            
+            <div style="position: relative; z-index: 1;">
+                <!-- 아이콘 그룹 -->
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    gap: 15px;
+                    font-size: 3rem;
+                    margin-bottom: 20px;
+                ">
+                    <span style="animation: float 3s ease-in-out infinite;">📱</span>
+                    <span style="animation: float 3s ease-in-out infinite; animation-delay: 0.5s;">🎮</span>
+                    <span style="animation: float 3s ease-in-out infinite; animation-delay: 1s;">✨</span>
+                </div>
+                
+                <h3 style="
+                    font-size: 1.8rem;
+                    background: linear-gradient(45deg, #00e5ff, #ff0066, #00ff88);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-size: 200% 200%;
+                    animation: gradient-shift 3s ease infinite;
+                    font-weight: 900;
+                    margin-bottom: 15px;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                ">AI 스마트 파티 시스템</h3>
+                
+                <p style="
+                    color: var(--text-primary);
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    margin-bottom: 10px;
+                ">
+                    국내 최초! 웹앱으로 즐기는 체계적 소셜링
+                </p>
+                
+                <p style="
+                    color: var(--text-secondary);
+                    font-size: 0.95rem;
+                    line-height: 1.5;
+                ">
+                    AI가 매칭하는 운명의 테이블 • 실시간 호감도 확인 • 게임처럼 즐기는 파티
+                </p>
+                
+                <!-- 핵심 포인트 -->
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    gap: 30px;
+                    margin-top: 25px;
+                    flex-wrap: wrap;
+                ">
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        color: #00e5ff;
+                        font-size: 0.9rem;
+                        font-weight: 600;
+                    ">
+                        <span>⚡</span>
+                        <span>매칭률 87%</span>
+                    </div>
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        color: #ff0066;
+                        font-size: 0.9rem;
+                        font-weight: 600;
+                    ">
+                        <span>💕</span>
+                        <span>호감 교환 5.3회</span>
+                    </div>
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        color: #00ff88;
+                        font-size: 0.9rem;
+                        font-weight: 600;
+                    ">
+                        <span>🎯</span>
+                        <span>15명+ 대화 성공</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 반짝이는 테두리 효과 -->
+            <div style="
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, #00e5ff, #ff0066, #00ff88, #00e5ff);
+                background-size: 300% 300%;
+                border-radius: 20px;
+                opacity: 0;
+                z-index: -1;
+                animation: gradient-shift 3s ease infinite, sparkle 2s ease-in-out infinite;
+            "></div>
+        </div>
 <style>
 .category-card {
     background: linear-gradient(135deg, rgba(17, 17, 17, 0.9) 0%, rgba(17, 17, 17, 0.7) 100%);
@@ -2034,7 +2213,42 @@
             <h3 style="color: var(--neon-accent); margin-bottom: 10px;">파티 분위기</h3>
             <p style="color: var(--text-secondary); font-size: 0.9rem;">사진 & 영상</p>
         </div>
-        
+        <!-- 스마트 파티 시스템 -->
+        <div class="category-card" onclick="showCategory('smart-system')" style="
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(255, 0, 102, 0.1));
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #00e5ff, #ff0066) 1;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        ">
+            <div style="
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: linear-gradient(45deg, #00e5ff, #ff0066);
+                color: white;
+                padding: 4px 10px;
+                border-radius: 15px;
+                font-size: 0.7rem;
+                font-weight: 700;
+            ">NEW</div>
+            <div style="font-size: 3rem; margin-bottom: 15px;">📱</div>
+            <h3 style="
+                background: linear-gradient(45deg, #00e5ff, #ff0066);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 10px;
+                font-weight: 800;
+            ">스마트 파티 시스템</h3>
+            <p style="color: var(--text-primary); font-size: 0.9rem; font-weight: 500;">
+                AI가 매칭하는 운명의 테이블
+            </p>
+        </div>
         <!-- 잔여석 -->
         <div class="category-card" onclick="showCategory('seats')" style="
             background: var(--bg-card);
@@ -3899,6 +4113,449 @@
             </button>
         </div>
     </section>
+    <!-- Smart Party System Section -->
+    <section class="section" id="smartSystemSection" style="display: none; background: linear-gradient(180deg, #000 0%, #0a0a0a 100%); position: relative; overflow: hidden;">
+        <!-- 배경 효과 -->
+        <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 229, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255, 0, 102, 0.1) 0%, transparent 50%);
+        "></div>
+        
+        <div style="position: relative; z-index: 1;">
+            <!-- 헤더 -->
+            <div style="text-align: center; margin-bottom: 60px;">
+                <div style="font-size: 3rem; margin-bottom: 20px;">📱✨</div>
+                <h2 class="section-title" style="
+                    font-size: clamp(2rem, 6vw, 3.5rem);
+                    margin-bottom: 20px;
+                ">
+                    파티를 <span style="
+                        background: linear-gradient(45deg, #00e5ff, #ff0066);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    ">게임처럼</span> 즐기는<br>
+                    국내 최초 스마트 파티 시스템
+                </h2>
+                <p style="
+                    font-size: 1.2rem;
+                    color: var(--text-secondary);
+                    margin-bottom: 10px;
+                ">다른 파티에선 절대 경험할 수 없는</p>
+                <p style="
+                    font-size: 1.4rem;
+                    color: var(--neon-accent);
+                    font-weight: 700;
+                ">MONO PARTY만의 혁신적 시스템</p>
+            </div>
+            
+            <!-- 시스템 특징 그리드 -->
+            <div style="
+                max-width: 1200px;
+                margin: 0 auto 80px;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 30px;
+                padding: 0 20px;
+            ">
+                <!-- 특징 1 -->
+                <div style="
+                    background: rgba(0, 229, 255, 0.05);
+                    border: 1px solid rgba(0, 229, 255, 0.3);
+                    border-radius: 20px;
+                    padding: 35px;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: -50px;
+                        right: -50px;
+                        width: 150px;
+                        height: 150px;
+                        background: radial-gradient(circle, rgba(0, 229, 255, 0.2) 0%, transparent 70%);
+                        border-radius: 50%;
+                    "></div>
+                    
+                    <div style="font-size: 2.5rem; margin-bottom: 20px;">🎯</div>
+                    <h3 style="color: #00e5ff; font-size: 1.5rem; margin-bottom: 15px; font-weight: 700;">
+                        AI가 찾아주는 운명의 테이블
+                    </h3>
+                    <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 20px;">
+                        <strong>"누구와 얘기해야 하지?"</strong> 고민 끝!<br><br>
+                        지정 좌석 + 체계적 로테이션으로<br>
+                        모든 참가자와 자연스럽게 대화<br>
+                        먼저 다가갈 부담감 ZERO
+                    </p>
+                    <div style="
+                        background: rgba(0, 229, 255, 0.1);
+                        padding: 12px;
+                        border-radius: 10px;
+                        font-size: 0.9rem;
+                        color: #00e5ff;
+                    ">
+                        💡 평균 15명 이상과 대화 성공
+                    </div>
+                </div>
+                
+                <!-- 특징 2 -->
+                <div style="
+                    background: rgba(255, 0, 102, 0.05);
+                    border: 1px solid rgba(255, 0, 102, 0.3);
+                    border-radius: 20px;
+                    padding: 35px;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: -50px;
+                        left: -50px;
+                        width: 150px;
+                        height: 150px;
+                        background: radial-gradient(circle, rgba(255, 0, 102, 0.2) 0%, transparent 70%);
+                        border-radius: 50%;
+                    "></div>
+                    
+                    <div style="font-size: 2.5rem; margin-bottom: 20px;">👤</div>
+                    <h3 style="color: #ff0066; font-size: 1.5rem; margin-bottom: 15px; font-weight: 700;">
+                        상세 프로필로 진짜 매력 어필
+                    </h3>
+                    <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 20px;">
+                        <strong>"이 사람 어떤 사람이지?"</strong> 궁금증 해결!<br><br>
+                        MBTI, 성격, 취향, 가치관까지<br>
+                        단순 스펙을 넘어선 진짜 '나'<br>
+                        외모보다 개성으로 승부
+                    </p>
+                    <div style="
+                        background: rgba(255, 0, 102, 0.1);
+                        padding: 12px;
+                        border-radius: 10px;
+                        font-size: 0.9rem;
+                        color: #ff0066;
+                    ">
+                        🔥 매칭률 87% 달성
+                    </div>
+                </div>
+                
+                <!-- 특징 3 -->
+                <div style="
+                    background: rgba(0, 255, 136, 0.05);
+                    border: 1px solid rgba(0, 255, 136, 0.3);
+                    border-radius: 20px;
+                    padding: 35px;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: -50px;
+                        right: -50px;
+                        width: 150px;
+                        height: 150px;
+                        background: radial-gradient(circle, rgba(0, 255, 136, 0.2) 0%, transparent 70%);
+                        border-radius: 50%;
+                    "></div>
+                    
+                    <div style="font-size: 2.5rem; margin-bottom: 20px;">💘</div>
+                    <h3 style="color: var(--neon-accent); font-size: 1.5rem; margin-bottom: 15px; font-weight: 700;">
+                        크레딧으로 전하는 진심
+                    </h3>
+                    <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 20px;">
+                        <strong>"혹시 나한테 관심 있나?"</strong> 설렘 폭발!<br><br>
+                        호감 크레딧 시스템<br>
+                        익명 메시지로 솔직한 마음<br>
+                        상호 호감 즉시 확인 가능
+                    </p>
+                    <div style="
+                        background: rgba(0, 255, 136, 0.1);
+                        padding: 12px;
+                        border-radius: 10px;
+                        font-size: 0.9rem;
+                        color: var(--neon-accent);
+                    ">
+                        💕 평균 호감 교환 5.3회
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 게임 요소 섹션 -->
+            <div style="
+                background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(255, 0, 102, 0.1));
+                padding: 60px 20px;
+                margin: 0 -20px 60px;
+                text-align: center;
+            ">
+                <h3 style="
+                    font-size: 2.5rem;
+                    margin-bottom: 40px;
+                    background: linear-gradient(45deg, #00e5ff, #ff0066);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    font-weight: 900;
+                ">🎮 게임처럼 즐기는 파티</h3>
+                
+                <div style="
+                    max-width: 1000px;
+                    margin: 0 auto;
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 30px;
+                ">
+                    <div style="
+                        background: rgba(0, 0, 0, 0.7);
+                        padding: 25px;
+                        border-radius: 15px;
+                        border: 1px solid rgba(0, 229, 255, 0.3);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">👑</div>
+                        <h4 style="color: #00e5ff; margin-bottom: 10px;">인기왕 투표</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            실시간 인기 순위 확인
+                        </p>
+                    </div>
+                    
+                    <div style="
+                        background: rgba(0, 0, 0, 0.7);
+                        padding: 25px;
+                        border-radius: 15px;
+                        border: 1px solid rgba(255, 0, 102, 0.3);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">💌</div>
+                        <h4 style="color: #ff0066; margin-bottom: 10px;">익명 메시지</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            솔직한 마음 전달
+                        </p>
+                    </div>
+                    
+                    <div style="
+                        background: rgba(0, 0, 0, 0.7);
+                        padding: 25px;
+                        border-radius: 15px;
+                        border: 1px solid rgba(0, 255, 136, 0.3);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">💎</div>
+                        <h4 style="color: var(--neon-accent); margin-bottom: 10px;">특별 미션</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            크레딧 획득 찬스
+                        </p>
+                    </div>
+                    
+                    <div style="
+                        background: rgba(0, 0, 0, 0.7);
+                        padding: 25px;
+                        border-radius: 15px;
+                        border: 1px solid rgba(255, 215, 0, 0.3);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">🏆</div>
+                        <h4 style="color: #FFD700; margin-bottom: 10px;">리워드 시스템</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            활동 포인트 적립
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 편의 기능 -->
+            <div style="
+                max-width: 900px;
+                margin: 0 auto 60px;
+                text-align: center;
+            ">
+                <h3 style="
+                    font-size: 2rem;
+                    margin-bottom: 40px;
+                    color: var(--text-primary);
+                ">📱 모든 정보가 손안에</h3>
+                
+                <div style="
+                    background: rgba(255, 255, 255, 0.03);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 20px;
+                    padding: 40px 30px;
+                ">
+                    <div style="
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                        gap: 30px;
+                        text-align: left;
+                    ">
+                        <div>
+                            <div style="color: var(--neon-accent); font-size: 1.2rem; margin-bottom: 10px;">
+                                ✅ 실시간 위치 확인
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                내 테이블, 좌석 번호 바로 확인<br>
+                                전체 배치도로 한눈에 파악
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <div style="color: var(--neon-accent); font-size: 1.2rem; margin-bottom: 10px;">
+                                ✅ 단계별 가이드
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                1부, 2부 진행 사항 안내<br>
+                                테이블 이동 타이밍 알림
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <div style="color: var(--neon-accent); font-size: 1.2rem; margin-bottom: 10px;">
+                                ✅ 스마트 매칭
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                관심사 기반 테이블 배치<br>
+                                대화가 잘 통하는 사람 추천
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <div style="color: var(--neon-accent); font-size: 1.2rem; margin-bottom: 10px;">
+                                ✅ 실시간 알림
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                호감 표시 즉시 확인<br>
+                                중요 공지사항 푸시 알림
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 티저 메시지 -->
+            <div style="
+                max-width: 800px;
+                margin: 60px auto;
+                padding: 50px 30px;
+                background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(255, 0, 102, 0.2));
+                border: 3px solid transparent;
+                background-clip: padding-box;
+                border-image: linear-gradient(45deg, #00e5ff, #ff0066) 1;
+                border-radius: 30px;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            ">
+                <div style="
+                    position: absolute;
+                    top: -100px;
+                    left: -100px;
+                    width: 200px;
+                    height: 200px;
+                    background: radial-gradient(circle, rgba(0, 229, 255, 0.3) 0%, transparent 70%);
+                    border-radius: 50%;
+                "></div>
+                
+                <div style="
+                    position: absolute;
+                    bottom: -100px;
+                    right: -100px;
+                    width: 200px;
+                    height: 200px;
+                    background: radial-gradient(circle, rgba(255, 0, 102, 0.3) 0%, transparent 70%);
+                    border-radius: 50%;
+                "></div>
+                
+                <div style="position: relative; z-index: 1;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">🤫</div>
+                    <h3 style="
+                        font-size: 2rem;
+                        margin-bottom: 20px;
+                        background: linear-gradient(45deg, #00e5ff, #ff0066);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        font-weight: 900;
+                    ">이건 비밀인데...</h3>
+                    
+                    <p style="
+                        font-size: 1.3rem;
+                        line-height: 1.8;
+                        color: var(--text-primary);
+                        margin-bottom: 30px;
+                    ">
+                        여기서 다 말하면 재미없잖아?<br>
+                        <span style="color: var(--neon-accent); font-weight: 700;">
+                            더 놀라운 기능들은<br>
+                            파티 현장에서 직접 경험하세요
+                        </span>
+                    </p>
+                    
+                    <p style="
+                        color: var(--text-secondary);
+                        font-size: 1.1rem;
+                        font-style: italic;
+                    ">
+                        "처음엔 신기했는데, 이제는 없으면 안 돼요"<br>
+                        - 3회 연속 참가자 K님
+                    </p>
+                </div>
+            </div>
+            
+            <!-- CTA -->
+            <div style="text-align: center; margin-top: 60px;">
+                <p style="
+                    font-size: 1.3rem;
+                    color: var(--text-secondary);
+                    margin-bottom: 30px;
+                ">
+                    국내 최초, 오직 MONO PARTY에서만
+                </p>
+                <a href="#" onclick="openApplicationModal(); return false;" class="cta-button" style="
+                    background: linear-gradient(45deg, #00e5ff, #ff0066);
+                    color: white;
+                    font-weight: 900;
+                    padding: 20px 60px;
+                    font-size: 1.2rem;
+                    box-shadow: 0 10px 40px rgba(0, 229, 255, 0.4);
+                ">
+                    스마트 파티 경험하기
+                </a>
+            </div>
+        </div>
+        
+        <!-- 섹션 네비게이션 -->
+        <div class="section-navigation" style="
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        ">
+            <button onclick="goToMain()" style="
+                padding: 12px 30px;
+                background: var(--bg-card);
+                border: 1px solid var(--neon-accent);
+                color: var(--neon-accent);
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            ">
+                ← 메인으로
+            </button>
+            
+            <button onclick="openApplicationModal()" style="
+                padding: 12px 30px;
+                background: linear-gradient(45deg, #00e5ff, #ff0066);
+                color: white;
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 700;
+                transition: all 0.3s ease;
+            ">
+                지금 신청하기 →
+            </button>
+        </div>
+    </section>
     <!-- FAQ Section -->
     <section class="section" id="faqSection" style="display: none; background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);">
         <h2 class="section-title">자주 묻는 질문</h2>
@@ -5182,6 +5839,9 @@ function showCategory(category) {
             break;
         case 'qna':
             document.getElementById('faqSection').style.display = 'block';
+            break;
+            case 'smart-system':
+            document.getElementById('smartSystemSection').style.display = 'block';
             break;
             case 'mood-king':
             document.getElementById('moodKingSection').style.display = 'block';
