@@ -3504,7 +3504,7 @@
                         background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
                         -webkit-background-clip: text;
                         -webkit-text-fill-color: transparent;
-                    ">MOOD KING PARTY</span>
+                    ">SPECIAL PARTY</span>
                 </h2>
                 <p style="
                     font-size: 1.3rem;
@@ -3637,7 +3637,7 @@
                         <div style="font-size: 3rem; margin-bottom: 20px;">⭐</div>
                         <h4 style="color: #FFD700; font-size: 1.3rem; margin-bottom: 15px;">우선 초대권</h4>
                         <p style="color: var(--text-primary); line-height: 1.6;">
-                            다음 무드왕 파티<br>
+                            다음 스페셜 파티<br>
                             <span style="color: #FFD700; font-weight: 700;">VIP 우선 예약</span><br>
                             매진 걱정 없는 특권!
                         </p>
@@ -3671,7 +3671,7 @@
                     font-size: 2.5rem;
                     margin-bottom: 40px;
                     color: var(--text-primary);
-                ">왜 무드왕 파티는 <span style="color: #FFD700;">레전드</span>인가?</h3>
+                ">왜 스페셜 파티는 <span style="color: #FFD700;">레전드</span>인가?</h3>
                 
                 <div style="
                     background: rgba(255, 215, 0, 0.03);
@@ -5698,7 +5698,7 @@ function scrollToMain() {
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-// 무드왕 파티 날짜 계산 및 표시
+// 스페셜 파티 날짜 계산 및 표시
 function updateMoodKingDate() {
     const now = new Date();
     const currentYear = now.getFullYear();
@@ -5919,7 +5919,7 @@ async function loadPartyDatesForIntro() {
                 const dayOfWeek = dayNames[date.getDay()];
                 const month = date.getMonth() + 1;
                 const day = date.getDate();
-                // 무드왕 파티 체크 함수
+                // 스페셜 파티 체크 함수
     function isMoodKingDate(checkDate) {
         const month = checkDate.getMonth();
         const dateNum = checkDate.getDate();
@@ -5943,7 +5943,7 @@ async function loadPartyDatesForIntro() {
         return false;
     }
     
-    // 무드왕 파티인지 체크
+    // 스페셜 파티인지 체크
     const isMoodKingParty = isMoodKingDate(date);
                 
                 // 토요일/일요일 특별 표시
@@ -5968,7 +5968,7 @@ async function loadPartyDatesForIntro() {
                 let urgencyBadge = '';
                 let cardIcon = '✨';
                 
-                // 무드왕 파티 특별 배지
+                // 스페셜 파티 특별 배지
 if (isMoodKingParty) {
     urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 900; z-index: 2; box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); animation: pulse 2s infinite;">👑 무드왕 파티</div>';
     cardBorderColor = '#FFD700';
