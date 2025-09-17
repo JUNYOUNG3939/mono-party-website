@@ -1337,7 +1337,7 @@
         opacity: 0.8;
     }
 }
-/* 무드왕 파티 전용 스타일 */
+/* 스페셜 파티 전용 스타일 */
 .mood-king-badge {
     background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700);
     background-size: 200% 200%;
@@ -1860,7 +1860,7 @@
         gap: 20px;
         margin-top: 40px;
     ">
-        <!-- 무드왕 파티 - 최상단 특별 카드 -->
+        <!-- 스페셜 파티 - 최상단 특별 카드 -->
         <div class="category-card mood-king-card" onclick="showCategory('mood-king')" style="
             grid-column: 1 / -1;
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(17, 17, 17, 0.98));
@@ -1894,7 +1894,7 @@
                 -webkit-text-fill-color: transparent;
                 font-weight: 900;
                 margin-bottom: 15px;
-            ">무드왕 파티</h3>
+            ">스페셜 파티</h3>
             <p style="color: #FFD700; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">
                 월 1회 스페셜 이벤트
             </p>
@@ -3480,7 +3480,7 @@
     </button>
 </div>
     </section>
-    <!-- 무드왕 파티 섹션 -->
+    <!-- 스페셜 파티 섹션 -->
     <section class="section" id="moodKingSection" style="display: none; background: linear-gradient(180deg, #000 0%, #0a0a0a 100%); position: relative; overflow: hidden;">
         <!-- 배경 효과 -->
         <div style="
@@ -3799,7 +3799,7 @@
     </div>
 </div>
 
-<!-- 무드왕 파티 시크릿 -->
+<!-- 스페셜 파티 시크릿 -->
 <div style="
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(0, 0, 0, 0.95));
     padding: 80px 20px;
@@ -3830,7 +3830,7 @@
             color: #FFD700;
             margin-bottom: 60px;
             font-weight: 900;
-        ">무드왕 파티에서만 경험할 수 있는 것</h3>
+        ">스페셜 파티에서만 경험할 수 있는 것</h3>
         
         <div style="
             display: grid;
@@ -3916,7 +3916,7 @@
                 line-height: 1.8;
             ">
                 <span style="color: #FFD700; font-size: 2rem;">🤫</span><br>
-                무드왕 파티의 특별한 컨텐츠는<br>
+                스페셜 파티의 특별한 컨텐츠는<br>
                 <span style="color: #FFD700; font-weight: 700;">참가자들끼리만 공유되는 비밀</span>입니다<br>
                 <span style="font-size: 0.95rem; color: var(--text-secondary);">
                     SNS 공유 및 외부 유출 시 참가 제한
@@ -3980,7 +3980,7 @@
                 font-style: italic;
                 margin-bottom: 20px;
             ">
-                "무드왕 파티의 그 '특별한 것'... 
+                "스페셜 파티의 그 '특별한 것'... 
                 말로 설명하긴 어렵지만 
                 경험해보면 왜 비밀인지 알게 돼요."
             </p>
@@ -4004,7 +4004,7 @@
             ">
                 "매력 있는 사람들만 모였더니 
                 에너지가 완전히 달라요. 
-                무드왕 파티는 정말 특별합니다."
+                스페셜 파티는 정말 말 그대로 특별합니다."
             </p>
             <p style="color: #FFD700; font-weight: 700;">
                 - 무드왕 J님
@@ -4071,7 +4071,7 @@
                     font-size: 1.2rem;
                     box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4);
                 ">
-                    무드왕 파티 참가 신청하기
+                    스페셜 파티 참가 신청하기
                 </a>
             </div>
         </div>
@@ -5970,7 +5970,7 @@ async function loadPartyDatesForIntro() {
                 
                 // 스페셜 파티 특별 배지
 if (isMoodKingParty) {
-    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 900; z-index: 2; box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); animation: pulse 2s infinite;">👑 무드왕 파티</div>';
+    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 900; z-index: 2; box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); animation: pulse 2s infinite;">👑 스페셜 파티</div>';
     cardBorderColor = '#FFD700';
     cardIcon = '👑';
 } else if (totalRemaining === 0) {
@@ -5985,7 +5985,7 @@ if (isMoodKingParty) {
                     cardIcon = '🔥';
                 }
                 
-// 무드왕 파티가 아닌 경우에만 주말 아이콘 적용
+// 스페셜 파티가 아닌 경우에만 주말 아이콘 적용
 if (isWeekend && !isMoodKingParty) {
     cardIcon = '🎉';
     if (totalRemaining > 20) {
@@ -6508,7 +6508,7 @@ async function loadPartyDates() {
                 const dayOfWeek = dayNames[date.getDay()];
                 const month = date.getMonth() + 1;
                 const day = date.getDate();
-                // 무드왕 파티 체크 함수
+                // 스페셜 파티 체크 함수
     function isMoodKingDate(checkDate) {
         const month = checkDate.getMonth();
         const dateNum = checkDate.getDate();
@@ -6532,7 +6532,7 @@ async function loadPartyDates() {
         return false;
     }
     
-    // 무드왕 파티인지 체크
+    // 스페셜 파티인지 체크
     const isMoodKingParty = isMoodKingDate(date);
                 
                 // 토요일/일요일 특별 표시
@@ -6557,9 +6557,9 @@ async function loadPartyDates() {
                 let urgencyBadge = '';
                 let cardIcon = '✨';
 
-                    // 무드왕 파티 특별 배지
+                    // 스페셜 파티 특별 배지
     if (isMoodKingParty) {
-        urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 900; z-index: 2; box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); animation: pulse 2s infinite;">👑 무드왕 파티</div>';
+        urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 900; z-index: 2; box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); animation: pulse 2s infinite;">👑 스페셜 파티</div>';
         cardBorderColor = '#FFD700';
         cardIcon = '👑';
     } else if (totalRemaining === 0) {
@@ -6576,7 +6576,7 @@ async function loadPartyDates() {
                     cardIcon = '🔥';
                 }
                 
-// 무드왕 파티가 아닌 경우에만 주말 아이콘 적용
+// 스페셜 파티가 아닌 경우에만 주말 아이콘 적용
 if (isWeekend && !isMoodKingParty) {
     cardIcon = '🎉';
     if (totalRemaining > 20) {
