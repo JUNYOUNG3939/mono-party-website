@@ -346,7 +346,7 @@
             border-color: var(--neon-pink);
             background: rgba(255, 0, 102, 0.1);
         }
-        /* 무드왕 파티 특별 스타일 */
+        /* 스페셜 파티 특별 스타일 */
 .calendar-day.mood-king-party {
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1)) !important;
     border: 2px solid #FFD700 !important;
@@ -1104,7 +1104,7 @@ fields: [
                 
                 if (data && data.length > 0) {
                     availablePartyDates = data.map(item => item.party_date);
-                        // 무드왕 파티 날짜가 있으면 콘솔에 표시 (디버깅용)
+                        // 스페셜 파티 날짜가 있으면 콘솔에 표시 (디버깅용)
     availablePartyDates.forEach(dateStr => {
         const date = new Date(dateStr);
         const month = date.getMonth();
@@ -1113,7 +1113,7 @@ fields: [
         
         if ((month === 8 && dateNum === 20) || 
             (day === 6 && new Date(date.getFullYear(), month, dateNum + 7).getMonth() !== month)) {
-            console.log('👑 무드왕 파티 날짜:', dateStr);
+            console.log('👑 스페셜 파티 날짜:', dateStr);
         }
     });
                     document.getElementById('calendarContent').style.display = 'block';
@@ -1178,7 +1178,7 @@ fields: [
 if (availablePartyDates.includes(dateStr)) {
     dayElement.classList.add('has-party');
     
-    // 무드왕 파티 체크
+    // 스페셜 파티 체크
     const partyDate = new Date(dateStr);
     const month = partyDate.getMonth();
     const dateNum = partyDate.getDate();
@@ -1225,7 +1225,7 @@ function selectDate(day, dateStr, isMoodKing = false) {
     // Set hidden input value
     document.getElementById('selectedDate').value = dateStr;
     
-    // 무드왕 파티 선택 시 특별 안내 표시
+    // 스페셜 파티 선택 시 특별 안내 표시
     if (isMoodKing) {
         const priceDisplay = document.querySelector('.price-display');
         const notice = document.createElement('div');
@@ -1233,14 +1233,14 @@ function selectDate(day, dateStr, isMoodKing = false) {
         notice.className = 'mood-king-notice';
         notice.innerHTML = `
             <h3 style="color: #FFD700; margin-bottom: 10px; font-size: 1.3rem;">
-                👑 무드왕 파티를 선택하셨습니다! 👑
+                👑 스페셜 파티를 선택하셨습니다! 👑
             </h3>
             <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 10px;">
                 <strong>월 1회 스페셜 이벤트</strong><br>
                 80명이 실명 투표로 선발한 매력왕들이 모이는 특별한 날
             </p>
             <p style="color: #FFD700; font-size: 0.9rem;">
-                ✨ 무드왕 선발자는 우선 초대 및 특별 혜택이 제공됩니다 ✨
+                ✨ 스페셜파티 선발자는 우선 초대 및 특별 혜택이 제공됩니다 ✨
             </p>
         `;
         priceDisplay.parentNode.insertBefore(notice, priceDisplay);
