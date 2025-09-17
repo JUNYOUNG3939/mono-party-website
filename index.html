@@ -72,7 +72,29 @@
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
+        
+/* 스마트 시스템 카드 전용 애니메이션 */
+@keyframes slideBackground {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
 
+@keyframes sparkle {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 0.3; }
+}
+
+/* 스마트 시스템 카드 호버 효과 */
+.smart-system-card:hover {
+    transform: translateY(-10px) scale(1.02) !important;
+    box-shadow: 0 30px 60px rgba(0, 229, 255, 0.3),
+                0 30px 60px rgba(255, 0, 102, 0.3),
+                0 0 100px rgba(0, 255, 136, 0.2) !important;
+}
+
+.smart-system-card:hover > div:last-child {
+    opacity: 1 !important;
+}
 /* 글래스모피즘 효과 */
 .glass-effect {
     background: rgba(255, 255, 255, 0.05);
@@ -1315,7 +1337,58 @@
         opacity: 0.8;
     }
 }
+/* 스페셜 파티 전용 스타일 */
+.mood-king-badge {
+    background: linear-gradient(135deg, #FFD700, #FFA500, #FFD700);
+    background-size: 200% 200%;
+    animation: goldShimmer 3s ease infinite;
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+    display: inline-block;
+}
 
+@keyframes goldShimmer {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.crown-animation {
+    animation: crownFloat 3s ease-in-out infinite;
+}
+
+@keyframes crownFloat {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+.mood-king-card {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(17, 17, 17, 0.95));
+    border: 2px solid #FFD700 !important;
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.mood-king-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+    animation: rotate 10s linear infinite;
+}
+
+@keyframes rotate {
+    100% { transform: rotate(360deg); }
+}
 /* 게이지바 애니메이션 */
 @keyframes fillGauge {
     from { 
@@ -1787,7 +1860,206 @@
         gap: 20px;
         margin-top: 40px;
     ">
+        <!-- 스페셜 파티 - 최상단 특별 카드 -->
+        <div class="category-card mood-king-card" onclick="showCategory('mood-king')" style="
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(17, 17, 17, 0.98));
+            border: 3px solid #FFD700;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        ">
+<div id="moodKingDateBadge" style="
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 900;
+    animation: pulse 2s infinite;
+"></div>
+            
+            <div class="crown-animation" style="font-size: 4rem; margin-bottom: 20px;">👑</div>
+            <h3 style="
+                font-size: 1.8rem;
+                background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                font-weight: 900;
+                margin-bottom: 15px;
+            ">스페셜 파티</h3>
+            <p style="color: #FFD700; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px;">
+                월 1회 스페셜 이벤트
+            </p>
+            <p style="color: var(--text-primary); font-size: 0.95rem;">
+                80명이 실명 투표로 선발한 진짜 매력왕들만 모이는 날
+            </p>
+        </div>
         <!-- 카테고리 그리드 뒤에 이 스타일 추가 -->
+        <!-- 스마트 파티 시스템 - 특별 강조 카드 -->
+        <div class="category-card smart-system-card" onclick="showCategory('smart-system')" style="
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.15), rgba(255, 0, 102, 0.15), rgba(17, 17, 17, 0.98));
+            border: 3px solid;
+            border-image: linear-gradient(45deg, #00e5ff, #ff0066, #00ff88) 1;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        ">
+            <!-- 애니메이션 배경 효과 -->
+            <div style="
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 200%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.1), rgba(255, 0, 102, 0.1), transparent);
+                animation: slideBackground 8s linear infinite;
+            "></div>
+            
+            <!-- NEW + HOT 배지 -->
+            <div style="
+                position: absolute;
+                top: 15px;
+                right: 20px;
+                display: flex;
+                gap: 10px;
+            ">
+                <span style="
+                    background: linear-gradient(135deg, #00e5ff, #0099ff);
+                    color: white;
+                    padding: 6px 14px;
+                    border-radius: 20px;
+                    font-size: 0.8rem;
+                    font-weight: 900;
+                    animation: pulse 2s infinite;
+                ">NEW</span>
+                <span style="
+                    background: linear-gradient(135deg, #ff0066, #ff3388);
+                    color: white;
+                    padding: 6px 14px;
+                    border-radius: 20px;
+                    font-size: 0.8rem;
+                    font-weight: 900;
+                    animation: pulse 2s infinite;
+                    animation-delay: 0.5s;
+                ">HOT</span>
+            </div>
+            
+            <div style="position: relative; z-index: 1;">
+                <!-- 아이콘 그룹 -->
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    gap: 15px;
+                    font-size: 3rem;
+                    margin-bottom: 20px;
+                ">
+                    <span style="animation: float 3s ease-in-out infinite;">📱</span>
+                    <span style="animation: float 3s ease-in-out infinite; animation-delay: 0.5s;">🎮</span>
+                    <span style="animation: float 3s ease-in-out infinite; animation-delay: 1s;">✨</span>
+                </div>
+                
+                <h3 style="
+                    font-size: 1.8rem;
+                    background: linear-gradient(45deg, #00e5ff, #ff0066, #00ff88);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-size: 200% 200%;
+                    animation: gradient-shift 3s ease infinite;
+                    font-weight: 900;
+                    margin-bottom: 15px;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                ">AI 스마트 파티 시스템</h3>
+                
+                <p style="
+                    color: var(--text-primary);
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    margin-bottom: 10px;
+                ">
+                    독자적인 웹앱으로 즐기는 체계적 소셜링
+                </p>
+                
+                <p style="
+                    color: var(--text-secondary);
+                    font-size: 0.95rem;
+                    line-height: 1.5;
+                ">
+                    AI가 매칭하는 운명의 테이블 • 실시간 호감도 확인 • 게임처럼 즐기는 파티
+                </p>
+                
+                <!-- 핵심 포인트 -->
+                <div style="
+                    display: flex;
+                    justify-content: center;
+                    gap: 30px;
+                    margin-top: 25px;
+                    flex-wrap: wrap;
+                ">
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        color: #00e5ff;
+                        font-size: 0.9rem;
+                        font-weight: 600;
+                    ">
+                        <span>⚡</span>
+                        <span>매칭률 87%</span>
+                    </div>
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        color: #ff0066;
+                        font-size: 0.9rem;
+                        font-weight: 600;
+                    ">
+                        <span>💕</span>
+                        <span>호감 교환 2회</span>
+                    </div>
+                    <div style="
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        color: #00ff88;
+                        font-size: 0.9rem;
+                        font-weight: 600;
+                    ">
+                        <span>🎯</span>
+                        <span>여러사람과 대화 성공</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 반짝이는 테두리 효과 -->
+            <div style="
+                position: absolute;
+                top: -2px;
+                left: -2px;
+                right: -2px;
+                bottom: -2px;
+                background: linear-gradient(45deg, #00e5ff, #ff0066, #00ff88, #00e5ff);
+                background-size: 300% 300%;
+                border-radius: 20px;
+                opacity: 0;
+                z-index: -1;
+                animation: gradient-shift 3s ease infinite, sparkle 2s ease-in-out infinite;
+            "></div>
+        </div>
 <style>
 .category-card {
     background: linear-gradient(135deg, rgba(17, 17, 17, 0.9) 0%, rgba(17, 17, 17, 0.7) 100%);
@@ -1941,7 +2213,42 @@
             <h3 style="color: var(--neon-accent); margin-bottom: 10px;">파티 분위기</h3>
             <p style="color: var(--text-secondary); font-size: 0.9rem;">사진 & 영상</p>
         </div>
-        
+        <!-- 스마트 파티 시스템 -->
+        <div class="category-card" onclick="showCategory('smart-system')" style="
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(255, 0, 102, 0.1));
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #00e5ff, #ff0066) 1;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        ">
+            <div style="
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: linear-gradient(45deg, #00e5ff, #ff0066);
+                color: white;
+                padding: 4px 10px;
+                border-radius: 15px;
+                font-size: 0.7rem;
+                font-weight: 700;
+            ">NEW</div>
+            <div style="font-size: 3rem; margin-bottom: 15px;">📱</div>
+            <h3 style="
+                background: linear-gradient(45deg, #00e5ff, #ff0066);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                margin-bottom: 10px;
+                font-weight: 800;
+            ">스마트 파티 시스템</h3>
+            <p style="color: var(--text-primary); font-size: 0.9rem; font-weight: 500;">
+                AI가 매칭하는 운명의 테이블
+            </p>
+        </div>
         <!-- 잔여석 -->
         <div class="category-card" onclick="showCategory('seats')" style="
             background: var(--bg-card);
@@ -3173,7 +3480,1082 @@
     </button>
 </div>
     </section>
+    <!-- 스페셜 파티 섹션 -->
+    <section class="section" id="moodKingSection" style="display: none; background: linear-gradient(180deg, #000 0%, #0a0a0a 100%); position: relative; overflow: hidden;">
+        <!-- 배경 효과 -->
+        <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+        "></div>
+        
+        <div style="position: relative; z-index: 1;">
+            <!-- 헤더 -->
+            <div style="text-align: center; margin-bottom: 60px;">
+                <div class="crown-animation" style="font-size: 5rem; margin-bottom: 20px;">👑</div>
+                <h2 class="section-title" style="
+                    font-size: clamp(2.5rem, 7vw, 4rem);
+                    margin-bottom: 20px;
+                ">
+                    <span style="
+                        background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    ">SPECIAL PARTY</span>
+                </h2>
+                <p style="
+                    font-size: 1.3rem;
+                    color: #FFD700;
+                    font-weight: 700;
+                    margin-bottom: 10px;
+                ">월 1회, 단 하루만 열리는 스페셜 이벤트</p>
+                <div class="mood-king-badge">매달 마지막 토요일 D-DAY</div>
+            </div>
+            
+            <!-- 무드왕이란? -->
+            <div style="
+                max-width: 900px;
+                margin: 0 auto 80px;
+                text-align: center;
+                background: rgba(255, 215, 0, 0.05);
+                border: 2px solid rgba(255, 215, 0, 0.3);
+                border-radius: 20px;
+                padding: 50px 30px;
+            ">
+                <h3 style="
+                    font-size: 2rem;
+                    color: #FFD700;
+                    margin-bottom: 30px;
+                    font-weight: 900;
+                ">무드왕이 뭐야?</h3>
+                
+                <p style="
+                    font-size: 1.2rem;
+                    line-height: 1.8;
+                    color: var(--text-primary);
+                    margin-bottom: 30px;
+                ">
+                    매회차 <span style="color: #FFD700; font-weight: 700;">80명의 참가자</span>가<br>
+                    <span style="font-size: 1.4rem; color: #FFD700;">익명이 아닌 실명 투표</span>로<br>
+                    직접 선택한 <span style="font-size: 1.5rem; color: #FFA500;">진짜 매력남녀</span>
+                </p>
+                
+                <div style="
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 20px;
+                    margin-top: 40px;
+                ">
+                    <div style="
+                        background: rgba(255, 215, 0, 0.1);
+                        padding: 20px;
+                        border-radius: 15px;
+                        border: 1px solid rgba(255, 215, 0, 0.3);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">✨</div>
+                        <h4 style="color: #FFD700; margin-bottom: 10px;">매력</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            눈빛만으로도 설레게 하는<br>치명적 매력
+                        </p>
+                    </div>
+                    
+                    <div style="
+                        background: rgba(255, 215, 0, 0.1);
+                        padding: 20px;
+                        border-radius: 15px;
+                        border: 1px solid rgba(255, 215, 0, 0.3);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">🔥</div>
+                        <h4 style="color: #FFD700; margin-bottom: 10px;">분위기</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            파티장을 지배하는<br>압도적 존재감
+                        </p>
+                    </div>
+                    
+                    <div style="
+                        background: rgba(255, 215, 0, 0.1);
+                        padding: 20px;
+                        border-radius: 15px;
+                        border: 1px solid rgba(255, 215, 0, 0.3);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">💎</div>
+                        <h4 style="color: #FFD700; margin-bottom: 10px;">외모</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            누가 봐도 인정하는<br>비주얼 끝판왕
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 무드왕 특전 -->
+            <div style="
+                background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+                padding: 60px 20px;
+                margin: 0 -20px 60px;
+            ">
+                <h3 style="
+                    text-align: center;
+                    font-size: 2.5rem;
+                    color: #FFD700;
+                    margin-bottom: 50px;
+                    font-weight: 900;
+                ">무드왕만의 특별한 혜택</h3>
+                
+                <div style="
+                    max-width: 1000px;
+                    margin: 0 auto;
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                    gap: 30px;
+                ">
+                    <div style="
+                        text-align: center;
+                        padding: 30px;
+                        background: rgba(0, 0, 0, 0.5);
+                        border-radius: 20px;
+                        border: 2px solid #FFD700;
+                    ">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">🎁</div>
+                        <h4 style="color: #FFD700; font-size: 1.3rem; margin-bottom: 15px;">프리미엄 아이템</h4>
+                        <p style="color: var(--text-primary); line-height: 1.6;">
+                            2부 컨텐츠에서 사용할 수 있는<br>
+                            <span style="color: #FFD700; font-weight: 700;">스페셜 아이템 증정</span><br>
+                            더 깊은 연결을 위한 찬스!
+                        </p>
+                    </div>
+                    
+                    <div style="
+                        text-align: center;
+                        padding: 30px;
+                        background: rgba(0, 0, 0, 0.5);
+                        border-radius: 20px;
+                        border: 2px solid #FFD700;
+                    ">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">⭐</div>
+                        <h4 style="color: #FFD700; font-size: 1.3rem; margin-bottom: 15px;">우선 초대권</h4>
+                        <p style="color: var(--text-primary); line-height: 1.6;">
+                            다음 스페셜 파티<br>
+                            <span style="color: #FFD700; font-weight: 700;">VIP 우선 예약</span><br>
+                            매진 걱정 없는 특권!
+                        </p>
+                    </div>
+                    
+                    <div style="
+                        text-align: center;
+                        padding: 30px;
+                        background: rgba(0, 0, 0, 0.5);
+                        border-radius: 20px;
+                        border: 2px solid #FFD700;
+                    ">
+                        <div style="font-size: 3rem; margin-bottom: 20px;">👑</div>
+                        <h4 style="color: #FFD700; font-size: 1.3rem; margin-bottom: 15px;">명예의 전당</h4>
+                        <p style="color: var(--text-primary); line-height: 1.6;">
+                            무드왕 전용<br>
+                            <span style="color: #FFD700; font-weight: 700;">프라이빗 네트워킹</span><br>
+                            최고들만의 커뮤니티!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 왜 특별한가 -->
+            <div style="
+                max-width: 900px;
+                margin: 0 auto 60px;
+                text-align: center;
+            ">
+                <h3 style="
+                    font-size: 2.5rem;
+                    margin-bottom: 40px;
+                    color: var(--text-primary);
+                ">왜 스페셜 파티는 <span style="color: #FFD700;">레전드</span>인가?</h3>
+                
+                <div style="
+                    background: rgba(255, 215, 0, 0.03);
+                    border: 1px solid rgba(255, 215, 0, 0.2);
+                    border-radius: 20px;
+                    padding: 40px 30px;
+                    margin-bottom: 30px;
+                ">
+                    <p style="
+                        font-size: 1.3rem;
+                        line-height: 2;
+                        color: var(--text-primary);
+                    ">
+                        <span style="color: #FFD700; font-weight: 700;">"물이 다르다"</span><br>
+                        검증된 매력남녀들만 모이니까<br><br>
+                        
+                        <span style="color: #FFD700; font-weight: 700;">"경쟁이 치열하다"</span><br>
+                        모두가 매력적이어서 더 설레는 긴장감<br><br>
+                        
+                        <span style="color: #FFD700; font-weight: 700;">"성공률이 높다"</span><br>
+                        이미 매력이 검증된 사람들끼리의 만남
+                    </p>
+                </div>
+                
+<div style="
+    font-size: 1.5rem;
+    color: #FFA500;
+    font-weight: 700;
+    margin-top: 40px;
+">
+    매달 마지막 토요일<br>
+    <span style="font-size: 1.2rem; color: #FFD700;">
+        (9월은 특별히 20일 개최)
+    </span><br>
+    단 하루만 열리는 프리미엄 파티
+</div>
+            </div>
+<!-- 무드왕 선발 프로세스 -->
+<div style="
+    max-width: 1200px;
+    margin: 80px auto;
+    padding: 0 20px;
+">
+    <h3 style="
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 60px;
+        font-weight: 900;
+        color: var(--text-primary);
+    ">
+        <span style="color: #FFD700;">무드왕</span>이 되는 과정
+    </h3>
     
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+    ">
+        <div style="
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(0, 0, 0, 0.5));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            position: relative;
+        ">
+            <div style="
+                font-size: 3rem;
+                margin-bottom: 20px;
+                filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+            ">📝</div>
+            <h4 style="color: #FFD700; font-size: 1.2rem; margin-bottom: 15px;">STEP 1</h4>
+            <p style="font-weight: 700; font-size: 1.1rem; margin-bottom: 10px;">실명 투표</p>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+                매 파티마다 참가자 80명이<br>
+                직접 만나고 느낀<br>
+                진짜 매력을 투표
+            </p>
+        </div>
+        
+        <div style="
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(0, 0, 0, 0.5));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            position: relative;
+        ">
+            <div style="
+                font-size: 3rem;
+                margin-bottom: 20px;
+                filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+            ">🎯</div>
+            <h4 style="color: #FFD700; font-size: 1.2rem; margin-bottom: 15px;">STEP 2</h4>
+            <p style="font-weight: 700; font-size: 1.1rem; margin-bottom: 10px;">상위 선발</p>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+                매력, 분위기, 대화 스킬<br>
+                종합 평가 상위 3%만<br>
+                무드왕 타이틀 획득
+            </p>
+        </div>
+        
+        <div style="
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(0, 0, 0, 0.5));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            position: relative;
+        ">
+            <div style="
+                font-size: 3rem;
+                margin-bottom: 20px;
+                filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5));
+            ">👑</div>
+            <h4 style="color: #FFD700; font-size: 1.2rem; margin-bottom: 15px;">STEP 3</h4>
+            <p style="font-weight: 700; font-size: 1.1rem; margin-bottom: 10px;">프리미엄 초대</p>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+                무드왕만을 위한<br>
+                월 1회 익스클루시브 파티<br>
+                특별 초대장 발송
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- 스페셜 파티 시크릿 -->
+<div style="
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(0, 0, 0, 0.95));
+    padding: 80px 20px;
+    margin: 60px -20px;
+    position: relative;
+    overflow: hidden;
+">
+    <!-- 배경 효과 -->
+    <div style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 10px,
+            rgba(255, 215, 0, 0.03) 10px,
+            rgba(255, 215, 0, 0.03) 20px
+        );
+    "></div>
+    
+    <div style="position: relative; z-index: 1; max-width: 1200px; margin: 0 auto;">
+        <h3 style="
+            text-align: center;
+            font-size: 2.5rem;
+            color: #FFD700;
+            margin-bottom: 60px;
+            font-weight: 900;
+        ">스페셜 파티에서만 경험할 수 있는 것</h3>
+        
+        <div style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        ">
+            <!-- 시크릿 컨텐츠 -->
+            <div style="
+                background: rgba(0, 0, 0, 0.7);
+                border: 2px solid #FFD700;
+                border-radius: 20px;
+                padding: 35px;
+                text-align: center;
+                backdrop-filter: blur(10px);
+            ">
+                <div style="font-size: 3rem; margin-bottom: 20px;">🔒</div>
+                <h4 style="color: #FFD700; font-size: 1.4rem; margin-bottom: 15px; font-weight: 800;">
+                    시크릿 컨텐츠
+                </h4>
+                <p style="color: var(--text-primary); line-height: 1.6; font-size: 1rem;">
+                    일반 파티에서는<br>
+                    <span style="color: #FFD700; font-weight: 700;">절대 공개되지 않는</span><br>
+                    무드왕들만의 특별한 게임<br>
+                    참가 후 직접 확인하세요
+                </p>
+            </div>
+            
+            <!-- 딥 커넥션 -->
+            <div style="
+                background: rgba(0, 0, 0, 0.7);
+                border: 2px solid #FFD700;
+                border-radius: 20px;
+                padding: 35px;
+                text-align: center;
+                backdrop-filter: blur(10px);
+            ">
+                <div style="font-size: 3rem; margin-bottom: 20px;">💫</div>
+                <h4 style="color: #FFD700; font-size: 1.4rem; margin-bottom: 15px; font-weight: 800;">
+                    깊은 교감의 시간
+                </h4>
+                <p style="color: var(--text-primary); line-height: 1.6; font-size: 1rem;">
+                    검증된 매력의 사람들과<br>
+                    <span style="color: #FFD700; font-weight: 700;">더 깊은 대화</span><br>
+                    표면적 만남이 아닌<br>
+                    진짜 연결의 순간
+                </p>
+            </div>
+            
+            <!-- 프리미엄 경험 -->
+            <div style="
+                background: rgba(0, 0, 0, 0.7);
+                border: 2px solid #FFD700;
+                border-radius: 20px;
+                padding: 35px;
+                text-align: center;
+                backdrop-filter: blur(10px);
+            ">
+                <div style="font-size: 3rem; margin-bottom: 20px;">✨</div>
+                <h4 style="color: #FFD700; font-size: 1.4rem; margin-bottom: 15px; font-weight: 800;">
+                    프리미엄 경험
+                </h4>
+                <p style="color: var(--text-primary); line-height: 1.6; font-size: 1rem;">
+                    더 특별한 분위기<br>
+                    <span style="color: #FFD700; font-weight: 700;">더 높은 퀄리티</span><br>
+                    무드왕들끼리만<br>
+                    공유하는 특별함
+                </p>
+            </div>
+        </div>
+        
+        <!-- 비밀 유지 안내 -->
+        <div style="
+            margin-top: 60px;
+            padding: 30px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid #FFD700;
+            border-radius: 20px;
+            text-align: center;
+        ">
+            <p style="
+                font-size: 1.2rem;
+                color: var(--text-primary);
+                line-height: 1.8;
+            ">
+                <span style="color: #FFD700; font-size: 2rem;">🤫</span><br>
+                스페셜 파티의 특별한 컨텐츠는<br>
+                <span style="color: #FFD700; font-weight: 700;">참가자들끼리만 공유되는 비밀</span>입니다<br>
+                <span style="font-size: 0.95rem; color: var(--text-secondary);">
+                    SNS 공유 및 외부 유출 시 참가 제한
+                </span>
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- 무드왕 참가자 후기 -->
+<div style="
+    max-width: 1200px;
+    margin: 80px auto 60px;
+    padding: 0 20px;
+">
+    <h3 style="
+        text-align: center;
+        font-size: 2rem;
+        color: var(--text-primary);
+        margin-bottom: 50px;
+        font-weight: 700;
+    ">무드왕이 된 사람들의 이야기</h3>
+    
+    <div style="
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    ">
+        <div style="
+            background: rgba(255, 215, 0, 0.05);
+            border-left: 3px solid #FFD700;
+            padding: 30px;
+            border-radius: 10px;
+        ">
+            <p style="
+                font-size: 1.1rem;
+                line-height: 1.7;
+                color: var(--text-primary);
+                font-style: italic;
+                margin-bottom: 20px;
+            ">
+                "일반 파티와는 완전히 달라요. 
+                모두가 검증된 매력을 가진 사람들이라 
+                대화의 깊이부터 다릅니다."
+            </p>
+            <p style="color: #FFD700; font-weight: 700;">
+                - 무드왕 K님
+            </p>
+        </div>
+        
+        <div style="
+            background: rgba(255, 215, 0, 0.05);
+            border-left: 3px solid #FFD700;
+            padding: 30px;
+            border-radius: 10px;
+        ">
+            <p style="
+                font-size: 1.1rem;
+                line-height: 1.7;
+                color: var(--text-primary);
+                font-style: italic;
+                margin-bottom: 20px;
+            ">
+                "스페셜 파티의 그 '특별한 것'... 
+                말로 설명하긴 어렵지만 
+                경험해보면 왜 비밀인지 알게 돼요."
+            </p>
+            <p style="color: #FFD700; font-weight: 700;">
+                - 무드왕 S님
+            </p>
+        </div>
+        
+        <div style="
+            background: rgba(255, 215, 0, 0.05);
+            border-left: 3px solid #FFD700;
+            padding: 30px;
+            border-radius: 10px;
+        ">
+            <p style="
+                font-size: 1.1rem;
+                line-height: 1.7;
+                color: var(--text-primary);
+                font-style: italic;
+                margin-bottom: 20px;
+            ">
+                "매력 있는 사람들만 모였더니 
+                에너지가 완전히 달라요. 
+                스페셜 파티는 정말 말 그대로 특별합니다."
+            </p>
+            <p style="color: #FFD700; font-weight: 700;">
+                - 무드왕 J님
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- 무드왕 도전 안내 -->
+<div style="
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 40px 30px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(0, 0, 0, 0.9));
+    border: 3px solid #FFD700;
+    border-radius: 30px;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+">
+    <h3 style="
+        color: #FFD700;
+        font-size: 2rem;
+        margin-bottom: 30px;
+        font-weight: 900;
+    ">무드왕에 도전하세요</h3>
+    
+    <p style="
+        font-size: 1.3rem;
+        line-height: 1.8;
+        color: var(--text-primary);
+        margin-bottom: 20px;
+    ">
+        매월 마지막 주 토요일<br>
+        <span style="color: #FFD700; font-weight: 700;">무드왕들만의 특별한 파티</span>가 열립니다
+    </p>
+    
+    <p style="
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.6;
+    ">
+        먼저 일반 MONO PARTY에 참여하고<br>
+        당신의 매력을 보여주세요<br><br>
+        <span style="color: #FFD700; font-weight: 700;">
+            80명의 선택을 받은 당신이<br>
+            다음 무드왕이 될 수 있습니다
+        </span>
+    </p>
+</div>
+            <!-- CTA -->
+            <div style="text-align: center; margin-top: 60px;">
+                <p style="
+                    font-size: 1.3rem;
+                    color: var(--text-secondary);
+                    margin-bottom: 30px;
+                ">
+                    지금 신청하고 당신도 무드왕이 되어보세요
+                </p>
+                <a href="#" onclick="openApplicationModal(); return false;" class="cta-button" style="
+                    background: linear-gradient(135deg, #FFD700, #FFA500);
+                    color: #000;
+                    font-weight: 900;
+                    padding: 20px 60px;
+                    font-size: 1.2rem;
+                    box-shadow: 0 10px 40px rgba(255, 215, 0, 0.4);
+                ">
+                    스페셜 파티 참가 신청하기
+                </a>
+            </div>
+        </div>
+        
+        <!-- 섹션 네비게이션 -->
+        <div class="section-navigation" style="
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        ">
+            <button onclick="goToMain()" style="
+                padding: 12px 30px;
+                background: var(--bg-card);
+                border: 1px solid var(--neon-accent);
+                color: var(--neon-accent);
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            ">
+                ← 메인으로
+            </button>
+            
+            <button onclick="openApplicationModal()" style="
+                padding: 12px 30px;
+                background: linear-gradient(135deg, #FFD700, #FFA500);
+                color: #000;
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 700;
+                transition: all 0.3s ease;
+            ">
+                지금 신청하기 →
+            </button>
+        </div>
+    </section>
+    <!-- Smart Party System Section -->
+    <section class="section" id="smartSystemSection" style="display: none; background: linear-gradient(180deg, #000 0%, #0a0a0a 100%); position: relative; overflow: hidden;">
+        <!-- 배경 효과 -->
+        <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 229, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255, 0, 102, 0.1) 0%, transparent 50%);
+        "></div>
+        
+        <div style="position: relative; z-index: 1;">
+            <!-- 헤더 -->
+            <div style="text-align: center; margin-bottom: 60px;">
+                <div style="font-size: 3rem; margin-bottom: 20px;">📱✨</div>
+                <h2 class="section-title" style="
+                    font-size: clamp(2rem, 6vw, 3.5rem);
+                    margin-bottom: 20px;
+                ">
+                    파티를 <span style="
+                        background: linear-gradient(45deg, #00e5ff, #ff0066);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                    ">게임처럼</span> 즐기는<br>
+                    MONOPARTY만의 스마트 파티 시스템
+                </h2>
+                <p style="
+                    font-size: 1.2rem;
+                    color: var(--text-secondary);
+                    margin-bottom: 10px;
+                ">다른 파티에선 절대 경험할 수 없는</p>
+                <p style="
+                    font-size: 1.4rem;
+                    color: var(--neon-accent);
+                    font-weight: 700;
+                ">MONO PARTY만의 혁신적 시스템</p>
+            </div>
+            
+            <!-- 시스템 특징 그리드 -->
+            <div style="
+                max-width: 1200px;
+                margin: 0 auto 80px;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 30px;
+                padding: 0 20px;
+            ">
+                <!-- 특징 1 -->
+                <div style="
+                    background: rgba(0, 229, 255, 0.05);
+                    border: 1px solid rgba(0, 229, 255, 0.3);
+                    border-radius: 20px;
+                    padding: 35px;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: -50px;
+                        right: -50px;
+                        width: 150px;
+                        height: 150px;
+                        background: radial-gradient(circle, rgba(0, 229, 255, 0.2) 0%, transparent 70%);
+                        border-radius: 50%;
+                    "></div>
+                    
+                    <div style="font-size: 2.5rem; margin-bottom: 20px;">🎯</div>
+                    <h3 style="color: #00e5ff; font-size: 1.5rem; margin-bottom: 15px; font-weight: 700;">
+                        AI가 찾아주는 운명의 테이블
+                    </h3>
+                    <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 20px;">
+                        <strong>"누구와 얘기해야 하지?"</strong> 고민 끝!<br><br>
+                        지정 좌석 + 체계적 로테이션으로<br>
+                        모든 참가자와 자연스럽게 대화<br>
+                        먼저 다가갈 부담감 ZERO
+                    </p>
+                    <div style="
+                        background: rgba(0, 229, 255, 0.1);
+                        padding: 12px;
+                        border-radius: 10px;
+                        font-size: 0.9rem;
+                        color: #00e5ff;
+                    ">
+                        💡  매력적인 이성과 대화 성공
+                    </div>
+                </div>
+                
+                <!-- 특징 2 -->
+                <div style="
+                    background: rgba(255, 0, 102, 0.05);
+                    border: 1px solid rgba(255, 0, 102, 0.3);
+                    border-radius: 20px;
+                    padding: 35px;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: -50px;
+                        left: -50px;
+                        width: 150px;
+                        height: 150px;
+                        background: radial-gradient(circle, rgba(255, 0, 102, 0.2) 0%, transparent 70%);
+                        border-radius: 50%;
+                    "></div>
+                    
+                    <div style="font-size: 2.5rem; margin-bottom: 20px;">👤</div>
+                    <h3 style="color: #ff0066; font-size: 1.5rem; margin-bottom: 15px; font-weight: 700;">
+                        상세 프로필로 진짜 매력 어필
+                    </h3>
+                    <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 20px;">
+                        <strong>"이 사람 어떤 사람이지?"</strong> 궁금증 해결!<br><br>
+                        MBTI, 성격, 취향, 가치관까지<br>
+                        단순 스펙을 넘어선 진짜 '나'<br>
+                        외모보다 개성으로 승부
+                    </p>
+                    <div style="
+                        background: rgba(255, 0, 102, 0.1);
+                        padding: 12px;
+                        border-radius: 10px;
+                        font-size: 0.9rem;
+                        color: #ff0066;
+                    ">
+                        🔥 매칭률 87% 달성
+                    </div>
+                </div>
+                
+                <!-- 특징 3 -->
+                <div style="
+                    background: rgba(0, 255, 136, 0.05);
+                    border: 1px solid rgba(0, 255, 136, 0.3);
+                    border-radius: 20px;
+                    padding: 35px;
+                    position: relative;
+                    overflow: hidden;
+                ">
+                    <div style="
+                        position: absolute;
+                        top: -50px;
+                        right: -50px;
+                        width: 150px;
+                        height: 150px;
+                        background: radial-gradient(circle, rgba(0, 255, 136, 0.2) 0%, transparent 70%);
+                        border-radius: 50%;
+                    "></div>
+                    
+                    <div style="font-size: 2.5rem; margin-bottom: 20px;">💘</div>
+                    <h3 style="color: var(--neon-accent); font-size: 1.5rem; margin-bottom: 15px; font-weight: 700;">
+                        크레딧으로 전하는 진심
+                    </h3>
+                    <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 20px;">
+                        <strong>"혹시 나한테 관심 있나?"</strong> 설렘 폭발!<br><br>
+                        호감 크레딧 시스템<br>
+                        익명 메시지로 솔직한 마음<br>
+                        상호 호감 즉시 확인 가능
+                    </p>
+                    <div style="
+                        background: rgba(0, 255, 136, 0.1);
+                        padding: 12px;
+                        border-radius: 10px;
+                        font-size: 0.9rem;
+                        color: var(--neon-accent);
+                    ">
+                        💕 평균 호감 교환 2회
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 게임 요소 섹션 -->
+            <div style="
+                background: linear-gradient(135deg, rgba(0, 229, 255, 0.1), rgba(255, 0, 102, 0.1));
+                padding: 60px 20px;
+                margin: 0 -20px 60px;
+                text-align: center;
+            ">
+                <h3 style="
+                    font-size: 2.5rem;
+                    margin-bottom: 40px;
+                    background: linear-gradient(45deg, #00e5ff, #ff0066);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    font-weight: 900;
+                ">🎮 게임처럼 즐기는 파티</h3>
+                
+                <div style="
+                    max-width: 1000px;
+                    margin: 0 auto;
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    gap: 30px;
+                ">
+                    <div style="
+                        background: rgba(0, 0, 0, 0.7);
+                        padding: 25px;
+                        border-radius: 15px;
+                        border: 1px solid rgba(0, 229, 255, 0.3);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">👑</div>
+                        <h4 style="color: #00e5ff; margin-bottom: 10px;">인기왕 투표</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            실시간 인기 순위 확인
+                        </p>
+                    </div>
+                    
+                    <div style="
+                        background: rgba(0, 0, 0, 0.7);
+                        padding: 25px;
+                        border-radius: 15px;
+                        border: 1px solid rgba(255, 0, 102, 0.3);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">💌</div>
+                        <h4 style="color: #ff0066; margin-bottom: 10px;">익명 메시지</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            솔직한 마음 전달
+                        </p>
+                    </div>
+                    
+                    <div style="
+                        background: rgba(0, 0, 0, 0.7);
+                        padding: 25px;
+                        border-radius: 15px;
+                        border: 1px solid rgba(0, 255, 136, 0.3);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">💎</div>
+                        <h4 style="color: var(--neon-accent); margin-bottom: 10px;">특별 미션</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            크레딧 획득 찬스
+                        </p>
+                    </div>
+                    
+                    <div style="
+                        background: rgba(0, 0, 0, 0.7);
+                        padding: 25px;
+                        border-radius: 15px;
+                        border: 1px solid rgba(255, 215, 0, 0.3);
+                    ">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">🏆</div>
+                        <h4 style="color: #FFD700; margin-bottom: 10px;">리워드 시스템</h4>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            활동 포인트 적립
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 편의 기능 -->
+            <div style="
+                max-width: 900px;
+                margin: 0 auto 60px;
+                text-align: center;
+            ">
+                <h3 style="
+                    font-size: 2rem;
+                    margin-bottom: 40px;
+                    color: var(--text-primary);
+                ">📱 모든 정보가 손안에</h3>
+                
+                <div style="
+                    background: rgba(255, 255, 255, 0.03);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 20px;
+                    padding: 40px 30px;
+                ">
+                    <div style="
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                        gap: 30px;
+                        text-align: left;
+                    ">
+                        <div>
+                            <div style="color: var(--neon-accent); font-size: 1.2rem; margin-bottom: 10px;">
+                                ✅ 실시간 위치 확인
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                내 테이블, 좌석 번호 바로 확인<br>
+                                전체 배치도로 한눈에 파악
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <div style="color: var(--neon-accent); font-size: 1.2rem; margin-bottom: 10px;">
+                                ✅ 단계별 가이드
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                1부, 2부 진행 사항 안내<br>
+                                테이블 이동 타이밍 알림
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <div style="color: var(--neon-accent); font-size: 1.2rem; margin-bottom: 10px;">
+                                ✅ 스마트 매칭
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                관심사 기반 테이블 배치<br>
+                                대화가 잘 통하는 사람 추천
+                            </p>
+                        </div>
+                        
+                        <div>
+                            <div style="color: var(--neon-accent); font-size: 1.2rem; margin-bottom: 10px;">
+                                ✅ 실시간 알림
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                                호감 표시 즉시 확인<br>
+                                중요 공지사항 푸시 알림
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 티저 메시지 -->
+            <div style="
+                max-width: 800px;
+                margin: 60px auto;
+                padding: 50px 30px;
+                background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(255, 0, 102, 0.2));
+                border: 3px solid transparent;
+                background-clip: padding-box;
+                border-image: linear-gradient(45deg, #00e5ff, #ff0066) 1;
+                border-radius: 30px;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            ">
+                <div style="
+                    position: absolute;
+                    top: -100px;
+                    left: -100px;
+                    width: 200px;
+                    height: 200px;
+                    background: radial-gradient(circle, rgba(0, 229, 255, 0.3) 0%, transparent 70%);
+                    border-radius: 50%;
+                "></div>
+                
+                <div style="
+                    position: absolute;
+                    bottom: -100px;
+                    right: -100px;
+                    width: 200px;
+                    height: 200px;
+                    background: radial-gradient(circle, rgba(255, 0, 102, 0.3) 0%, transparent 70%);
+                    border-radius: 50%;
+                "></div>
+                
+                <div style="position: relative; z-index: 1;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">🤫</div>
+                    <h3 style="
+                        font-size: 2rem;
+                        margin-bottom: 20px;
+                        background: linear-gradient(45deg, #00e5ff, #ff0066);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        font-weight: 900;
+                    ">이건 비밀인데...</h3>
+                    
+                    <p style="
+                        font-size: 1.3rem;
+                        line-height: 1.8;
+                        color: var(--text-primary);
+                        margin-bottom: 30px;
+                    ">
+                        여기서 다 말하면 재미없잖아?<br>
+                        <span style="color: var(--neon-accent); font-weight: 700;">
+                            더 놀라운 기능들은<br>
+                            파티 현장에서 직접 경험하세요
+                        </span>
+                    </p>
+                    
+                    <p style="
+                        color: var(--text-secondary);
+                        font-size: 1.1rem;
+                        font-style: italic;
+                    ">
+                        "처음엔 신기했는데, 이제는 없으면 안 돼요"<br>
+                        - 3회 연속 참가자 K님
+                    </p>
+                </div>
+            </div>
+            
+            <!-- CTA -->
+            <div style="text-align: center; margin-top: 60px;">
+                <p style="
+                    font-size: 1.3rem;
+                    color: var(--text-secondary);
+                    margin-bottom: 30px;
+                ">
+                    독자적인 시스템 개발, 오직 MONO PARTY에서만
+                </p>
+                <a href="#" onclick="openApplicationModal(); return false;" class="cta-button" style="
+                    background: linear-gradient(45deg, #00e5ff, #ff0066);
+                    color: white;
+                    font-weight: 900;
+                    padding: 20px 60px;
+                    font-size: 1.2rem;
+                    box-shadow: 0 10px 40px rgba(0, 229, 255, 0.4);
+                ">
+                    스마트 파티 경험하기
+                </a>
+            </div>
+        </div>
+        
+        <!-- 섹션 네비게이션 -->
+        <div class="section-navigation" style="
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        ">
+            <button onclick="goToMain()" style="
+                padding: 12px 30px;
+                background: var(--bg-card);
+                border: 1px solid var(--neon-accent);
+                color: var(--neon-accent);
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            ">
+                ← 메인으로
+            </button>
+            
+            <button onclick="openApplicationModal()" style="
+                padding: 12px 30px;
+                background: linear-gradient(45deg, #00e5ff, #ff0066);
+                color: white;
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                font-weight: 700;
+                transition: all 0.3s ease;
+            ">
+                지금 신청하기 →
+            </button>
+        </div>
+    </section>
     <!-- FAQ Section -->
     <section class="section" id="faqSection" style="display: none; background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);">
         <h2 class="section-title">자주 묻는 질문</h2>
@@ -4316,7 +5698,56 @@ function scrollToMain() {
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
+// 스페셜 파티 날짜 계산 및 표시
+function updateMoodKingDate() {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const currentMonth = now.getMonth();
+    
+    // 9월 20일 체크
+    const sept20 = new Date(currentYear, 8, 20); // 9월은 8
+    
+    let moodKingDate;
+    
+    // 현재 날짜가 9월 20일 이전이면 9월 20일 표시
+    if (now < sept20) {
+        moodKingDate = sept20;
+    } else {
+        // 9월 20일이 지났으면 다음 달 마지막 토요일 계산
+        let nextMonth = currentMonth + 1;
+        let year = currentYear;
+        
+        if (nextMonth > 11) {
+            nextMonth = 0;
+            year++;
+        }
+        
+        // 해당 월의 마지막 토요일 찾기
+        const lastDay = new Date(year, nextMonth + 1, 0); // 다음달 0일 = 이번달 마지막날
+        let lastSaturday = new Date(lastDay);
+        
+        // 마지막 날부터 역산해서 토요일 찾기
+        while (lastSaturday.getDay() !== 6) {
+            lastSaturday.setDate(lastSaturday.getDate() - 1);
+        }
+        
+        moodKingDate = lastSaturday;
+    }
+    
+    // 날짜 포맷팅
+    const month = moodKingDate.getMonth() + 1;
+    const date = moodKingDate.getDate();
+    const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+    const dayName = dayNames[moodKingDate.getDay()];
+    
+    const dateString = `${month}/${date} ${dayName}요일`;
+    
+    // 메인 페이지 카드의 날짜 업데이트
+    const badge = document.getElementById('moodKingDateBadge');
+    if (badge) {
+        badge.textContent = dateString;
+    }
+}
 function backToIntro() {
     document.getElementById('mainPage').style.display = 'none';
     document.getElementById('introPage').style.display = 'block';
@@ -4409,6 +5840,12 @@ function showCategory(category) {
         case 'qna':
             document.getElementById('faqSection').style.display = 'block';
             break;
+            case 'smart-system':
+            document.getElementById('smartSystemSection').style.display = 'block';
+            break;
+            case 'mood-king':
+            document.getElementById('moodKingSection').style.display = 'block';
+            break;
     }
     
     // 뒤로가기 버튼 표시
@@ -4482,6 +5919,32 @@ async function loadPartyDatesForIntro() {
                 const dayOfWeek = dayNames[date.getDay()];
                 const month = date.getMonth() + 1;
                 const day = date.getDate();
+                // 스페셜 파티 체크 함수
+    function isMoodKingDate(checkDate) {
+        const month = checkDate.getMonth();
+        const dateNum = checkDate.getDate();
+        const day = checkDate.getDay();
+        
+        // 9월(8)은 특별히 20일에 개최
+        if (month === 8 && dateNum === 20) {
+            return true;
+        }
+        
+        // 다른 달은 마지막 주 토요일 체크
+        if (day === 6) { // 토요일인지 확인
+            const nextSaturday = new Date(checkDate);
+            nextSaturday.setDate(checkDate.getDate() + 7);
+            
+            if (nextSaturday.getMonth() !== checkDate.getMonth()) {
+                return true; // 이번이 이 달의 마지막 토요일
+            }
+        }
+        
+        return false;
+    }
+    
+    // 스페셜 파티인지 체크
+    const isMoodKingParty = isMoodKingDate(date);
                 
                 // 토요일/일요일 특별 표시
                 const isWeekend = date.getDay() === 6 || date.getDay() === 0;
@@ -4505,7 +5968,12 @@ async function loadPartyDatesForIntro() {
                 let urgencyBadge = '';
                 let cardIcon = '✨';
                 
-                if (totalRemaining === 0) {
+                // 스페셜 파티 특별 배지
+if (isMoodKingParty) {
+    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 900; z-index: 2; box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); animation: pulse 2s infinite;">👑 스페셜 파티</div>';
+    cardBorderColor = '#FFD700';
+    cardIcon = '👑';
+} else if (totalRemaining === 0) {
                     urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">SOLD OUT</div>';
                     cardBorderColor = '#ff0066';
                 } else if (totalRemaining <= 10) {
@@ -4517,12 +5985,13 @@ async function loadPartyDatesForIntro() {
                     cardIcon = '🔥';
                 }
                 
-                if (isWeekend) {
-                    cardIcon = '🎉';
-                    if (totalRemaining > 20) {
-                        cardBorderColor = '#ff0066';
-                    }
-                }
+// 스페셜 파티가 아닌 경우에만 주말 아이콘 적용
+if (isWeekend && !isMoodKingParty) {
+    cardIcon = '🎉';
+    if (totalRemaining > 20) {
+        cardBorderColor = '#ff0066';
+    }
+}
                 
                 return `
                     <div style="
@@ -5039,6 +6508,32 @@ async function loadPartyDates() {
                 const dayOfWeek = dayNames[date.getDay()];
                 const month = date.getMonth() + 1;
                 const day = date.getDate();
+                // 스페셜 파티 체크 함수
+    function isMoodKingDate(checkDate) {
+        const month = checkDate.getMonth();
+        const dateNum = checkDate.getDate();
+        const day = checkDate.getDay();
+        
+        // 9월(8)은 특별히 20일에 개최
+        if (month === 8 && dateNum === 20) {
+            return true;
+        }
+        
+        // 다른 달은 마지막 주 토요일 체크
+        if (day === 6) { // 토요일인지 확인
+            const nextSaturday = new Date(checkDate);
+            nextSaturday.setDate(checkDate.getDate() + 7);
+            
+            if (nextSaturday.getMonth() !== checkDate.getMonth()) {
+                return true; // 이번이 이 달의 마지막 토요일
+            }
+        }
+        
+        return false;
+    }
+    
+    // 스페셜 파티인지 체크
+    const isMoodKingParty = isMoodKingDate(date);
                 
                 // 토요일/일요일 특별 표시
                 const isWeekend = date.getDay() === 6 || date.getDay() === 0;
@@ -5061,8 +6556,15 @@ async function loadPartyDates() {
                 let cardBorderColor = '#00ff88';
                 let urgencyBadge = '';
                 let cardIcon = '✨';
-                
-                if (totalRemaining === 0) {
+
+                    // 스페셜 파티 특별 배지
+    if (isMoodKingParty) {
+        urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 900; z-index: 2; box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); animation: pulse 2s infinite;">👑 스페셜 파티</div>';
+        cardBorderColor = '#FFD700';
+        cardIcon = '👑';
+    } else if (totalRemaining === 0) {
+
+
                     urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">SOLD OUT</div>';
                     cardBorderColor = '#ff0066';
                 } else if (totalRemaining <= 10) {
@@ -5074,12 +6576,13 @@ async function loadPartyDates() {
                     cardIcon = '🔥';
                 }
                 
-                if (isWeekend) {
-                    cardIcon = '🎉';
-                    if (totalRemaining > 20) {
-                        cardBorderColor = '#ff0066';
-                    }
-                }
+// 스페셜 파티가 아닌 경우에만 주말 아이콘 적용
+if (isWeekend && !isMoodKingParty) {
+    cardIcon = '🎉';
+    if (totalRemaining > 20) {
+        cardBorderColor = '#ff0066';
+    }
+}
                 
                 return `
                     <div style="
@@ -5310,6 +6813,7 @@ async function loadPartyDates() {
             subscribeToApplications();
             generateRandomNotifications();
             updateViewerCount();
+             updateMoodKingDate(); 
                 // 메인 페이지가 보이면 파티 일정 로드
     const mainPageObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
