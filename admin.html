@@ -550,9 +550,11 @@
         <div class="filter-section">
             <div class="filter-grid">
                 <div class="filter-group">
-                    <label class="filter-label">날짜 필터</label>
-                    <input type="date" class="filter-input" id="dateFilter">
-                </div>
+    <label class="filter-label">파티 날짜</label>
+    <select class="filter-select" id="partyDateFilter">
+        <option value="">전체</option>
+    </select>
+</div>
                 
                 <div class="filter-group">
                     <label class="filter-label">파티 타입</label>
@@ -621,12 +623,7 @@
             </div>
         </div>
         
-        <!-- Charts Section -->
-        <div class="chart-container">
-            <h3 class="chart-title">주간 신청 현황</h3>
-            <canvas id="weeklyChart" height="100"></canvas>
-        </div>
-    </div>
+
     
     <!-- Application Detail Modal -->
     <div class="modal" id="detailModal">
@@ -642,7 +639,7 @@
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
     <script>
         // Supabase 초기화
         const SUPABASE_URL = 'https://wframchrsfspkxrpughn.supabase.co';
@@ -896,17 +893,17 @@
         }
         
         // Filter applications
-        function applyFilters() {
-            const dateFilter = document.getElementById('dateFilter').value;
-            const partyTypeFilter = document.getElementById('partyTypeFilter').value;
-            const genderFilter = document.getElementById('genderFilter').value;
-            const statusFilter = document.getElementById('statusFilter').value;
-            
-            let filtered = applications;
-            
-            if (dateFilter) {
-                filtered = filtered.filter(app => app.selected_date === dateFilter);
-            }
+function applyFilters() {
+    const partyDateFilter = document.getElementById('partyDateFilter').value;
+    const partyTypeFilter = document.getElementById('partyTypeFilter').value;
+    const genderFilter = document.getElementById('genderFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    
+    let filtered = applications;
+    
+    if (partyDateFilter) {
+        filtered = filtered.filter(app => app.selected_date === partyDateFilter);
+    }
             
             if (partyTypeFilter) {
                 filtered = filtered.filter(app => app.party_type === partyTypeFilter);
@@ -923,109 +920,16 @@
             renderTable(filtered);
         }
         
-        // Initialize chart
-        function initChart() {
-            const ctx = document.getElementById('weeklyChart').getContext('2d');
-            
-            // Prepare data for last 7 days
-            const last7Days = [];
-            const counts = [];
-            
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toISOString().split('T')[0];
-                last7Days.push(date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }));
-                
-                const count = applications.filter(app => 
-                    app.created_at && app.created_at.startsWith(dateStr)
-                ).length;
-                counts.push(count);
-            }
-            
-            chartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: last7Days,
-                    datasets: [{
-                        label: '신청자 수',
-                        data: counts,
-                        borderColor: '#00ff88',
-                        backgroundColor: 'rgba(0, 255, 136, 0.1)',
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 0 // 애니메이션 비활성화
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1,
-                                color: '#999'
-                            },
-                            grid: {
-                                color: 'rgba(255, 255, 255, 0.1)'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                color: '#999'
-                            },
-                            grid: {
-                                display: false
-                            }
-                        }
-                    }
-                }
-            });
-        }
+       
         
         // Update dashboard
-        let chartInstance = null;
-        function updateDashboard() {
-            updateStats();
-            renderTable();
-            
-            // 차트는 처음 한 번만 생성
-            if (!chartInstance && document.getElementById('weeklyChart')) {
-                initChart();
-            } else if (chartInstance) {
-                // 기존 차트 데이터만 업데이트
-                updateChartData();
-            }
-        }
+function updateDashboard() {
+    updateStats();
+    renderTable();
+    populatePartyDateFilter(); // 파티 날짜 필터 옵션 추가
+}
         
-        // Update chart data only
-        function updateChartData() {
-            const last7Days = [];
-            const counts = [];
-            
-            for (let i = 6; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toISOString().split('T')[0];
-                last7Days.push(date.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }));
-                
-                const count = applications.filter(app => 
-                    app.created_at && app.created_at.startsWith(dateStr)
-                ).length;
-                counts.push(count);
-            }
-            
-            chartInstance.data.labels = last7Days;
-            chartInstance.data.datasets[0].data = counts;
-            chartInstance.update('none'); // 애니메이션 없이 업데이트
-        }
+     
         
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
@@ -1037,18 +941,18 @@
             // Focus on password input
             document.getElementById('passwordInput').focus();
             
-            // Add filter event listeners (only if logged in)
-            const dateFilter = document.getElementById('dateFilter');
-            const partyTypeFilter = document.getElementById('partyTypeFilter');
-            const genderFilter = document.getElementById('genderFilter');
-            const statusFilter = document.getElementById('statusFilter');
-            
-            if (dateFilter) {
-                dateFilter.addEventListener('change', applyFilters);
-                partyTypeFilter.addEventListener('change', applyFilters);
-                genderFilter.addEventListener('change', applyFilters);
-                statusFilter.addEventListener('change', applyFilters);
-            }
+// Add filter event listeners (only if logged in)
+const partyDateFilter = document.getElementById('partyDateFilter');
+const partyTypeFilter = document.getElementById('partyTypeFilter');
+const genderFilter = document.getElementById('genderFilter');
+const statusFilter = document.getElementById('statusFilter');
+
+if (partyDateFilter) {
+    partyDateFilter.addEventListener('change', applyFilters);
+    partyTypeFilter.addEventListener('change', applyFilters);
+    genderFilter.addEventListener('change', applyFilters);
+    statusFilter.addEventListener('change', applyFilters);
+}
         });
         
         // Clean up on page unload
