@@ -682,6 +682,8 @@
                 
                 applications = data || [];
                 updateDashboard();
+                 // 필터 값이 유지되도록 필터 재적용
+        applyFilters();
             } catch (error) {
                 console.error('Error loading applications:', error);
                 // 에러 시에도 기존 데이터 유지
@@ -919,7 +921,33 @@ function applyFilters() {
             
             renderTable(filtered);
         }
-        
+// 파티 날짜 필터 옵션 생성
+function populatePartyDateFilter() {
+    const partyDateFilter = document.getElementById('partyDateFilter');
+    
+    // 모든 신청에서 유니크한 날짜 추출
+    const uniqueDates = [...new Set(applications.map(app => app.selected_date))]
+        .filter(date => date) // null/undefined 제거
+        .sort(); // 날짜 정렬
+    
+    // 현재 선택된 값 저장
+    const currentValue = partyDateFilter.value;
+    
+    // 옵션 재생성
+    partyDateFilter.innerHTML = '<option value="">전체</option>';
+    
+    uniqueDates.forEach(date => {
+        const option = document.createElement('option');
+        option.value = date;
+        option.textContent = date;
+        partyDateFilter.appendChild(option);
+    });
+    
+    // 이전 선택 값 복원
+    if (currentValue && uniqueDates.includes(currentValue)) {
+        partyDateFilter.value = currentValue;
+    }
+}        
        
         
         // Update dashboard
