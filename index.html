@@ -3530,7 +3530,7 @@
                     color: #FFD700;
                     margin-bottom: 30px;
                     font-weight: 900;
-                ">스페셜 파티가 뭐야?</h3>
+                ">무드왕이 뭐야?</h3>
                 
                 <p style="
                     font-size: 1.2rem;
@@ -3540,7 +3540,7 @@
                 ">
                     매회차 <span style="color: #FFD700; font-weight: 700;">80명의 참가자</span>가<br>
                     <span style="font-size: 1.4rem; color: #FFD700;">익명이 아닌 실명 투표</span>로<br>
-                    직접 선택한 <span style="font-size: 1.5rem; color: #FFA500;">무드왕들이 모이는 파티</span>
+                    직접 선택한 <span style="font-size: 1.5rem; color: #FFA500;">진짜 매력남녀</span>
                 </p>
                 
                 <div style="
@@ -3602,7 +3602,7 @@
                     color: #FFD700;
                     margin-bottom: 50px;
                     font-weight: 900;
-                ">무드왕만의 특별 혜택</h3>
+                ">무드왕만의 특별한 혜택</h3>
                 
                 <div style="
                     max-width: 1000px;
@@ -3671,7 +3671,7 @@
                     font-size: 2.5rem;
                     margin-bottom: 40px;
                     color: var(--text-primary);
-                ">왜 <span style="color: #FFD700;">레전드</span>인가?</h3>
+                ">왜 스페셜 파티는 <span style="color: #FFD700;">레전드</span>인가?</h3>
                 
                 <div style="
                     background: rgba(255, 215, 0, 0.03);
@@ -5920,28 +5920,28 @@ async function loadPartyDatesForIntro() {
                 const month = date.getMonth() + 1;
                 const day = date.getDate();
                 // 스페셜 파티 체크 함수
-    function isMoodKingDate(checkDate) {
-        const month = checkDate.getMonth();
-        const dateNum = checkDate.getDate();
-        const day = checkDate.getDay();
-        
-        // 9월(8)은 특별히 20일에 개최
-        if (month === 8 && dateNum === 20) {
-            return true;
-        }
-        
-        // 다른 달은 마지막 주 토요일 체크
-        if (day === 6) { // 토요일인지 확인
-            const nextSaturday = new Date(checkDate);
-            nextSaturday.setDate(checkDate.getDate() + 7);
-            
-            if (nextSaturday.getMonth() !== checkDate.getMonth()) {
-                return true; // 이번이 이 달의 마지막 토요일
-            }
-        }
-        
-        return false;
+function isMoodKingDate(checkDate) {
+    const month = checkDate.getMonth();
+    const dateNum = checkDate.getDate();
+    const day = checkDate.getDay();
+    
+    // 9월(8)은 특별히 20일에만 개최 (다른 날은 일반 파티)
+    if (month === 8) {
+        return dateNum === 20;  // 9월은 20일만 true, 나머지는 false
     }
+    
+    // 9월이 아닌 다른 달은 마지막 주 토요일 체크
+    if (day === 6) { // 토요일인지 확인
+        const nextSaturday = new Date(checkDate);
+        nextSaturday.setDate(checkDate.getDate() + 7);
+        
+        if (nextSaturday.getMonth() !== checkDate.getMonth()) {
+            return true; // 이번이 이 달의 마지막 토요일
+        }
+    }
+    
+    return false;
+}
     
     // 스페셜 파티인지 체크
     const isMoodKingParty = isMoodKingDate(date);
