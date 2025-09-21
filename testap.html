@@ -756,7 +756,10 @@
                 
 
             
-            
+<div class="form-group">
+    <label class="form-label" for="nickname">닉네임 <span class="required">*</span></label>
+    <input type="text" class="form-input" id="nickname" name="nickname" placeholder="파티에서 사용할 닉네임" required>
+</div>            
 <!-- Personal Information Section -->
 <div class="form-section">
     <h2 class="section-title">개인 정보</h2>
@@ -1013,6 +1016,11 @@ fields: [
                         value: applicationData.job,
                         inline: true
                     },
+    {
+    name: "🏷️ 닉네임",
+    value: applicationData.nickname,
+    inline: true
+},
                     {
                         name: "📸 인스타그램",
                         value: applicationData.instagram,
@@ -1251,14 +1259,15 @@ function selectDate(day, dateStr, isMoodKing = false) {
 }
 // 개인정보 필드가 모두 채워졌는지 확인하는 함수
 function checkAllPersonalInfoFilled() {
-    const requiredFields = [
-        'name',
-        'height', 
-        'age',
-        'phone',
-        'job',
-        'instagram'
-    ];
+const requiredFields = [
+    'name',
+    'height', 
+    'age',
+    'phone',
+    'job',
+    'nickname',  // 추가
+    'instagram'
+];
     
     // 모든 필드가 채워졌는지 확인
     for (let fieldId of requiredFields) {
@@ -1524,7 +1533,7 @@ document.querySelectorAll('input[name="gender"]').forEach(radio => {
     });
 });
             // 개인정보 입력 필드들에 대한 이벤트 리스너
-const personalInfoFields = ['name', 'height', 'age', 'phone', 'job', 'instagram'];
+const personalInfoFields = ['name', 'height', 'age', 'phone', 'job', 'nickname', 'instagram'];
 let hasStartedPersonalInfo = false;
 
 personalInfoFields.forEach(fieldId => {
@@ -1824,6 +1833,7 @@ const applicationData = {
     age: parseInt(formData.get('age')),
     phone: formData.get('phone'),
     job: formData.get('job'),
+    nickname: formData.get('nickname'),  // 추가
     instagram: formData.get('instagram'),
     companion: formData.get('companion'),
     companion_name: formData.get('companionName') || null,
@@ -1954,6 +1964,7 @@ const paymentInfo = applicationData.gender === 'male' ? `
                         <div style="background: var(--bg-card); padding: 30px; border-radius: 10px; margin-top: 30px;">
                             <h3 style="color: var(--neon-accent); margin-bottom: 20px;">신청 내역</h3>
                             <div style="display: grid; gap: 15px;">
+                            <p><strong>닉네임:</strong> ${applicationData.nickname}</p>
                                 <p><strong>성함:</strong> ${applicationData.name}</p>
                                 <p><strong>성별:</strong> ${applicationData.gender === 'male' ? '남성' : '여성'}</p>
                                 <p><strong>날짜:</strong> ${applicationData.selected_date}</p>
