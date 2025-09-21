@@ -1193,9 +1193,10 @@ if (availablePartyDates.includes(dateStr)) {
     const dayOfWeek = partyDate.getDay();
     
     // 9월 20일이거나 다른 달의 마지막 토요일인지 체크
-    const isMoodKingParty = (month === 8 && dateNum === 20) || 
-        (dayOfWeek === 6 && new Date(partyDate.getFullYear(), month, dateNum + 7).getMonth() !== month);
-    
+    // 9월은 20일만, 다른 달은 마지막 토요일 체크
+const isMoodKingParty = month === 8 
+    ? dateNum === 20  // 9월은 20일만 true
+    : (dayOfWeek === 6 && new Date(partyDate.getFullYear(), month, dateNum + 7).getMonth() !== month);
     if (isMoodKingParty) {
         dayElement.classList.add('mood-king-party');
     }
