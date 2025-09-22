@@ -1546,6 +1546,15 @@ document.getElementById('agreeAll').addEventListener('change', function() {
             // Form submission
             document.getElementById('applicationForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
+                    const ticketType = document.querySelector('input[name="ticketType"]:checked');
+    if (!ticketType) {
+        alert('💡 티켓 종류를 선택해주세요!\n\nALL NIGHT(1부+2부), 1부만, 2부만 중에서 선택하세요.');
+        document.getElementById('agreedPriceDisplay').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+        return;
+    }
 
                 // 확인함 텍스트 검증
 const confirmText = document.getElementById('confirmText').value.trim();
