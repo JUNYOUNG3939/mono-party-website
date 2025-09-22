@@ -1212,28 +1212,27 @@ function updatePrices() {
         ? genderPrices.allNightWithCompanion 
         : genderPrices.allNight;
     
-    // ✅ 이미지와 동일한 레이아웃
+    // ✅ 이미지와 100% 동일
     priceOptions.innerHTML = `
-        <!-- 카드 그리드만 -->
         <div style="
             display: grid;
-            grid-template-columns: 1.5fr 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: 1.3fr 1fr 1fr;
+            gap: 10px;
             width: 100%;
+            height: 220px;
         ">
-            <!-- ALL NIGHT 카드 (크게) -->
+            <!-- ALL NIGHT 카드 -->
             <label class="price-option" style="
                 position: relative;
-                background: var(--input-bg);
+                background: #1a1a1a;
                 border: 2px solid var(--neon-accent);
                 border-radius: 10px;
-                padding: 30px 20px;
+                padding: 20px;
                 cursor: pointer;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
-                text-align: center;
+                justify-content: space-between;
             ">
                 <input type="radio" name="ticketType" value="allNight" style="display: none;">
                 
@@ -1241,116 +1240,146 @@ function updatePrices() {
                 <div style="
                     position: absolute;
                     top: -12px;
+                    left: 50%;
+                    transform: translateX(-50%);
                     background: var(--neon-accent);
                     color: #000;
-                    padding: 5px 25px;
+                    padding: 5px 20px;
                     border-radius: 20px;
-                    font-size: 0.85rem;
+                    font-size: 0.75rem;
                     font-weight: 900;
+                    white-space: nowrap;
                 ">
                     ✨ BEST ✨
                 </div>
                 
-                <div style="
-                    font-size: 1.3rem;
-                    font-weight: 900;
-                    color: white;
-                    margin-top: 15px;
-                    margin-bottom: 10px;
-                ">
-                    ALL NIGHT
-                </div>
-                
-                <div style="
-                    color: var(--text-secondary);
-                    font-size: 0.9rem;
-                    margin-bottom: 20px;
-                ">
-                    (1부 + 2부)
-                </div>
-                
-                ${companion === 'yes' ? 
-                    `<div style="
-                        text-decoration: line-through;
-                        opacity: 0.5;
+                <div style="text-align: center; margin-top: 25px;">
+                    <div style="
                         font-size: 1rem;
-                        color: var(--text-secondary);
-                    ">${genderPrices.allNight.toLocaleString()}원</div>`
-                    : ''
-                }
+                        font-weight: 700;
+                        color: white;
+                        letter-spacing: 1px;
+                    ">
+                        ALL
+                    </div>
+                    <div style="
+                        font-size: 1.1rem;
+                        font-weight: 900;
+                        color: white;
+                        letter-spacing: 1px;
+                        margin-bottom: 10px;
+                    ">
+                        NIGHT
+                    </div>
+                    <div style="
+                        color: #999;
+                        font-size: 0.85rem;
+                    ">
+                        (1부 + 2부)
+                    </div>
+                </div>
                 
-                <div style="
-                    font-size: 1.5rem;
-                    font-weight: 700;
-                    color: var(--neon-accent);
-                ">
-                    ${allNightPrice.toLocaleString()}원
+                <div style="text-align: center;">
+                    ${companion === 'yes' ? 
+                        `<div style="
+                            text-decoration: line-through;
+                            opacity: 0.5;
+                            font-size: 0.95rem;
+                            color: #999;
+                        ">${genderPrices.allNight.toLocaleString()}원</div>`
+                        : ''
+                    }
+                    <div style="
+                        font-size: 1.3rem;
+                        font-weight: 700;
+                        color: var(--neon-accent);
+                    ">
+                        ${allNightPrice.toLocaleString()}원
+                    </div>
                 </div>
             </label>
             
             <!-- 1부 카드 -->
             <label class="price-option" style="
-                background: var(--input-bg);
-                border: 2px solid var(--input-border);
+                background: #1a1a1a;
+                border: 2px solid #333;
                 border-radius: 10px;
-                padding: 30px 20px;
+                padding: 20px;
                 cursor: pointer;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
-                text-align: center;
+                justify-content: space-between;
             ">
                 <input type="radio" name="ticketType" value="part1" style="display: none;">
                 
-                <div style="
-                    font-size: 1.2rem;
-                    font-weight: 700;
-                    color: white;
-                    margin-bottom: 30px;
-                ">
-                    1부
+                <div style="margin-top: 10px;">
+                    <div style="
+                        font-size: 1.2rem;
+                        font-weight: 700;
+                        color: white;
+                        text-align: center;
+                    ">
+                        1부
+                    </div>
                 </div>
                 
-                <div style="
-                    font-size: 1.3rem;
-                    font-weight: 700;
-                    color: var(--neon-accent);
-                ">
-                    ${genderPrices.part1.toLocaleString()}원
+                <div style="text-align: center;">
+                    <div style="
+                        font-size: 1.2rem;
+                        font-weight: 700;
+                        color: var(--neon-accent);
+                    ">
+                        ${genderPrices.part1.toLocaleString()}
+                    </div>
+                    <div style="
+                        font-size: 0.9rem;
+                        color: var(--neon-accent);
+                    ">
+                        원
+                    </div>
                 </div>
             </label>
             
             <!-- 2부 카드 -->
             <label class="price-option" style="
-                background: var(--input-bg);
-                border: 2px solid var(--input-border);
+                background: #1a1a1a;
+                border: 2px solid #333;
                 border-radius: 10px;
-                padding: 30px 20px;
+                padding: 20px;
                 cursor: pointer;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                justify-content: center;
-                text-align: center;
+                justify-content: space-between;
             ">
                 <input type="radio" name="ticketType" value="part2" style="display: none;">
                 
-                <div style="
-                    font-size: 1.2rem;
-                    font-weight: 700;
-                    color: white;
-                    margin-bottom: 30px;
-                ">
-                    2부
+                <div style="margin-top: 10px;">
+                    <div style="
+                        font-size: 1.2rem;
+                        font-weight: 700;
+                        color: white;
+                        text-align: center;
+                    ">
+                        2부
+                    </div>
                 </div>
                 
-                <div style="
-                    font-size: 1.3rem;
-                    font-weight: 700;
-                    color: var(--neon-accent);
-                ">
-                    ${genderPrices.part2.toLocaleString()}원
+                <div style="text-align: center;">
+                    <div style="
+                        font-size: 1.2rem;
+                        font-weight: 700;
+                        color: var(--neon-accent);
+                    ">
+                        ${genderPrices.part2.toLocaleString()}
+                    </div>
+                    <div style="
+                        font-size: 0.9rem;
+                        color: var(--neon-accent);
+                    ">
+                        원
+                    </div>
                 </div>
             </label>
         </div>
@@ -1361,10 +1390,15 @@ function updatePrices() {
         option.addEventListener('click', function() {
             document.querySelectorAll('.price-option').forEach(opt => {
                 opt.classList.remove('selected');
+                opt.style.borderColor = '#333';
             });
             this.classList.add('selected');
+            this.style.borderColor = 'var(--neon-accent)';
         });
     });
+    
+    // ALL NIGHT는 항상 초록 테두리
+    document.querySelector('.price-option').style.borderColor = 'var(--neon-accent)';
 }
         
         // Toggle companion name field
