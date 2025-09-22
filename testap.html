@@ -1212,31 +1212,31 @@ function updatePrices() {
         ? genderPrices.allNightWithCompanion 
         : genderPrices.allNight;
     
-    // ✅ 전체 너비 사용, 버튼 크기 증가
+    // ✅ 전체 너비를 꽉 채우도록 수정
     priceOptions.innerHTML = `
-        <!-- 카드 그리드 - 전체 너비 사용 -->
+        <!-- 카드 그리드 - 100% 너비 사용, 여백 제거 -->
         <div style="
-            display: grid;
-            grid-template-columns: 1.5fr 1fr 1fr;
-            gap: 15px;
+            display: flex;
+            gap: 12px;
             width: 100%;
             margin: 0;
             padding: 0;
         ">
-            <!-- ALL NIGHT 카드 (크게) -->
+            <!-- ALL NIGHT 카드 (40% 너비) -->
             <label class="price-option" style="
                 position: relative;
                 background: var(--input-bg);
                 border: 2px solid var(--neon-accent);
                 border-radius: 10px;
-                padding: 40px 25px;
+                padding: 35px 20px;
                 cursor: pointer;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                height: 220px;
+                flex: 1.5;
+                min-height: 200px;
             ">
                 <input type="radio" name="ticketType" value="allNight" style="display: none;">
                 
@@ -1246,7 +1246,7 @@ function updatePrices() {
                     top: -12px;
                     background: var(--neon-accent);
                     color: #000;
-                    padding: 6px 30px;
+                    padding: 6px 28px;
                     border-radius: 20px;
                     font-size: 0.9rem;
                     font-weight: 900;
@@ -1256,20 +1256,19 @@ function updatePrices() {
                 
                 <!-- ALL NIGHT 한 줄로 -->
                 <div style="
-                    font-size: 1.4rem;
+                    font-size: 1.3rem;
                     font-weight: 900;
                     color: white;
                     margin-top: 20px;
                     margin-bottom: 10px;
-                    letter-spacing: 1px;
                 ">
                     ALL NIGHT
                 </div>
                 
                 <div style="
                     color: var(--text-secondary);
-                    font-size: 0.95rem;
-                    margin-bottom: 25px;
+                    font-size: 0.9rem;
+                    margin-bottom: 20px;
                 ">
                     (1부 + 2부)
                 </div>
@@ -1278,7 +1277,7 @@ function updatePrices() {
                     `<div style="
                         text-decoration: line-through;
                         opacity: 0.5;
-                        font-size: 1.1rem;
+                        font-size: 1rem;
                         color: var(--text-secondary);
                         margin-bottom: 5px;
                     ">${genderPrices.allNight.toLocaleString()}원</div>`
@@ -1286,7 +1285,7 @@ function updatePrices() {
                 }
                 
                 <div style="
-                    font-size: 1.6rem;
+                    font-size: 1.5rem;
                     font-weight: 700;
                     color: var(--neon-accent);
                 ">
@@ -1294,33 +1293,34 @@ function updatePrices() {
                 </div>
             </label>
             
-            <!-- 1부 카드 -->
+            <!-- 1부 카드 (30% 너비) -->
             <label class="price-option" style="
                 background: var(--input-bg);
                 border: 2px solid var(--input-border);
                 border-radius: 10px;
-                padding: 40px 20px;
+                padding: 35px 15px;
                 cursor: pointer;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                height: 220px;
+                flex: 1;
+                min-height: 200px;
             ">
                 <input type="radio" name="ticketType" value="part1" style="display: none;">
                 
                 <div style="
-                    font-size: 1.4rem;
+                    font-size: 1.3rem;
                     font-weight: 700;
                     color: white;
-                    margin-bottom: 40px;
+                    margin-bottom: 35px;
                 ">
                     1부
                 </div>
                 
                 <div style="
-                    font-size: 1.4rem;
+                    font-size: 1.3rem;
                     font-weight: 700;
                     color: var(--neon-accent);
                 ">
@@ -1328,33 +1328,34 @@ function updatePrices() {
                 </div>
             </label>
             
-            <!-- 2부 카드 -->
+            <!-- 2부 카드 (30% 너비) -->
             <label class="price-option" style="
                 background: var(--input-bg);
                 border: 2px solid var(--input-border);
                 border-radius: 10px;
-                padding: 40px 20px;
+                padding: 35px 15px;
                 cursor: pointer;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                height: 220px;
+                flex: 1;
+                min-height: 200px;
             ">
                 <input type="radio" name="ticketType" value="part2" style="display: none;">
                 
                 <div style="
-                    font-size: 1.4rem;
+                    font-size: 1.3rem;
                     font-weight: 700;
                     color: white;
-                    margin-bottom: 40px;
+                    margin-bottom: 35px;
                 ">
                     2부
                 </div>
                 
                 <div style="
-                    font-size: 1.4rem;
+                    font-size: 1.3rem;
                     font-weight: 700;
                     color: var(--neon-accent);
                 ">
