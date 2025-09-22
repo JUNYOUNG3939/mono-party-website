@@ -364,11 +364,10 @@
             color: var(--neon-accent);
         }
         
-        .price-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
+.price-options {
+    display: block;  /* grid 대신 block으로 변경 */
+    width: 100%;
+}
         
         .price-option {
             background: var(--input-bg);
@@ -573,11 +572,13 @@
             .price-options {
                 grid-template-columns: 1fr;
             }
-                /* ✅ 가격 옵션은 레이아웃 유지하되 비율만 조정 */
+@media (max-width: 768px) {
+    /* ✅ 가격 옵션은 레이아웃 유지하되 비율만 조정 */
     .price-options > div {
         grid-template-columns: 2fr 1fr 1fr !important;
         gap: 10px !important;
     }
+}
             
             .calendar-grid {
                 gap: 5px;
@@ -1220,6 +1221,7 @@ function updatePrices() {
         grid-template-columns: 2fr 1fr 1fr;
         gap: 10px;
         width: 100%;
+        box-sizing: border-box;
     ">
             <!-- ALL NIGHT 카드 (40% 너비) -->
             <label class="price-option" style="
