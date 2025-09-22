@@ -713,6 +713,10 @@
                     <label class="form-label" for="name">성함 (본명) <span class="required">*</span></label>
                     <input type="text" class="form-input" id="name" name="name" required>
                 </div>
+                <div class="form-group">
+    <label class="form-label" for="nickname">파티에서 사용할 닉네임 <span class="required">*</span></label>
+    <input type="text" class="form-input" id="nickname" name="nickname" placeholder="파티에서 사용할 닉네임" required>
+</div>
                 
                 <div class="form-group">
                     <label class="form-label" for="height">키 (cm) <span class="required">*</span></label>
@@ -894,6 +898,11 @@ fields: [
                         value: applicationData.name,
                         inline: true
                     },
+    {
+    name: "🎭 닉네임",
+    value: applicationData.nickname,
+    inline: true
+},
                     {
                         name: "📱 연락처",
                         value: applicationData.phone,
@@ -1463,6 +1472,7 @@ const applicationData = {
     
     // Personal info
     name: formData.get('name'),
+    nickname: formData.get('nickname'),
     height: parseInt(formData.get('height')),
     age: parseInt(formData.get('age')),
     phone: formData.get('phone'),
@@ -1598,7 +1608,9 @@ const paymentInfo = applicationData.gender === 'male' ? `
                             <h3 style="color: var(--neon-accent); margin-bottom: 20px;">신청 내역</h3>
                             <div style="display: grid; gap: 15px;">
                                 <p><strong>성함:</strong> ${applicationData.name}</p>
+                                <p><strong>닉네임:</strong> ${applicationData.nickname}</p>
                                 <p><strong>성별:</strong> ${applicationData.gender === 'male' ? '남성' : '여성'}</p>
+                                
                                 <p><strong>날짜:</strong> ${applicationData.selected_date}</p>
                                 <p><strong>티켓:</strong> ${applicationData.ticket_type === 'allNight' ? 'ALL NIGHT' : applicationData.ticket_type === 'part1' ? '1부' : '2부'}</p>
                                 <p><strong>참가비:</strong> ${applicationData.price.toLocaleString()}원</p>
