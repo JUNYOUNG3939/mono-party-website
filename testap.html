@@ -1213,15 +1213,14 @@ function updatePrices() {
         : genderPrices.allNight;
     
     // ✅ 전체 너비를 꽉 채우도록 수정
-    priceOptions.innerHTML = `
-        <!-- 카드 그리드 - 100% 너비 사용, 여백 제거 -->
-        <div style="
-            display: flex;
-            gap: 12px;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-        ">
+ priceOptions.innerHTML = `
+    <!-- 카드 그리드 - 100% 너비 사용, 여백 제거 -->
+    <div style="
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+    ">
             <!-- ALL NIGHT 카드 (40% 너비) -->
             <label class="price-option" style="
                 position: relative;
@@ -1235,7 +1234,7 @@ function updatePrices() {
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                flex: 1.5;
+                
                 min-height: 200px;
             ">
                 <input type="radio" name="ticketType" value="allNight" style="display: none;">
@@ -1254,16 +1253,17 @@ function updatePrices() {
                     ✨ BEST ✨
                 </div>
                 
-                <!-- ALL NIGHT 한 줄로 -->
-                <div style="
-                    font-size: 1.3rem;
-                    font-weight: 900;
-                    color: white;
-                    margin-top: 20px;
-                    margin-bottom: 10px;
-                ">
-                    ALL NIGHT
-                </div>
+<!-- ALL NIGHT 한 줄로 -->
+<div style="
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: white;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    white-space: nowrap;
+">
+    ALL NIGHT
+</div>
                 
                 <div style="
                     color: var(--text-secondary);
@@ -1305,7 +1305,7 @@ function updatePrices() {
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                flex: 1;
+                
                 min-height: 200px;
             ">
                 <input type="radio" name="ticketType" value="part1" style="display: none;">
