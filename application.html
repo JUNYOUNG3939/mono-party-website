@@ -648,8 +648,7 @@
             <div style="font-size: 2rem; margin-bottom: 10px;">👥</div>
             <div style="font-weight: 700;">동반인과 함께</div>
             <div style="color: var(--neon-accent); font-size: 0.9rem; margin-top: 5px;">
-                <strong>할인 혜택!</strong><br>
-                남성 -2,000원 / 여성 -5,000원
+                <strong>할인 혜택!</strong>
             </div>
         </label>
     </div>
@@ -739,11 +738,11 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="photo">본인 사진 첨부 <span class="required">*</span></label>
+                    <label class="form-label" for="photo">본인 사진 첨부</label>
                     <div class="file-upload">
-                        <input type="file" id="photo" name="photo" accept="image/*" required>
+                        <input type="file" id="photo" name="photo" accept="image/*">
                         <label class="file-upload-label" for="photo">
-                            📷 사진을 선택하거나 드래그하세요
+                            📷 사진을 선택하거나 드래그하세요 (선택사항)
                         </label>
                     </div>
                 </div>
@@ -877,98 +876,94 @@
         
         // Discord 알림 전송 함수
         async function sendDiscordNotification(applicationData) {
-            const embed = {
-                title: "🎉 새로운 MONO PARTY 참가 신청!",
-                color: 0x00ff88,
-                timestamp: new Date().toISOString(),
-                footer: {
-                    text: "MONO PARTY 신청 시스템"
-                },
-footer: {
-    text: "MONO PARTY 신청 시스템"
-},
-// 사진 추가 (큰 이미지로 표시)
-image: applicationData.photo_url ? {
-    url: applicationData.photo_url
-} : undefined,
-fields: [
-                    {
-
-                        name: "👤 이름",
-                        value: applicationData.name,
-                        inline: true
-                    },
-    {
-    name: "🎭 닉네임",
-    value: applicationData.nickname,
-    inline: true
-},
-                    {
-                        name: "📱 연락처",
-                        value: applicationData.phone,
-                        inline: true
-                    },
-                    {
-                        name: "⚧ 성별",
-                        value: applicationData.gender === 'male' ? '남성' : '여성',
-                        inline: true
-                    },
-                    {
-                        name: "📅 참가 날짜",
-                        value: applicationData.selected_date,
-                        inline: true
-                    },
-                    {
-                        name: "🎫 티켓 타입",
-                        value: applicationData.ticket_type === 'allNight' ? 'ALL NIGHT (1부+2부)' : 
-                               applicationData.ticket_type === 'part1' ? '1부만' : '2부만',
-                        inline: true
-                    },
-                    {
-                        name: "💰 결제 금액",
-                        value: `${applicationData.price.toLocaleString()}원`,
-                        inline: true
-                    },
-                    {
-                        name: "🎂 나이",
-                        value: `${applicationData.age}세`,
-                        inline: true
-                    },
-                    {
-                        name: "📏 키",
-                        value: `${applicationData.height}cm`,
-                        inline: true
-                    },
-                    {
-                        name: "💼 직업",
-                        value: applicationData.job,
-                        inline: true
-                    },
-                    {
-                        name: "📸 인스타그램",
-                        value: applicationData.instagram,
-                        inline: true
-                    },
-                    {
-                        name: "👥 동반인",
-                        value: applicationData.companion === 'yes' ? 
-                               `있음 (${applicationData.companion_name})` : '없음',
-                        inline: true
-                    },
-                    {
-                        name: "🆔 신청 번호",
-                        value: `#${applicationData.id || 'N/A'}`,
-                        inline: true
-                    },
-                                {
-                name: "📷 사진 링크",
-                value: applicationData.photo_url ? `[사진 보기](${applicationData.photo_url})` : '사진 없음',
-                inline: false
-            }
-                ]
-            };
-
             try {
+                const embed = {
+                    title: "🎉 새로운 MONO PARTY 참가 신청!",
+                    color: 0x00ff88,
+                    timestamp: new Date().toISOString(),
+                    footer: {
+                        text: "MONO PARTY 신청 시스템"
+                    },
+                    // 사진 추가 (큰 이미지로 표시)
+                    image: applicationData.photo_url ? {
+                        url: applicationData.photo_url
+                    } : undefined,
+                    fields: [
+                        {
+                            name: "👤 이름",
+                            value: applicationData.name || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "🎭 닉네임",
+                            value: applicationData.nickname || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "📱 연락처",
+                            value: applicationData.phone || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "⚧ 성별",
+                            value: applicationData.gender === 'male' ? '남성' : '여성',
+                            inline: true
+                        },
+                        {
+                            name: "📅 참가 날짜",
+                            value: applicationData.selected_date || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "🎫 티켓 타입",
+                            value: applicationData.ticket_type === 'allNight' ? 'ALL NIGHT (1부+2부)' : 
+                                   applicationData.ticket_type === 'part1' ? '1부만' : '2부만',
+                            inline: true
+                        },
+                        {
+                            name: "💰 결제 금액",
+                            value: `${applicationData.price.toLocaleString()}원`,
+                            inline: true
+                        },
+                        {
+                            name: "🎂 나이",
+                            value: `${applicationData.age}세`,
+                            inline: true
+                        },
+                        {
+                            name: "📏 키",
+                            value: `${applicationData.height}cm`,
+                            inline: true
+                        },
+                        {
+                            name: "💼 직업",
+                            value: applicationData.job || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "📸 인스타그램",
+                            value: applicationData.instagram || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "👥 동반인",
+                            value: applicationData.companion === 'yes' ? 
+                                   `있음 (${applicationData.companion_name})` : '없음',
+                            inline: true
+                        },
+                        {
+                            name: "🆔 신청 번호",
+                            value: `#${applicationData.id || 'N/A'}`,
+                            inline: true
+                        },
+                        {
+                            name: "📷 사진 링크",
+                            value: applicationData.photo_url ? `[사진 보기](${applicationData.photo_url})` : '사진 없음',
+                            inline: false
+                        }
+                    ]
+                };
+
                 const response = await fetch(DISCORD_WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
@@ -985,6 +980,7 @@ fields: [
                 }
             } catch (error) {
                 console.error('Discord 알림 에러:', error);
+                // Discord 전송 실패해도 신청은 계속 진행
             }
         }
         
@@ -997,22 +993,39 @@ fields: [
         // Available party dates from database
         let availablePartyDates = [];
         
-        // Price information
-        const prices = {
-            male: {
-                allNight: 64000,
-                part1: 42000,
-                part2: 25000,
-                allNightWithCompanion: 60000
-            },
-            female: {
-                allNight: 40000,
-                part1: 30000,
-                part2: 20000,
-                allNightWithCompanion: 30000
-            }
-        };
-        
+// Price information (추석 할인 적용)
+const prices = {
+    male: {
+        allNight: 64000,
+        part1: 42000,
+        part2: 25000,
+        allNightWithCompanion: 60000,
+        // 추석 할인 가격
+        chuseokAllNight: 54000,           // 10,000원 할인
+        chuseokAllNightWithCompanion: 50000  // 10,000원 할인
+    },
+    female: {
+        allNight: 40000,
+        part1: 30000,
+        part2: 20000,
+        allNightWithCompanion: 30000,
+        // 추석 할인 가격
+        chuseokAllNight: 30000,           // 10,000원 할인
+        chuseokAllNightWithCompanion: 20000  // 10,000원 할인
+    }
+};
+
+// 추석 기간 체크 함수
+function isChuseokPeriod(dateStr) {
+    // dateStr이 'YYYY-MM-DD' 형식이므로 직접 비교
+    const date = new Date(dateStr + 'T00:00:00'); // 시간대 문제 방지
+    const start = new Date('2025-10-02T00:00:00');
+    const end = new Date('2025-10-11T23:59:59');
+    
+    console.log('체크할 날짜:', dateStr, '파싱된 날짜:', date, '추석 기간:', start, '~', end);
+    
+    return date >= start && date <= end;
+}        
         // Load available party dates from database
         async function loadAvailablePartyDates() {
             try {
@@ -1035,23 +1048,6 @@ fields: [
                 
                 if (data && data.length > 0) {
                     availablePartyDates = data.map(item => item.party_date);
-                        // 무드왕 파티 날짜가 있으면 콘솔에 표시 (디버깅용)
-availablePartyDates.forEach(dateStr => {
-    const date = new Date(dateStr);
-    const month = date.getMonth();
-    const dateNum = date.getDate();
-    const day = date.getDay();
-    
-    // 9월 27일 제외
-    const isSeptember27 = (month === 8 && dateNum === 27);
-    
-    if (!isSeptember27 && (
-        (month === 8 && dateNum === 20) || 
-        (day === 6 && new Date(date.getFullYear(), month, dateNum + 7).getMonth() !== month)
-    )) {
-        console.log('👑 무드왕 파티 날짜:', dateStr);
-    }
-});
                     document.getElementById('calendarContent').style.display = 'block';
                     
                     // Set calendar to the month of the first available date
@@ -1141,17 +1137,21 @@ const isMoodKingParty = !isSeptember27 && (
             }
         }
         
-       // Select date
+// Select date
 function selectDate(day, dateStr, isMoodKing = false) {
     // Remove previous selection
     document.querySelectorAll('.calendar-day.selected').forEach(el => {
         el.classList.remove('selected');
     });
     
-    // Remove previous mood king notice
+    // Remove previous notices
     const existingNotice = document.getElementById('moodKingNotice');
     if (existingNotice) {
         existingNotice.remove();
+    }
+    const existingChuseokNotice = document.getElementById('chuseokNotice');
+    if (existingChuseokNotice) {
+        existingChuseokNotice.remove();
     }
     
     // Add selection to clicked date
@@ -1162,11 +1162,45 @@ function selectDate(day, dateStr, isMoodKing = false) {
         }
     });
     
-    // Set hidden input value
+    // Set hidden input value - 매우 중요!
     document.getElementById('selectedDate').value = dateStr;
     
-    // 무드왕 파티 선택 시 특별 안내 표시
-    if (isMoodKing) {
+    // 추석 기간 체크
+    const isChuseok = isChuseokPeriod(dateStr);
+    
+    console.log('=== 날짜 선택 완료 ===');
+    console.log('선택된 날짜:', dateStr);
+    console.log('추석 기간 여부:', isChuseok);
+    console.log('무드왕 파티 여부:', isMoodKing);
+    console.log('Hidden input 값:', document.getElementById('selectedDate').value);
+    
+    // 추석 기간 선택 시 특별 안내 표시
+    if (isChuseok) {
+        const priceDisplay = document.querySelector('.price-display');
+        const notice = document.createElement('div');
+        notice.id = 'chuseokNotice';
+        notice.className = 'mood-king-notice';
+        notice.style.background = 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1))';
+        notice.style.borderColor = '#FFD700';
+        notice.innerHTML = `
+            <h3 style="color: #FFD700; margin-bottom: 10px; font-size: 1.3rem;">
+                🌕 추석 연휴 특별 할인! 🌕
+            </h3>
+            <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 10px;">
+                <strong>10월 2일 ~ 10월 11일</strong><br>
+                ALL NIGHT 티켓 <span style="color: #FFD700; font-weight: 700;">10,000원 할인</span>
+            </p>
+            <p style="color: #FFD700; font-size: 0.9rem;">
+                ✨ 추석 연휴 기간 한정 혜택입니다 ✨
+            </p>
+        `;
+        priceDisplay.parentNode.insertBefore(notice, priceDisplay);
+        
+        // 스크롤 애니메이션
+        notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    // 무드왕 파티 선택 시 특별 안내 표시 (추석 아닌 경우만)
+    else if (isMoodKing) {
         const priceDisplay = document.querySelector('.price-display');
         const notice = document.createElement('div');
         notice.id = 'moodKingNotice';
@@ -1188,31 +1222,180 @@ function selectDate(day, dateStr, isMoodKing = false) {
         // 스크롤 애니메이션
         notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
+    
+    // 성별이 선택되어 있으면 가격 업데이트 - 강화된 버전
+    const gender = document.querySelector('input[name="gender"]:checked');
+    
+    if (gender) {
+        console.log('성별 선택 확인:', gender.value);
+        
+        // 즉시 한 번 실행
+        updatePrices();
+        
+        // DOM 업데이트 보장을 위해 추가 실행
+        setTimeout(() => {
+            console.log('지연 실행 - 가격 재계산');
+            updatePrices();
+            
+            // 추석 할인이 제대로 적용되었는지 확인
+            if (isChuseok) {
+                const allNightOption = document.querySelector('.price-option-price');
+                if (allNightOption) {
+                    const priceText = allNightOption.textContent;
+                    console.log('표시된 ALL NIGHT 가격:', priceText);
+                    
+                    // 추석 할인 가격 확인 (남성 54,000원, 여성 30,000원)
+                    const expectedPrice = gender.value === 'male' ? '54,000' : '30,000';
+                    if (!priceText.includes(expectedPrice)) {
+                        console.warn('⚠️ 추석 할인이 제대로 적용되지 않았습니다! 재시도...');
+                        updatePrices();
+                    } else {
+                        console.log('✅ 추석 할인이 정상적으로 적용되었습니다');
+                    }
+                }
+            }
+        }, 150);
+        
+    } else {
+        console.log('성별이 아직 선택되지 않음');
+        
+        // 성별 선택 유도 메시지 (선택적)
+        const genderSection = document.querySelector('.gender-selection');
+        if (genderSection) {
+            // 성별 선택 섹션에 하이라이트 효과 추가
+            genderSection.style.transition = 'all 0.3s ease';
+            genderSection.style.border = '2px solid var(--neon-accent)';
+            genderSection.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.3)';
+            
+            // 3초 후 하이라이트 제거
+            setTimeout(() => {
+                genderSection.style.border = '';
+                genderSection.style.boxShadow = '';
+            }, 3000);
+            
+            // 스크롤
+            genderSection.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+    }
+    
+    // 동반인 선택이 되어 있는 경우도 가격 재계산
+    const companion = document.querySelector('input[name="companion"]:checked');
+    if (companion && companion.value === 'yes') {
+        console.log('동반인 선택됨 - 추가 가격 업데이트');
+        setTimeout(() => {
+            updatePrices();
+        }, 200);
+    }
 }
         
-        // Update price display
-        function updatePrices() {
-            const gender = document.querySelector('input[name="gender"]:checked');
-            const priceOptions = document.getElementById('priceOptions');
-           const companion = document.querySelector('input[name="companion"]:checked')?.value || 'no';  // ✅ 수정
-            
-            if (!gender) return;
-            
-            const genderPrices = prices[gender.value];
-            const allNightPrice = companion === 'yes' 
-        ? genderPrices.allNightWithCompanion 
-        : genderPrices.allNight;
-            
+      // Update price display
+// Update price display
+function updatePrices() {
+    const gender = document.querySelector('input[name="gender"]:checked');
+    const priceOptions = document.getElementById('priceOptions');
+    const companion = document.querySelector('input[name="companion"]:checked')?.value || 'no';
+    const selectedDate = document.getElementById('selectedDate').value;
+    
+    if (!gender) return;
+    
+    // 날짜가 선택되지 않은 경우 기본 가격 표시
+    if (!selectedDate) {
+        console.log('날짜가 선택되지 않음, 기본 가격 표시');
+        const genderPrices = prices[gender.value];
+        
+        priceOptions.innerHTML = `
+            <label class="price-option">
+                <input type="radio" name="ticketType" value="allNight" required>
+                <div class="price-option-name">
+                    ALL NIGHT<br>(1부 + 2부)
+                    ${companion === 'yes' ? '<br><span style="color: var(--neon-accent); font-size: 0.8rem;">동반인 할인</span>' : ''}
+                </div>
+                <div class="price-option-price">
+                    ${companion === 'yes' ? `<span style="text-decoration: line-through; opacity: 0.5; font-size: 0.9rem;">${genderPrices.allNight.toLocaleString()}원</span><br>` : ''}
+                    ${(companion === 'yes' ? genderPrices.allNightWithCompanion : genderPrices.allNight).toLocaleString()}원
+                </div>
+            </label>
+            <label class="price-option">
+                <input type="radio" name="ticketType" value="part1" required>
+                <div class="price-option-name">1부</div>
+                <div class="price-option-price">${genderPrices.part1.toLocaleString()}원</div>
+            </label>
+            <label class="price-option">
+                <input type="radio" name="ticketType" value="part2" required>
+                <div class="price-option-name">2부</div>
+                <div class="price-option-price">${genderPrices.part2.toLocaleString()}원</div>
+            </label>
+        `;
+        
+        // Add click events to price options
+        document.querySelectorAll('.price-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.price-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        return;
+    }
+    
+    const genderPrices = prices[gender.value];
+    const isChuseok = isChuseokPeriod(selectedDate);
+    
+    // 디버깅용 로그
+    console.log('=== 가격 계산 ===');
+    console.log('선택된 날짜:', selectedDate);
+    console.log('추석 기간 여부:', isChuseok);
+    console.log('성별:', gender.value);
+    console.log('동반인:', companion);
+    
+    // ALL NIGHT 가격 결정
+    let allNightPrice;
+    let originalAllNightPrice;
+    let showDiscount = false;
+    let discountLabel = '';
+    
+    if (isChuseok) {
+        // 추석 기간 할인 가격
+        if (companion === 'yes') {
+            allNightPrice = genderPrices.chuseokAllNightWithCompanion;
+            originalAllNightPrice = genderPrices.allNightWithCompanion;
+            discountLabel = '추석+동반 할인';
+        } else {
+            allNightPrice = genderPrices.chuseokAllNight;
+            originalAllNightPrice = genderPrices.allNight;
+            discountLabel = '🌕 추석 특가 (10,000원 할인)';
+        }
+        showDiscount = true;
+        console.log('추석 할인 적용 - 최종 가격:', allNightPrice, '원래 가격:', originalAllNightPrice);
+    } else {
+        // 일반 가격
+        if (companion === 'yes') {
+            allNightPrice = genderPrices.allNightWithCompanion;
+            originalAllNightPrice = genderPrices.allNight;
+            showDiscount = true;
+            discountLabel = '동반인 할인';
+        } else {
+            allNightPrice = genderPrices.allNight;
+            originalAllNightPrice = genderPrices.allNight;
+            showDiscount = false;
+        }
+        console.log('일반 가격 적용 - 최종 가격:', allNightPrice);
+    }
+    
+    // HTML 생성
     priceOptions.innerHTML = `
         <label class="price-option">
             <input type="radio" name="ticketType" value="allNight" required>
             <div class="price-option-name">
                 ALL NIGHT<br>(1부 + 2부)
-                ${companion === 'yes' ? '<br><span style="color: var(--neon-accent); font-size: 0.8rem;">동반인 할인 적용</span>' : ''}
+                ${discountLabel ? `<br><span style="color: ${isChuseok ? '#FFD700' : 'var(--neon-accent)'}; font-size: 0.8rem;">${discountLabel}</span>` : ''}
             </div>
             <div class="price-option-price">
-                ${companion === 'yes' ? '<span style="text-decoration: line-through; opacity: 0.5; font-size: 0.9rem;">' + genderPrices.allNight.toLocaleString() + '원</span><br>' : ''}
-                ${allNightPrice.toLocaleString()}원
+                ${showDiscount ? `<span style="text-decoration: line-through; opacity: 0.5; font-size: 0.9rem;">${originalAllNightPrice.toLocaleString()}원</span><br>` : ''}
+                <span style="${isChuseok ? 'color: #FFD700; font-weight: 700;' : ''}">${allNightPrice.toLocaleString()}원</span>
             </div>
         </label>
         <label class="price-option">
@@ -1234,6 +1417,8 @@ function selectDate(day, dateStr, isMoodKing = false) {
             this.classList.add('selected');
         });
     });
+    
+    console.log('가격 업데이트 완료');
 }
         
         // Toggle companion name field
@@ -1353,7 +1538,7 @@ function toggleCompanionName() {
             
             // File upload
             document.getElementById('photo').addEventListener('change', function(e) {
-                const fileName = e.target.files[0]?.name || '📷 사진을 선택하거나 드래그하세요';
+                const fileName = e.target.files[0]?.name || '📷 사진을 선택하거나 드래그하세요 (선택사항)';
                 document.querySelector('.file-upload-label').textContent = fileName;
             });
 
@@ -1401,6 +1586,9 @@ if (confirmText !== '확인함') {
     let isValid = true;
     
     requiredFields.forEach(field => {
+        // 사진은 선택사항이므로 제외
+        if (field.id === 'photo') return;
+        
         if (!field.value && !field.checked) {
             isValid = false;
             field.classList.add('error');
@@ -1419,243 +1607,223 @@ if (confirmText !== '확인함') {
     submitButton.disabled = true;
     submitButton.innerHTML = '<div class="loading-spinner" style="display: block;"></div>';
     
-    // Collect form data
-    const formData = new FormData(this);
-    
-    // ===== 사진 업로드 처리 추가 시작 =====
-let photoUrl = null;
-const photoFile = document.getElementById('photo').files[0];
-
-if (photoFile) {
-    console.log('📸 파일 업로드 시작:', photoFile.name, '크기:', photoFile.size);
-    
     try {
-        // 파일명 생성 (타임스탬프 + 랜덤 문자열)
-        const timestamp = Date.now();
-        const randomString = Math.random().toString(36).substring(7);
-        const fileExt = photoFile.name.split('.').pop();
-        const fileName = `${timestamp}_${randomString}.${fileExt}`;
+        // Collect form data
+        const formData = new FormData(this);
         
-        console.log('📁 생성된 파일명:', fileName);
+        // ===== 사진 업로드 처리 (선택사항) =====
+        let photoUrl = null;
+        const photoFile = document.getElementById('photo').files[0];
         
-        // Supabase Storage에 업로드
-        const { data: uploadData, error: uploadError } = await supabaseClient.storage
-            .from('application-photos')
-            .upload(fileName, photoFile, {
-                cacheControl: '3600',
-                upsert: false
-            });
-        
-        if (uploadError) {
-            console.error('❌ Supabase 업로드 에러:', uploadError);
-            throw uploadError;
+        if (photoFile) {
+            console.log('📸 파일 업로드 시작:', photoFile.name, '크기:', photoFile.size);
+            
+            try {
+                // 파일명 생성 (타임스탬프 + 랜덤 문자열)
+                const timestamp = Date.now();
+                const randomString = Math.random().toString(36).substring(7);
+                const fileExt = photoFile.name.split('.').pop();
+                const fileName = `${timestamp}_${randomString}.${fileExt}`;
+                
+                console.log('📁 생성된 파일명:', fileName);
+                
+                // Supabase Storage에 업로드
+                const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                    .from('application-photos')
+                    .upload(fileName, photoFile, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+                
+                if (uploadError) {
+                    console.error('❌ Supabase 업로드 에러:', uploadError);
+                    throw uploadError;
+                }
+                
+                console.log('✅ 업로드 성공:', uploadData);
+                
+                // 업로드된 파일의 공개 URL 가져오기
+                const { data: { publicUrl } } = supabaseClient.storage
+                    .from('application-photos')
+                    .getPublicUrl(fileName);
+                
+                photoUrl = publicUrl;
+                console.log('🔗 생성된 공개 URL:', photoUrl);
+                
+            } catch (error) {
+                console.error('❌ 사진 업로드 실패 상세:', error);
+                // 사진 업로드 실패해도 계속 진행 (선택사항이므로)
+                console.log('사진 업로드 실패, 사진 없이 계속 진행');
+            }
+        } else {
+            console.log('⚠️ 사진 파일이 선택되지 않음 (선택사항)');
         }
         
-        console.log('✅ 업로드 성공:', uploadData);
-        
-        // 업로드된 파일의 공개 URL 가져오기
-        const { data: { publicUrl } } = supabaseClient.storage
-            .from('application-photos')
-            .getPublicUrl(fileName);
-        
-        photoUrl = publicUrl;
-        console.log('🔗 생성된 공개 URL:', photoUrl);
-        
-    } catch (error) {
-        console.error('❌ 사진 업로드 실패 상세:', error);
-        alert('사진 업로드에 실패했습니다. 다시 시도해주세요.');
-        submitButton.disabled = false;
-        submitButton.innerHTML = '참가 신청하기';
-        return;
-    }
-} else {
-    console.log('⚠️ 사진 파일이 선택되지 않음');
-}
-// ===== 사진 업로드 처리 추가 끝 =====
-    
-const applicationData = {
-    // Basic info
-    gender: formData.get('gender'),
-    selected_date: formData.get('selectedDate'),
-    ticket_type: formData.get('ticketType'),
-    
-    // Personal info
-    name: formData.get('name'),
-    nickname: formData.get('nickname'),
-    height: parseInt(formData.get('height')),
-    age: parseInt(formData.get('age')),
-    phone: formData.get('phone'),
-    job: formData.get('job'),
-    instagram: formData.get('instagram'),
-    companion: formData.get('companion'),
-    companion_name: formData.get('companionName') || null,
-    
-    // Calculate price (동반인 할인 적용)
-    price: (() => {
+        const applicationData = {
+            // Basic info
+            gender: formData.get('gender'),
+            selected_date: formData.get('selectedDate'),
+            ticket_type: formData.get('ticketType'),
+            
+            // Personal info
+            name: formData.get('name'),
+            nickname: formData.get('nickname'),
+            height: parseInt(formData.get('height')),
+            age: parseInt(formData.get('age')),
+            phone: formData.get('phone'),
+            job: formData.get('job'),
+            instagram: formData.get('instagram'),
+            companion: formData.get('companion'),
+            companion_name: formData.get('companionName') || null,
+            
+               // Calculate price (추석 할인 + 동반인 할인 적용)
+        price: (() => {
         const gender = formData.get('gender');
         const ticketType = formData.get('ticketType');
         const hasCompanion = formData.get('companion') === 'yes';
+        const selectedDate = formData.get('selectedDate');
+        const isChuseok = isChuseokPeriod(selectedDate);
         
-        if (ticketType === 'allNight' && hasCompanion) {
-            // 동반인이 있고 ALL NIGHT인 경우 할인 가격 적용
-            return prices[gender].allNightWithCompanion;
+        console.log('=== 최종 가격 계산 ===');
+        console.log('날짜:', selectedDate);
+        console.log('추석 여부:', isChuseok);
+        console.log('티켓 타입:', ticketType);
+        console.log('동반인:', hasCompanion);
+        
+        if (ticketType === 'allNight') {
+            if (isChuseok) {
+                const price = hasCompanion 
+                    ? prices[gender].chuseokAllNightWithCompanion 
+                    : prices[gender].chuseokAllNight;
+                console.log('추석 할인 적용 가격:', price);
+                return price;
+            } else if (hasCompanion) {
+                return prices[gender].allNightWithCompanion;
+            } else {
+                return prices[gender].allNight;
+            }
         } else {
-            // 일반 가격 적용
-            return prices[gender][ticketType];
+            return prices[gender][ticketType === 'part1' ? 'part1' : 'part2'];
         }
     })(),
+            
+            // Party type is always 'provided' now
+            party_type: 'provided',
+            
+            // 사진 URL (선택사항)
+            photo_url: photoUrl
+        }; 
         
-        // Party type is always 'provided' now
-        party_type: 'provided',
+        // 저장할 데이터 확인
+        console.log('📤 데이터베이스 저장 데이터:', applicationData);
         
-        // ===== 사진 URL 추가 =====
-        photo_url: photoUrl
-    }; 
-                try {
-                        // 저장할 데이터 확인
-    console.log('📤 데이터베이스 저장 데이터:', applicationData);
-                    // Save to Supabase
-                    const { data, error } = await supabaseClient
-                        .from('applications')
-                        .insert([applicationData])
-                        .select();
-                    
- if (error) {
-        console.error('❌ DB 저장 에러:', error);
-        throw error;
+        // Save to Supabase
+        const { data, error } = await supabaseClient
+            .from('applications')
+            .insert([applicationData])
+            .select();
+        
+        if (error) {
+            console.error('❌ DB 저장 에러:', error);
+            throw error;
+        }
+        
+        console.log('✅ DB 저장 성공:', data);
+        console.log('신청 완료:', data);
+        
+        // Discord 알림 전송 (신청 ID 포함)
+        console.log('📨 Discord 알림 전송 시작');
+        await sendDiscordNotification({
+            ...applicationData,
+            id: data[0].id
+        });
+        console.log('✅ Discord 알림 전송 완료');
+        
+        // Create payment info based on gender (올바른 계좌번호로 수정)
+        const selectedPrice = applicationData.price.toLocaleString();
+        
+        const paymentInfo = `
+            <div style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink); padding: 25px; border-radius: 10px; margin-top: 30px;">
+                <h4 style="color: var(--neon-pink); margin-bottom: 20px; text-align: center;">⚠️ 중요 안내 ⚠️</h4>
+                
+                <!-- 계좌 정보 박스 -->
+                <div style="background: rgba(0, 255, 136, 0.2); border: 2px solid var(--neon-accent); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                    <h5 style="color: var(--neon-accent); margin-bottom: 15px; font-size: 1.2rem;">💳 입금 계좌 정보</h5>
+                    <p style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">
+                        카카오뱅크 79422264022
+                    </p>
+                    <p style="font-size: 1.1rem; color: var(--text-primary);">
+                        예금주: <strong>김O준</strong>
+                    </p>
+                    <p style="margin-top: 15px; font-size: 0.95rem; color: var(--neon-pink);">
+                        ⚡ 신청금액: <strong style="font-size: 1.2rem;">${selectedPrice}원</strong>
+                    </p>
+                </div>
+                
+                <p style="margin-bottom: 15px; line-height: 1.8;">
+                    <strong>위 계좌로 1시간 이내로 티켓 비용을 입금하셔야 신청이 접수됩니다.</strong><br>
+                    <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
+                </p>
+                <p style="margin-bottom: 15px; text-align: center;">
+                    <span style="color: var(--neon-accent); font-weight: 600; font-size: 1rem;">
+                        📱 입금 후 인스타그램 @mono_party_로 신청 날짜와 성함을 DM으로 보내주세요!
+                    </span>
+                </p>
+                
+                <div style="background: var(--bg-card); padding: 20px; border-radius: 5px; margin-top: 20px;">
+                    <h5 style="color: var(--neon-accent); margin-bottom: 15px;">티켓 비용 (${applicationData.gender === 'male' ? '남성' : '여성'})</h5>
+                    <p style="margin-bottom: 8px;">1부 + 2부 : <strong>${applicationData.gender === 'male' ? '64,000원' : '40,000원'}</strong></p>
+                    <p style="margin-bottom: 8px;">1부: <strong>${applicationData.gender === 'male' ? '42,000원' : '30,000원'}</strong></p>
+                    <p style="margin-bottom: 8px;">2부: <strong>${applicationData.gender === 'male' ? '25,000원' : '20,000원'}</strong></p>
+                    <p style="color: var(--neon-accent);">동반인이 있을 경우 : 1부 + 2부 <strong>${applicationData.gender === 'male' ? '60,000원' : '30,000원'}</strong></p>
+                </div>
+            </div>
+        `;
+        
+        // Create summary for display
+        const summaryHTML = `
+            <div style="background: var(--bg-card); padding: 30px; border-radius: 10px; margin-top: 30px;">
+                <h3 style="color: var(--neon-accent); margin-bottom: 20px;">신청 내역</h3>
+                <div style="display: grid; gap: 15px;">
+                    <p><strong>성함:</strong> ${applicationData.name}</p>
+                    <p><strong>닉네임:</strong> ${applicationData.nickname}</p>
+                    <p><strong>성별:</strong> ${applicationData.gender === 'male' ? '남성' : '여성'}</p>
+                    <p><strong>날짜:</strong> ${applicationData.selected_date}</p>
+                    <p><strong>티켓:</strong> ${applicationData.ticket_type === 'allNight' ? 'ALL NIGHT' : applicationData.ticket_type === 'part1' ? '1부' : '2부'}</p>
+                    <p><strong>참가비:</strong> ${applicationData.price.toLocaleString()}원</p>
+                    <p><strong>연락처:</strong> ${applicationData.phone}</p>
+                    <p><strong>인스타그램:</strong> ${applicationData.instagram}</p>
+                    ${applicationData.companion === 'yes' ? `<p><strong>동반인:</strong> ${applicationData.companion_name}</p>` : ''}
+                </div>
+                <div style="margin-top: 30px; padding: 20px; background: rgba(0, 255, 136, 0.1); border: 1px solid var(--neon-accent); border-radius: 5px;">
+                    <p style="text-align: center; margin: 0;">
+                        <strong>신청번호:</strong> #${data[0].id}<br>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">이 번호는 무시하셔도 됩니다.</span>
+                    </p>
+                </div>
+                ${paymentInfo}
+            </div>
+        `;
+        
+        // Hide form and show success message with summary
+        this.style.display = 'none';
+        const successMessage = document.getElementById('successMessage');
+        successMessage.innerHTML += summaryHTML;
+        successMessage.style.display = 'block';
+        
+        // Alert for SMS notification
+        alert(`✅ 신청이 완료되었습니다!\n\n파티 인스타 DM으로 신청 날짜 및 이름을 한번 더 전송 부탁드려요!`);
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('신청 중 오류가 발생했습니다. 다시 시도해주세요.\n\n오류 내용: ' + error.message);
+        submitButton.disabled = false;
+        submitButton.innerHTML = '참가 신청하기';
     }
-    
-    console.log('✅ DB 저장 성공:', data);
-    console.log('신청 완료:', data);
-                    
-  // Discord 알림 전송 (신청 ID 포함)
-    console.log('📨 Discord 알림 전송 시작');
-    await sendDiscordNotification({
-        ...applicationData,
-        id: data[0].id
-    });
-    console.log('✅ Discord 알림 전송 완료');
-                    
-// Create payment info based on gender
-const selectedPrice = applicationData.price.toLocaleString(); // 미리 변수로 만들기
-
-const paymentInfo = applicationData.gender === 'male' ? `
-    <div style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink); padding: 25px; border-radius: 10px; margin-top: 30px;">
-        <h4 style="color: var(--neon-pink); margin-bottom: 20px; text-align: center;">⚠️ 중요 안내 ⚠️</h4>
-        
-        <!-- 계좌 정보 박스 -->
-        <div style="background: rgba(0, 255, 136, 0.2); border: 2px solid var(--neon-accent); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-            <h5 style="color: var(--neon-accent); margin-bottom: 15px; font-size: 1.2rem;">💳 입금 계좌 정보</h5>
-            <p style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">
-                카카오뱅크 79422264022
-            </p>
-            <p style="font-size: 1.1rem; color: var(--text-primary);">
-                예금주: <strong>김O준</strong>
-            </p>
-            <p style="margin-top: 15px; font-size: 0.95rem; color: var(--neon-pink);">
-                ⚡ 신청금액: <strong style="font-size: 1.2rem;">${selectedPrice}원</strong>
-            </p>
-        </div>
-        
-        <p style="margin-bottom: 15px; line-height: 1.8;">
-            <strong>위 계좌로 1시간 이내로 티켓 비용을 입금하셔야 신청이 접수됩니다.</strong><br>
-            <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
-            </p>
-<p style="margin-bottom: 15px; text-align: center;">
-    <span style="color: var(--neon-accent); font-weight: 600; font-size: 1rem;">
-        📱 입금 후 인스타그램 @mono_party_로 신청 날짜와 성함을 DM으로 보내주세요!
-    </span>
-        </p>
-        
-        <div style="background: var(--bg-card); padding: 20px; border-radius: 5px; margin-top: 20px;">
-            <h5 style="color: var(--neon-accent); margin-bottom: 15px;">티켓 비용 (남성)</h5>
-            <p style="margin-bottom: 8px;">1부 + 2부 : <strong>64,000원</strong></p>
-            <p style="margin-bottom: 8px;">1부: <strong>42,000원</strong></p>
-            <p style="margin-bottom: 8px;">2부: <strong>25,000원</strong></p>
-            <p style="color: var(--neon-accent);">동반인이 있을 경우 : 1부 + 2부 <strong>60,000원</strong></p>
-        </div>
-    </div>
-` : `
-    <div style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink); padding: 25px; border-radius: 10px; margin-top: 30px;">
-        <h4 style="color: var(--neon-pink); margin-bottom: 20px; text-align: center;">⚠️ 중요 안내 ⚠️</h4>
-        
-        <!-- 계좌 정보 박스 -->
-        <div style="background: rgba(0, 255, 136, 0.2); border: 2px solid var(--neon-accent); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-            <h5 style="color: var(--neon-accent); margin-bottom: 15px; font-size: 1.2rem;">💳 입금 계좌 정보</h5>
-            <p style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">
-                카카오뱅크 79402264022
-            </p>
-            <p style="font-size: 1.1rem; color: var(--text-primary);">
-                예금주: <strong>김O준</strong>
-            </p>
-            <p style="margin-top: 15px; font-size: 0.95rem; color: var(--neon-pink);">
-                ⚡ 신청금액: <strong style="font-size: 1.2rem;">${selectedPrice}원</strong>
-            </p>
-        </div>
-        
-        <p style="margin-bottom: 15px; line-height: 1.8;">
-            <strong>위 계좌로 1시간 이내로 티켓 비용을 입금하셔야 신청이 접수됩니다.</strong><br>
-            <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
-            <p style="margin-bottom: 15px; text-align: center;">
-    <span style="color: var(--neon-accent); font-weight: 600; font-size: 1rem;">
-        📱 입금 후 인스타그램 @mono_party_로 신청 날짜와 성함을 DM으로 보내주세요!
-        </p>
-        
-        <div style="background: var(--bg-card); padding: 20px; border-radius: 5px; margin-top: 20px;">
-            <h5 style="color: var(--neon-accent); margin-bottom: 15px;">티켓 비용 (여성)</h5>
-            <p style="margin-bottom: 8px;">1부 + 2부 : <strong>40,000원</strong></p>
-            <p style="margin-bottom: 8px;">1부: <strong>30,000원</strong></p>
-            <p style="margin-bottom: 8px;">2부: <strong>20,000원</strong></p>
-            <p style="color: var(--neon-accent);">동반인이 있을 경우 : 1부 + 2부 <strong>30,000원</strong></p>
-        </div>
-    </div>
-`;
-                    
-                    // Create summary for display
-                    const summaryHTML = `
-                        <div style="background: var(--bg-card); padding: 30px; border-radius: 10px; margin-top: 30px;">
-                            <h3 style="color: var(--neon-accent); margin-bottom: 20px;">신청 내역</h3>
-                            <div style="display: grid; gap: 15px;">
-                                <p><strong>성함:</strong> ${applicationData.name}</p>
-                                <p><strong>닉네임:</strong> ${applicationData.nickname}</p>
-                                <p><strong>성별:</strong> ${applicationData.gender === 'male' ? '남성' : '여성'}</p>
-                                
-                                <p><strong>날짜:</strong> ${applicationData.selected_date}</p>
-                                <p><strong>티켓:</strong> ${applicationData.ticket_type === 'allNight' ? 'ALL NIGHT' : applicationData.ticket_type === 'part1' ? '1부' : '2부'}</p>
-                                <p><strong>참가비:</strong> ${applicationData.price.toLocaleString()}원</p>
-                                <p><strong>연락처:</strong> ${applicationData.phone}</p>
-                                <p><strong>인스타그램:</strong> ${applicationData.instagram}</p>
-                                ${applicationData.companion === 'yes' ? `<p><strong>동반인:</strong> ${applicationData.companion_name}</p>` : ''}
-                            </div>
-                            <div style="margin-top: 30px; padding: 20px; background: rgba(0, 255, 136, 0.1); border: 1px solid var(--neon-accent); border-radius: 5px;">
-                                <p style="text-align: center; margin: 0;">
-                                    <strong>신청번호:</strong> #${data[0].id}<br>
-                                    <span style="color: var(--text-secondary); font-size: 0.9rem;">이 번호는 무시하셔도 됩니다.</span>
-                                </p>
-                            </div>
-                            ${paymentInfo}
-                        </div>
-                    `;
-                    
-                    // Hide form and show success message with summary
-                    this.style.display = 'none';
-                    const successMessage = document.getElementById('successMessage');
-                    successMessage.innerHTML += summaryHTML;
-                    successMessage.style.display = 'block';
-                    
-                    // Alert for SMS notification
-                    alert(`✅ 신청이 완료되었습니다!\n\n파티 인스타 DM으로 신청 날짜 및 이름을 한번 더 전송 부탁드려요!`);
-                    
-                    // Scroll to top
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                    
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('신청 중 오류가 발생했습니다. 다시 시도해주세요.');
-                    submitButton.disabled = false;
-                    submitButton.innerHTML = '참가 신청하기';
-                }
-            });
+});
         });
         
         // Add floating particles effect
