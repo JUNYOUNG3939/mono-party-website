@@ -7342,5 +7342,300 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('backButton').style.display = 'none';
 });
 </script>
+    <!-- 추석 특별 할인 팝업 -->
+<div id="chuseokPopup" style="
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 99999;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(15px);
+    animation: fadeIn 0.5s ease;
+">
+    <div style="
+        position: relative;
+        max-width: 500px;
+        width: 90%;
+        background: linear-gradient(135deg, rgba(17, 17, 17, 0.98) 0%, rgba(0, 0, 0, 0.98) 100%);
+        border: 3px solid;
+        border-image: linear-gradient(45deg, #FFD700, #FFA500, #00ff88) 1;
+        border-radius: 30px;
+        padding: 0;
+        overflow: hidden;
+        box-shadow: 0 30px 80px rgba(255, 215, 0, 0.4);
+        animation: slideUp 0.6s ease;
+    ">
+        <!-- 닫기 버튼 -->
+        <button onclick="closeChuseokPopup()" style="
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        " onmouseover="this.style.background='rgba(255, 0, 102, 0.9)'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='scale(1)'">×</button>
+        
+        <!-- 반짝이는 배경 효과 -->
+        <div style="
+            position: absolute;
+            top: -100px;
+            left: -100px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+            animation: float 4s ease-in-out infinite;
+        "></div>
+        <div style="
+            position: absolute;
+            bottom: -100px;
+            right: -100px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.3) 0%, transparent 70%);
+            animation: float 4s ease-in-out infinite reverse;
+        "></div>
+        
+        <!-- 컨텐츠 -->
+        <div style="position: relative; z-index: 1; padding: 50px 30px 40px;">
+            <!-- 아이콘 -->
+            <div style="text-align: center; margin-bottom: 25px;">
+                <div style="
+                    font-size: 4rem;
+                    animation: bounce 1s infinite;
+                    display: inline-block;
+                ">🎁</div>
+            </div>
+            
+            <!-- 타이틀 -->
+            <h2 style="
+                text-align: center;
+                font-size: 2rem;
+                font-weight: 900;
+                margin-bottom: 15px;
+                background: linear-gradient(45deg, #FFD700, #FFA500);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                line-height: 1.3;
+            ">추석 연휴 특별 할인!</h2>
+            
+            <!-- 기간 -->
+            <div style="
+                text-align: center;
+                margin-bottom: 25px;
+                padding: 12px 25px;
+                background: rgba(255, 215, 0, 0.1);
+                border-radius: 30px;
+                border: 1px solid rgba(255, 215, 0, 0.3);
+                display: inline-block;
+                width: 100%;
+            ">
+                <p style="
+                    color: #FFD700;
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    margin: 0;
+                ">📅 10월 2일 ~ 10월 11일</p>
+            </div>
+            
+            <!-- 할인 금액 -->
+            <div style="
+                text-align: center;
+                margin: 30px 0;
+                padding: 25px;
+                background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+                border-radius: 20px;
+                border: 2px solid #FFD700;
+            ">
+                <p style="
+                    font-size: 1.1rem;
+                    color: var(--text-secondary);
+                    margin-bottom: 10px;
+                ">추석 특별가</p>
+                <p style="
+                    font-size: 3rem;
+                    font-weight: 900;
+                    color: #FFD700;
+                    margin: 0;
+                    line-height: 1;
+                    text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+                ">10,000원 할인</p>
+                <p style="
+                    font-size: 0.9rem;
+                    color: var(--text-secondary);
+                    margin-top: 10px;
+                ">1부+2부 패키지 구매 시</p>
+            </div>
+            
+            <!-- 설명 -->
+            <div style="
+                text-align: center;
+                margin-bottom: 30px;
+                padding: 20px;
+                background: rgba(0, 255, 136, 0.05);
+                border-radius: 15px;
+                border: 1px solid rgba(0, 255, 136, 0.2);
+            ">
+                <p style="
+                    color: var(--text-primary);
+                    line-height: 1.6;
+                    margin: 0;
+                    font-size: 0.95rem;
+                ">
+                    🌕 <strong>추석 연휴 기념</strong><br>
+                    평소보다 <span style="color: #FFD700; font-weight: 700;">10,000원 저렴하게!</span><br>
+                    이 기회를 놓치지 마세요
+                </p>
+            </div>
+            
+            <!-- CTA 버튼 -->
+            <button onclick="closeChuseokPopup(); openApplicationModal();" style="
+                width: 100%;
+                padding: 18px;
+                background: linear-gradient(135deg, #FFD700, #FFA500);
+                color: #000;
+                border: none;
+                border-radius: 30px;
+                font-size: 1.2rem;
+                font-weight: 900;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+                position: relative;
+                overflow: hidden;
+            " onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 15px 40px rgba(255, 215, 0, 0.6)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(255, 215, 0, 0.4)'">
+                🎉 지금 할인받고 참가하기
+            </button>
+            
+            <!-- 하단 안내 -->
+            <p style="
+                text-align: center;
+                color: var(--text-secondary);
+                font-size: 0.8rem;
+                margin-top: 15px;
+                margin-bottom: 0;
+            ">* 추석 기간 한정 혜택</p>
+        </div>
+        
+        <!-- 타이머 효과 (선택사항) -->
+        <div id="chuseokTimer" style="
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 0, 102, 0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            animation: pulse 2s infinite;
+        ">⏰ 기간 한정</div>
+    </div>
+</div>
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+}
+</style>
+
+<script>
+// 팝업 닫기 함수
+function closeChuseokPopup() {
+    const popup = document.getElementById('chuseokPopup');
+    popup.style.animation = 'fadeOut 0.3s ease';
+    setTimeout(() => {
+        popup.style.display = 'none';
+        // 오늘 하루 동안 팝업 안 보기 (선택사항)
+        localStorage.setItem('chuseokPopupClosed', new Date().toDateString());
+    }, 300);
+}
+
+// 팝업 표시 체크
+window.addEventListener('load', function() {
+    const lastClosed = localStorage.getItem('chuseokPopupClosed');
+    const today = new Date().toDateString();
+    
+    // 오늘 이미 닫았다면 팝업 표시 안 함 (선택사항)
+    if (lastClosed === today) {
+        document.getElementById('chuseokPopup').style.display = 'none';
+    }
+});
+
+// fadeOut 애니메이션 추가
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+
+// ESC 키로 팝업 닫기
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const popup = document.getElementById('chuseokPopup');
+        if (popup && popup.style.display !== 'none') {
+            closeChuseokPopup();
+        }
+    }
+});
+
+// 팝업 외부 클릭시 닫기
+document.getElementById('chuseokPopup').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeChuseokPopup();
+    }
+});
+</script>
 </body>
 </html>
