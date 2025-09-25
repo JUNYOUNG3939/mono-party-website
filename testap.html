@@ -997,21 +997,35 @@ fields: [
         // Available party dates from database
         let availablePartyDates = [];
         
-        // Price information
-        const prices = {
-            male: {
-                allNight: 64000,
-                part1: 42000,
-                part2: 25000,
-                allNightWithCompanion: 60000
-            },
-            female: {
-                allNight: 40000,
-                part1: 30000,
-                part2: 20000,
-                allNightWithCompanion: 30000
-            }
-        };
+// Price information (추석 할인 적용)
+const prices = {
+    male: {
+        allNight: 64000,
+        part1: 42000,
+        part2: 25000,
+        allNightWithCompanion: 60000,
+        // 추석 할인 가격
+        chuseokAllNight: 54000,           // 10,000원 할인
+        chuseokAllNightWithCompanion: 50000  // 10,000원 할인
+    },
+    female: {
+        allNight: 40000,
+        part1: 30000,
+        part2: 20000,
+        allNightWithCompanion: 30000,
+        // 추석 할인 가격
+        chuseokAllNight: 30000,           // 10,000원 할인
+        chuseokAllNightWithCompanion: 20000  // 10,000원 할인
+    }
+};
+
+// 추석 기간 체크 함수
+function isChuseokPeriod(dateStr) {
+    const date = new Date(dateStr);
+    const start = new Date('2025-10-02');
+    const end = new Date('2025-10-11');
+    return date >= start && date <= end;
+}
         
         // Load available party dates from database
         async function loadAvailablePartyDates() {
@@ -1148,10 +1162,14 @@ function selectDate(day, dateStr, isMoodKing = false) {
         el.classList.remove('selected');
     });
     
-    // Remove previous mood king notice
+    // Remove previous notices
     const existingNotice = document.getElementById('moodKingNotice');
     if (existingNotice) {
         existingNotice.remove();
+    }
+    const existingChuseokNotice = document.getElementById('chuseokNotice');
+    if (existingChuseokNotice) {
+        existingChuseokNotice.remove();
     }
     
     // Add selection to clicked date
@@ -1165,8 +1183,36 @@ function selectDate(day, dateStr, isMoodKing = false) {
     // Set hidden input value
     document.getElementById('selectedDate').value = dateStr;
     
-    // 무드왕 파티 선택 시 특별 안내 표시
-    if (isMoodKing) {
+    // 추석 기간 체크
+    const isChuseok = isChuseokPeriod(dateStr);
+    
+    // 추석 기간 선택 시 특별 안내 표시
+    if (isChuseok) {
+        const priceDisplay = document.querySelector('.price-display');
+        const notice = document.createElement('div');
+        notice.id = 'chuseokNotice';
+        notice.className = 'mood-king-notice';
+        notice.style.background = 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1))';
+        notice.style.borderColor = '#FFD700';
+        notice.innerHTML = `
+            <h3 style="color: #FFD700; margin-bottom: 10px; font-size: 1.3rem;">
+                🌕 추석 연휴 특별 할인! 🌕
+            </h3>
+            <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 10px;">
+                <strong>10월 2일 ~ 10월 11일</strong><br>
+                ALL NIGHT 티켓 <span style="color: #FFD700; font-weight: 700;">10,000원 할인</span>
+            </p>
+            <p style="color: #FFD700; font-size: 0.9rem;">
+                ✨ 추석 연휴 기간 한정 혜택입니다 ✨
+            </p>
+        `;
+        priceDisplay.parentNode.insertBefore(notice, priceDisplay);
+        
+        // 스크롤 애니메이션
+        notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    // 무드왕 파티 선택 시 특별 안내 표시 (추석 아닌 경우만)
+    else if (isMoodKing) {
         const priceDisplay = document.querySelector('.price-display');
         const notice = document.createElement('div');
         notice.id = 'moodKingNotice';
@@ -1190,29 +1236,56 @@ function selectDate(day, dateStr, isMoodKing = false) {
     }
 }
         
-        // Update price display
-        function updatePrices() {
-            const gender = document.querySelector('input[name="gender"]:checked');
-            const priceOptions = document.getElementById('priceOptions');
-           const companion = document.querySelector('input[name="companion"]:checked')?.value || 'no';  // ✅ 수정
-            
-            if (!gender) return;
-            
-            const genderPrices = prices[gender.value];
-            const allNightPrice = companion === 'yes' 
-        ? genderPrices.allNightWithCompanion 
-        : genderPrices.allNight;
-            
+       // Update price display
+function updatePrices() {
+    const gender = document.querySelector('input[name="gender"]:checked');
+    const priceOptions = document.getElementById('priceOptions');
+    const companion = document.querySelector('input[name="companion"]:checked')?.value || 'no';
+    const selectedDate = document.getElementById('selectedDate').value;
+    
+    if (!gender) return;
+    
+    const genderPrices = prices[gender.value];
+    const isChuseok = selectedDate && isChuseokPeriod(selectedDate);
+    
+    // ALL NIGHT 가격 결정
+    let allNightPrice;
+    let originalAllNightPrice;
+    let showDiscount = false;
+    
+    if (isChuseok) {
+        // 추석 기간 할인 가격
+        if (companion === 'yes') {
+            allNightPrice = genderPrices.chuseokAllNightWithCompanion;
+            originalAllNightPrice = genderPrices.allNightWithCompanion;
+        } else {
+            allNightPrice = genderPrices.chuseokAllNight;
+            originalAllNightPrice = genderPrices.allNight;
+        }
+        showDiscount = true;
+    } else {
+        // 일반 가격
+        if (companion === 'yes') {
+            allNightPrice = genderPrices.allNightWithCompanion;
+            originalAllNightPrice = genderPrices.allNight;
+            showDiscount = true;
+        } else {
+            allNightPrice = genderPrices.allNight;
+        }
+    }
+    
     priceOptions.innerHTML = `
         <label class="price-option">
             <input type="radio" name="ticketType" value="allNight" required>
             <div class="price-option-name">
                 ALL NIGHT<br>(1부 + 2부)
-                ${companion === 'yes' ? '<br><span style="color: var(--neon-accent); font-size: 0.8rem;">동반인 할인 적용</span>' : ''}
+                ${isChuseok ? '<br><span style="color: #FFD700; font-size: 0.8rem;">🌕 추석 특가</span>' : ''}
+                ${companion === 'yes' && !isChuseok ? '<br><span style="color: var(--neon-accent); font-size: 0.8rem;">동반인 할인</span>' : ''}
+                ${companion === 'yes' && isChuseok ? '<br><span style="color: var(--neon-accent); font-size: 0.8rem;">추석+동반 할인</span>' : ''}
             </div>
             <div class="price-option-price">
-                ${companion === 'yes' ? '<span style="text-decoration: line-through; opacity: 0.5; font-size: 0.9rem;">' + genderPrices.allNight.toLocaleString() + '원</span><br>' : ''}
-                ${allNightPrice.toLocaleString()}원
+                ${showDiscount ? `<span style="text-decoration: line-through; opacity: 0.5; font-size: 0.9rem;">${originalAllNightPrice.toLocaleString()}원</span><br>` : ''}
+                <span style="${isChuseok ? 'color: #FFD700;' : ''}">${allNightPrice.toLocaleString()}원</span>
             </div>
         </label>
         <label class="price-option">
@@ -1490,17 +1563,29 @@ const applicationData = {
     companion: formData.get('companion'),
     companion_name: formData.get('companionName') || null,
     
-    // Calculate price (동반인 할인 적용)
+       // Calculate price (추석 할인 + 동반인 할인 적용)
     price: (() => {
         const gender = formData.get('gender');
         const ticketType = formData.get('ticketType');
         const hasCompanion = formData.get('companion') === 'yes';
+        const selectedDate = formData.get('selectedDate');
+        const isChuseok = isChuseokPeriod(selectedDate);
         
-        if (ticketType === 'allNight' && hasCompanion) {
-            // 동반인이 있고 ALL NIGHT인 경우 할인 가격 적용
-            return prices[gender].allNightWithCompanion;
+        if (ticketType === 'allNight') {
+            if (isChuseok) {
+                // 추석 기간 할인 가격
+                return hasCompanion 
+                    ? prices[gender].chuseokAllNightWithCompanion 
+                    : prices[gender].chuseokAllNight;
+            } else if (hasCompanion) {
+                // 동반인 할인만
+                return prices[gender].allNightWithCompanion;
+            } else {
+                // 일반 가격
+                return prices[gender].allNight;
+            }
         } else {
-            // 일반 가격 적용
+            // 1부 또는 2부 (할인 없음)
             return prices[gender][ticketType];
         }
     })(),
