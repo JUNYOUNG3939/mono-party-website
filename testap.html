@@ -1186,9 +1186,6 @@ function selectDate(day, dateStr, isMoodKing = false) {
     // 추석 기간 체크
     const isChuseok = isChuseokPeriod(dateStr);
     
-    // ✅ 날짜 선택 후 가격 즉시 업데이트
-    updatePrices();
-    
     // 추석 기간 선택 시 특별 안내 표시
     if (isChuseok) {
         const priceDisplay = document.querySelector('.price-display');
@@ -1214,30 +1211,6 @@ function selectDate(day, dateStr, isMoodKing = false) {
         // 스크롤 애니메이션
         notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-    // 무드왕 파티 선택 시 특별 안내 표시 (추석 아닌 경우만)
-    else if (isMoodKing) {
-        const priceDisplay = document.querySelector('.price-display');
-        const notice = document.createElement('div');
-        notice.id = 'moodKingNotice';
-        notice.className = 'mood-king-notice';
-        notice.innerHTML = `
-            <h3 style="color: #FFD700; margin-bottom: 10px; font-size: 1.3rem;">
-                👑 무드왕 파티를 선택하셨습니다! 👑
-            </h3>
-            <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 10px;">
-                <strong>월 1회 스페셜 이벤트</strong><br>
-                80명이 실명 투표로 선발한 매력왕들이 모이는 특별한 날
-            </p>
-            <p style="color: #FFD700; font-size: 0.9rem;">
-                ✨ 무드왕 선발자는 우선 초대 및 특별 혜택이 제공됩니다 ✨
-            </p>
-        `;
-        priceDisplay.parentNode.insertBefore(notice, priceDisplay);
-        
-        // 스크롤 애니메이션
-        notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-}
     // 무드왕 파티 선택 시 특별 안내 표시 (추석 아닌 경우만)
     else if (isMoodKing) {
         const priceDisplay = document.querySelector('.price-display');
@@ -1377,46 +1350,46 @@ function toggleCompanionName() {
         }
     }, 100);
                 // Companion selection cards
-document.querySelectorAll('input[name="companion"]').forEach(radio => {
-    radio.addEventListener('change', function() {
-        // Remove selected class from all cards
-        document.querySelectorAll('.companion-card').forEach(card => {
-            card.classList.remove('selected');
-        });
-        
-        // Add selected class to parent card
-        this.parentElement.classList.add('selected');
-        this.parentElement.setAttribute('data-value', this.value);
-        
-        // Toggle companion name field
-        const companionNameGroup = document.getElementById('companionNameGroup');
-        const companionNameInput = document.getElementById('companionName');
-        
-        if (this.value === 'yes') {
-            companionNameGroup.style.display = 'block';
-            companionNameInput.required = true;
+    document.querySelectorAll('input[name="companion"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Remove selected class from all cards
+            document.querySelectorAll('.companion-card').forEach(card => {
+                card.classList.remove('selected');
+            });
             
-            // 성별이 선택되어 있으면 가격 업데이트
-            const gender = document.querySelector('input[name="gender"]:checked');
-            if (gender) {
-                updatePrices();  // ✅ 가격 업데이트
+            // Add selected class to parent card
+            this.parentElement.classList.add('selected');
+            this.parentElement.setAttribute('data-value', this.value);
+            
+            // Toggle companion name field
+            const companionNameGroup = document.getElementById('companionNameGroup');
+            const companionNameInput = document.getElementById('companionName');
+            
+            if (this.value === 'yes') {
+                companionNameGroup.style.display = 'block';
+                companionNameInput.required = true;
                 
-                // 할인 안내 애니메이션
-                companionNameGroup.style.animation = 'slideDown 0.3s ease';
+                // 성별이 선택되어 있으면 가격 업데이트
+                const gender = document.querySelector('input[name="gender"]:checked');
+                if (gender) {
+                    updatePrices();
+                    
+                    // 할인 안내 애니메이션
+                    companionNameGroup.style.animation = 'slideDown 0.3s ease';
+                } else {
+                    alert('💡 먼저 성별을 선택해주세요!');
+                    document.querySelector('input[name="companion"][value="no"]').checked = true;
+                    this.parentElement.classList.remove('selected');
+                    return;
+                }
             } else {
-                alert('💡 먼저 성별을 선택해주세요!');
-                document.querySelector('input[name="companion"][value="no"]').checked = true;
-                this.parentElement.classList.remove('selected');
-                return;
+                companionNameGroup.style.display = 'none';
+                companionNameInput.required = false;
+                companionNameInput.value = '';
+                updatePrices();
             }
-        } else {
-            companionNameGroup.style.display = 'none';
-            companionNameInput.required = false;
-            companionNameInput.value = '';
-            updatePrices();  // ✅ 가격 업데이트
-        }
+        });
     });
-});
             
             // Gender selection
             document.querySelectorAll('input[name="gender"]').forEach(radio => {
