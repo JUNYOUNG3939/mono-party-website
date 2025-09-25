@@ -1831,7 +1831,6 @@
         <p style="color: var(--text-secondary);">원하시는 정보를 선택해주세요</p>
     </div>
     
-    <!-- 파티 일정 표시 -->
 <div id="upcomingPartiesIntro" style="
     background: var(--bg-card);
     border: 2px solid var(--neon-accent);
@@ -1839,18 +1838,59 @@
     padding: 30px;
     margin-bottom: 40px;
 ">
-    <h3 style="color: var(--neon-accent); margin-bottom: 20px;">🗓️ 다가오는 파티 일정</h3>
-    <div id="partyScheduleGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-        <!-- 로딩 메시지 -->
-        <div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-secondary);">
-            파티 일정을 불러오는 중...
-        </div>
+    <h3 style="color: var(--neon-accent); margin-bottom: 20px;">🗓️ 파티 일정 캘린더</h3>
+    
+    <!-- 캘린더 헤더 -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <button onclick="previousMonth()" style="
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--neon-accent);
+            color: var(--neon-accent);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">◀ 이전</button>
+        
+        <h4 id="currentMonth" style="color: var(--text-primary); font-size: 1.3rem; font-weight: 700;"></h4>
+        
+        <button onclick="nextMonth()" style="
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--neon-accent);
+            color: var(--neon-accent);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        ">다음 ▶</button>
     </div>
-    <div style="text-align: center; margin-top: 30px;">
-        <a href="#" onclick="openApplicationModal(); return false;" class="cta-button neon-glow">
-            지금 참가 신청하기
-        </a>
+    
+    <!-- 캘린더 그리드 -->
+    <div id="calendarGrid" style="
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 5px;
+        margin-bottom: 20px;
+    ">
+        <!-- 요일 헤더 -->
+        <div style="text-align: center; color: #ff0066; font-weight: 700; padding: 10px; font-size: 0.9rem;">일</div>
+        <div style="text-align: center; color: var(--text-secondary); font-weight: 700; padding: 10px; font-size: 0.9rem;">월</div>
+        <div style="text-align: center; color: var(--text-secondary); font-weight: 700; padding: 10px; font-size: 0.9rem;">화</div>
+        <div style="text-align: center; color: var(--text-secondary); font-weight: 700; padding: 10px; font-size: 0.9rem;">수</div>
+        <div style="text-align: center; color: var(--text-secondary); font-weight: 700; padding: 10px; font-size: 0.9rem;">목</div>
+        <div style="text-align: center; color: var(--text-secondary); font-weight: 700; padding: 10px; font-size: 0.9rem;">금</div>
+        <div style="text-align: center; color: #00e5ff; font-weight: 700; padding: 10px; font-size: 0.9rem;">토</div>
     </div>
+    
+    <!-- 선택된 날짜 상세 정보 -->
+    <div id="dateDetails" style="
+        display: none;
+        background: rgba(0, 255, 136, 0.05);
+        border: 1px solid var(--neon-accent);
+        border-radius: 15px;
+        padding: 25px;
+        margin-top: 20px;
+    "></div>
 </div>
     
     <!-- 카테고리 그리드 -->
@@ -5122,6 +5162,92 @@
     background: #ffaa00;
     animation: pulse 2s infinite;
 }
+    /* ========== 캘린더 스타일 ========== */
+.calendar-date {
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid transparent;
+}
+
+.calendar-date:hover {
+    background: rgba(0, 255, 136, 0.1);
+    transform: scale(1.05);
+    border-color: rgba(0, 255, 136, 0.3);
+}
+
+.calendar-date.has-party {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 229, 255, 0.2));
+    border: 2px solid var(--neon-accent);
+    font-weight: 700;
+    color: var(--neon-accent);
+}
+
+.calendar-date.has-party:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.3), rgba(0, 229, 255, 0.3));
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+}
+
+.calendar-date.special-party {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+    border: 2px solid #FFD700;
+    color: #FFD700;
+}
+
+.calendar-date.special-party::after {
+    content: '👑';
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 0.8rem;
+}
+
+.calendar-date.other-month {
+    opacity: 0.3;
+    pointer-events: none;
+    color: #555;
+}
+
+.calendar-date.selected {
+    background: var(--neon-accent) !important;
+    color: var(--bg-primary) !important;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+}
+
+.party-indicator {
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    background: var(--neon-accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.calendar-date.special-party .party-indicator {
+    background: #FFD700;
+}
+
+@media (max-width: 768px) {
+    .calendar-date {
+        padding: 5px;
+        font-size: 0.85rem;
+    }
+    
+    .calendar-date.special-party::after {
+        font-size: 0.7rem;
+    }
+}
 
 @keyframes pulse {
     0%, 100% { transform: scale(1); }
@@ -5882,303 +6008,200 @@ function backToMain() {
 // 인트로용 파티 일정 로드 - 완전 수정 버전
 // 인트로용 파티 일정 로드 - 남녀 구분 표시
 // 인트로용 파티 일정 로드 - 남녀 구분 표시
-async function loadPartyDatesForIntro() {
-    console.log('파티 일정 로드 시작');
-    
+// ========== 캘린더 관련 변수 ==========
+let currentDate = new Date();
+let partyData = [];
+let selectedDate = null;
+
+// ========== 파티 데이터 로드 ==========
+async function loadPartyData() {
     try {
         const { data, error } = await supabaseClient
             .from('party_schedules')
             .select('*')
             .eq('is_active', true)
             .gte('party_date', new Date().toISOString().split('T')[0])
-            .order('party_date', { ascending: true })
-            .limit(4);
+            .order('party_date', { ascending: true });
         
-        console.log('받아온 데이터:', data);
+        if (error) throw error;
         
-        if (error) {
-            console.error('Supabase 에러:', error);
-            throw error;
-        }
-        
-        const container = document.getElementById('partyScheduleGrid');
-        
-        if (!container) {
-            console.error('partyScheduleGrid 컨테이너를 찾을 수 없습니다');
-            return;
-        }
-        
-        if (data && data.length > 0) {
-            container.style.display = 'grid';
-            container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(280px, 1fr))';
-            container.style.gap = '20px';
-            
-            container.innerHTML = data.map((party, index) => {
-                const date = new Date(party.party_date + 'T00:00:00');
-                const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-                const dayOfWeek = dayNames[date.getDay()];
-                const month = date.getMonth() + 1;
-                const day = date.getDate();
-                // 스페셜 파티 체크 함수
+        partyData = data || [];
+        return partyData;
+    } catch (error) {
+        console.error('파티 데이터 로드 실패:', error);
+        return [];
+    }
+}
+
+// ========== 스페셜 파티 체크 ==========
 function isMoodKingDate(checkDate) {
     const month = checkDate.getMonth();
     const dateNum = checkDate.getDate();
     const day = checkDate.getDay();
     
-    // 9월(8)은 특별히 20일에만 개최 (다른 날은 일반 파티)
-    if (month === 8) {
-        return dateNum === 20;  // 9월은 20일만 true, 나머지는 false
-    }
+    if (month === 8 && dateNum === 20) return true;
     
-    // 9월이 아닌 다른 달은 마지막 주 토요일 체크
-    if (day === 6) { // 토요일인지 확인
+    if (day === 6) {
         const nextSaturday = new Date(checkDate);
         nextSaturday.setDate(checkDate.getDate() + 7);
-        
-        if (nextSaturday.getMonth() !== checkDate.getMonth()) {
-            return true; // 이번이 이 달의 마지막 토요일
-        }
+        if (nextSaturday.getMonth() !== checkDate.getMonth()) return true;
     }
     
     return false;
 }
+
+// ========== 날짜 셀 생성 ==========
+function createDateCell(date, dateString, partyInfo = null) {
+    const cell = document.createElement('div');
+    cell.className = 'calendar-date';
+    cell.textContent = date;
     
-    // 스페셜 파티인지 체크
-    const isMoodKingParty = isMoodKingDate(date);
-                
-                // 토요일/일요일 특별 표시
-                const isWeekend = date.getDay() === 6 || date.getDay() === 0;
-                
-                // 남녀 잔여석 계산
-                const maleRemaining = party.male_remaining_seats !== undefined ? party.male_remaining_seats : 35;
-                const femaleRemaining = party.female_remaining_seats !== undefined ? party.female_remaining_seats : 35;
-                const maleMax = party.male_max_capacity || 35;
-                const femaleMax = party.female_max_capacity || 35;
-                
-                // 전체 잔여석
-                const totalRemaining = maleRemaining + femaleRemaining;
-                const totalMax = maleMax + femaleMax;
-                
-                // 점유율 계산
-                const maleOccupancyRate = ((maleMax - maleRemaining) / maleMax) * 100;
-                const femaleOccupancyRate = ((femaleMax - femaleRemaining) / femaleMax) * 100;
-                
-                // 상태 결정
-                let cardBorderColor = '#00ff88';
-                let urgencyBadge = '';
-                let cardIcon = '✨';
-                
-                // 스페셜 파티 특별 배지
-if (isMoodKingParty) {
-    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 900; z-index: 2; box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); animation: pulse 2s infinite;">👑 스페셜 파티</div>';
-    cardBorderColor = '#FFD700';
-    cardIcon = '👑';
-} else if (totalRemaining === 0) {
-                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">SOLD OUT</div>';
-                    cardBorderColor = '#ff0066';
-                } else if (totalRemaining <= 10) {
-                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ff0066; color: white; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2; animation: pulse 1.5s infinite;">마감임박</div>';
-                    cardBorderColor = '#ff0066';
-                } else if (totalRemaining <= 20) {
-                    urgencyBadge = '<div style="position: absolute; top: 15px; right: 15px; background: #ffaa00; color: #000; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; z-index: 2;">HOT</div>';
-                    cardBorderColor = '#ffaa00';
-                    cardIcon = '🔥';
-                }
-                
-// 스페셜 파티가 아닌 경우에만 주말 아이콘 적용
-if (isWeekend && !isMoodKingParty) {
-    cardIcon = '🎉';
-    if (totalRemaining > 20) {
-        cardBorderColor = '#ff0066';
+    if (partyInfo) {
+        cell.classList.add('has-party');
+        
+        const checkDate = new Date(dateString + 'T00:00:00');
+        if (isMoodKingDate(checkDate)) {
+            cell.classList.add('special-party');
+        }
+        
+        const indicator = document.createElement('div');
+        indicator.className = 'party-indicator';
+        cell.appendChild(indicator);
+        
+        cell.onclick = () => showDateDetails(dateString, partyInfo);
+    }
+    
+    return cell;
+}
+
+// ========== 캘린더 렌더링 ==========
+async function renderCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    
+    document.getElementById('currentMonth').textContent = `${year}년 ${month + 1}월`;
+    
+    const calendarGrid = document.getElementById('calendarGrid');
+    const dateCells = calendarGrid.querySelectorAll('.calendar-date');
+    dateCells.forEach(cell => cell.remove());
+    
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const prevLastDay = new Date(year, month, 0);
+    
+    const firstDayOfWeek = firstDay.getDay();
+    for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+        const date = prevLastDay.getDate() - i;
+        const cell = createDateCell(date);
+        cell.classList.add('other-month');
+        calendarGrid.appendChild(cell);
+    }
+    
+    for (let date = 1; date <= lastDay.getDate(); date++) {
+        const dateString = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+        const partyInfo = partyData.find(p => p.party_date === dateString);
+        
+        const cell = createDateCell(date, dateString, partyInfo);
+        calendarGrid.appendChild(cell);
+    }
+    
+    const remainingCells = 42 - (firstDayOfWeek + lastDay.getDate());
+    for (let date = 1; date <= remainingCells; date++) {
+        const cell = createDateCell(date);
+        cell.classList.add('other-month');
+        calendarGrid.appendChild(cell);
     }
 }
-                
-                return `
-                    <div style="
-                        background: rgba(17, 17, 17, 0.98);
-                        border: 2px solid ${cardBorderColor};
-                        border-radius: 20px;
-                        padding: 35px 25px 25px;
-                        position: relative;
-                        transition: all 0.3s ease;
-                        box-shadow: 0 0 30px rgba(0, 255, 136, 0.2);
-                        ${totalRemaining === 0 ? 'opacity: 0.7;' : ''}
-                    " 
-                    onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 15px 50px rgba(0, 255, 136, 0.4)'" 
-                    onmouseout="this.style.transform=''; this.style.boxShadow='0 0 30px rgba(0, 255, 136, 0.2)'">
-                        
-                        ${urgencyBadge}
-                        
-                        <!-- 아이콘 -->
-                        <div style="text-align: center; font-size: 2.5rem; margin-bottom: 15px;">
-                            ${cardIcon}
-                        </div>
-                        
-                        <!-- 날짜 표시 -->
-                        <div style="text-align: center; margin-bottom: 25px;">
-                            <div style="font-size: 2.2rem; font-weight: 900; color: ${cardBorderColor}; margin-bottom: 5px;">
-                                ${month}월 ${day}일
-                            </div>
-                            <div style="color: #999; font-size: 1rem;">
-                                ${dayOfWeek}요일
-                            </div>
-                        </div>
-                        
-                        <!-- 남성 잔여석 -->
-                        <div style="margin-bottom: 15px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <span style="color: #00e5ff; font-size: 0.9rem; font-weight: 600;">
-                                    ♂ 남성
-                                </span>
-                                <span style="color: ${maleRemaining <= 5 ? '#ff0066' : maleRemaining <= 10 ? '#ffaa00' : '#00e5ff'}; font-size: 0.9rem; font-weight: 700;">
-                                   ${maleRemaining === 0 ? '마감' : `${maleRemaining}석`}
-                                </span>
-                            </div>
-                            <div style="position: relative; background: rgba(0, 229, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
-                                <div style="
-                                    background: linear-gradient(90deg, #00e5ff, #0099ff);
-                                    height: 100%;
-                                    width: ${maleOccupancyRate}%;
-                                    transition: width 0.5s ease;
-                                    box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
-                                "></div>
-                            </div>
-                        </div>
-                        
-                        <!-- 여성 잔여석 -->
-                        <div style="margin-bottom: 20px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <span style="color: #ff0066; font-size: 0.9rem; font-weight: 600;">
-                                    ♀ 여성
-                                </span>
-                                <span style="color: ${femaleRemaining <= 5 ? '#ff0066' : femaleRemaining <= 10 ? '#ffaa00' : '#ff0066'}; font-size: 0.9rem; font-weight: 700;">
-                                   ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}석`}
-                                </span>
-                            </div>
-                            <div style="position: relative; background: rgba(255, 0, 102, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
-                                <div style="
-                                    background: linear-gradient(90deg, #ff0066, #ff3388);
-                                    height: 100%;
-                                    width: ${femaleOccupancyRate}%;
-                                    transition: width 0.5s ease;
-                                    box-shadow: 0 0 10px rgba(255, 0, 102, 0.5);
-                                "></div>
-                            </div>
-                        </div>
-                        
-                        <!-- 전체 잔여석 표시 (숫자 없이) -->
-<!-- 전체 잔여석 표시 -->
-${totalRemaining === 0 ? `
-    <div style="
-        background: rgba(255, 0, 102, 0.1);
-        border: 1px solid #ff0066;
-        border-radius: 25px;
-        padding: 12px;
-        text-align: center;
-        margin-top: 5px;
-    ">
-        <span style="
-            color: #ff0066;
-            font-size: 1rem;
-            font-weight: 700;
-        ">
-            🔥 매진 🔥
-        </span>
-    </div>
-` : totalRemaining <= 10 ? `
-    <div style="
-        background: rgba(255, 0, 102, 0.1);
-        border: 1px solid #ff0066;
-        border-radius: 25px;
-        padding: 12px;
-        text-align: center;
-        margin-top: 5px;
-    ">
-        <span style="
-            color: #ff0066;
-            font-size: 1rem;
-            font-weight: 700;
-        ">
-            ⚠️ 마감임박! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석
-        </span>
-    </div>
-` : totalRemaining <= 20 ? `
-    <div style="
-        background: rgba(255, 170, 0, 0.1);
-        border: 1px solid #ffaa00;
-        border-radius: 25px;
-        padding: 12px;
-        text-align: center;
-        margin-top: 5px;
-    ">
-        <span style="
-            color: #ffaa00;
-            font-size: 1rem;
-            font-weight: 700;
-        ">
-            ⚡ 서둘러요! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석
-        </span>
-    </div>
-` : `
-    <div style="
-        background: rgba(0, 255, 136, 0.1);
-        border: 1px solid #00ff88;
-        border-radius: 25px;
-        padding: 12px;
-        text-align: center;
-        margin-top: 5px;
-    ">
-        <span style="
-            color: #00ff88;
-            font-size: 1rem;
-            font-weight: 700;
-        ">
-            잔여석: 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석
-        </span>
-    </div>
-`}
-                    </div>
-                `;
-            }).join('');
-            
-        } else {
-            // 데이터가 없을 때
-            container.innerHTML = `
-                <div style="
-                    grid-column: 1 / -1;
-                    text-align: center;
-                    padding: 40px 20px;
-                    background: rgba(255, 0, 102, 0.1);
-                    border: 1px solid var(--neon-pink);
-                    border-radius: 10px;
-                ">
-                    <p style="color: var(--neon-pink); font-size: 1.1rem; margin-bottom: 10px;">
-                        📅 현재 예약 가능한 파티가 없습니다
-                    </p>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                        새로운 파티 일정은 인스타그램에서 확인해주세요!
-                    </p>
-                </div>
-            `;
-        }
-    } catch (error) {
-        console.error('파티 일정 로드 실패:', error);
+
+// ========== 날짜 상세 정보 표시 ==========
+function showDateDetails(dateString, partyInfo) {
+    const detailsDiv = document.getElementById('dateDetails');
+    selectedDate = dateString;
+    
+    document.querySelectorAll('.calendar-date').forEach(cell => {
+        cell.classList.remove('selected');
+    });
+    event.target.classList.add('selected');
+    
+    const date = new Date(dateString + 'T00:00:00');
+    const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const dayOfWeek = dayNames[date.getDay()];
+    
+    const maleRemaining = partyInfo.male_remaining_seats || 0;
+    const femaleRemaining = partyInfo.female_remaining_seats || 0;
+    const maleMax = partyInfo.male_max_capacity || 35;
+    const femaleMax = partyInfo.female_max_capacity || 35;
+    const totalRemaining = maleRemaining + femaleRemaining;
+    
+    const maleOccupancy = ((maleMax - maleRemaining) / maleMax) * 100;
+    const femaleOccupancy = ((femaleMax - femaleRemaining) / femaleMax) * 100;
+    
+    const isSpecial = isMoodKingDate(date);
+    
+    detailsDiv.innerHTML = `
+        <div style="text-align: center; margin-bottom: 25px;">
+            ${isSpecial ? '<div style="font-size: 3rem; margin-bottom: 10px;">👑</div>' : '<div style="font-size: 3rem; margin-bottom: 10px;">🎉</div>'}
+            <h3 style="font-size: 2rem; color: ${isSpecial ? '#FFD700' : 'var(--neon-accent)'}; margin-bottom: 10px;">
+                ${month}월 ${day}일 ${dayOfWeek}요일
+            </h3>
+            ${isSpecial ? '<p style="color: #FFD700; font-weight: 700; font-size: 1.1rem;">스페셜 파티 🌟</p>' : ''}
+        </div>
         
-        const container = document.getElementById('partyScheduleGrid');
-        if (container) {
-            container.innerHTML = `
-                <div style="
-                    grid-column: 1 / -1;
-                    text-align: center;
-                    padding: 30px;
-                    color: var(--text-secondary);
-                ">
-                    <p>파티 일정을 불러오는데 실패했습니다.</p>
-                    <p style="font-size: 0.9rem; margin-top: 10px;">잠시 후 다시 시도해주세요.</p>
-                </div>
-            `;
-        }
-    }
+        <div style="margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span style="color: #00e5ff; font-weight: 600;">♂ 남성</span>
+                <span style="color: ${maleRemaining <= 5 ? '#ff0066' : '#00e5ff'}; font-weight: 700;">
+                    ${maleRemaining}석 남음
+                </span>
+            </div>
+            <div style="background: rgba(0, 229, 255, 0.1); border-radius: 10px; height: 12px; overflow: hidden;">
+                <div style="background: linear-gradient(90deg, #00e5ff, #0099ff); height: 100%; width: ${maleOccupancy}%; transition: width 0.5s ease;"></div>
+            </div>
+        </div>
+        
+        <div style="margin-bottom: 25px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span style="color: #ff0066; font-weight: 600;">♀ 여성</span>
+                <span style="color: ${femaleRemaining <= 5 ? '#ff0066' : '#ff0066'}; font-weight: 700;">
+                    ${femaleRemaining}석 남음
+                </span>
+            </div>
+            <div style="background: rgba(255, 0, 102, 0.1); border-radius: 10px; height: 12px; overflow: hidden;">
+                <div style="background: linear-gradient(90deg, #ff0066, #ff3388); height: 100%; width: ${femaleOccupancy}%; transition: width 0.5s ease;"></div>
+            </div>
+        </div>
+        
+        <div style="text-align: center;">
+            ${totalRemaining === 0 ? 
+                '<button disabled style="padding: 15px 40px; background: #666; color: #999; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: not-allowed;">매진되었습니다</button>' :
+                '<button onclick="openApplicationModal()" style="padding: 15px 40px; background: var(--neon-accent); color: var(--bg-primary); border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">지금 참가 신청하기 →</button>'
+            }
+        </div>
+    `;
+    
+    detailsDiv.style.display = 'block';
+    detailsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ========== 월 이동 ==========
+function previousMonth() {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+    document.getElementById('dateDetails').style.display = 'none';
+}
+
+function nextMonth() {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+    document.getElementById('dateDetails').style.display = 'none';
+}
+
+// ========== 초기화 ==========
+async function loadPartyDatesForIntro() {
+    await loadPartyData();
+    await renderCalendar();
 }
     // fadeInUp 애니메이션 추가
 const style = document.createElement('style');
@@ -6809,6 +6832,7 @@ if (isWeekend && !isMoodKingParty) {
         // 페이지 로드 시 실행
         document.addEventListener('DOMContentLoaded', function() {
             loadPartyDates();
+             loadPartyDatesForIntro();   // 👈 이 줄 추가 (바로 아래에)
             subscribeToNotifications();
             subscribeToApplications();
             generateRandomNotifications();
