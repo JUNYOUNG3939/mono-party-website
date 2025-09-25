@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MONO PARTY | 참가 신청서</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Playfair+Display:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --neon-accent: #00ff88;
+            --neon-pink: #ff0066;
+            --neon-blue: #00e5ff;
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-card: #111111;
+            --input-bg: #1a1a1a;
+            --input-border: #333333;
+        }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 20% 80%, rgba(255, 0, 102, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at center, rgba(0, 255, 136, 0.05) 0%, transparent 70%);
+        }
+        
+        /* Form Container */
+        .form-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Header */
+        .form-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .form-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            margin-bottom: 10px;
+            color: var(--neon-accent);
+            text-shadow: 0 0 20px var(--neon-accent);
+        }
+        
+        .form-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+        
+        /* Form Section */
+        .form-section {
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            padding: 40px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--neon-accent), var(--neon-pink), var(--neon-blue));
+            animation: gradient 3s ease infinite;
+        }
+        
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        @keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--neon-accent);
+        }
+        
+        /* Form Group */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .required {
+            color: var(--neon-pink);
+        }
+        
+        /* Input Styles */
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 15px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--neon-accent);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+        
+        /* Gender Selection */
+        .gender-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .gender-card {
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .gender-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+        }
+        
+        .gender-card.selected {
+            border-color: var(--neon-accent);
+            background: rgba(0, 255, 136, 0.1);
+        }
+        /* Companion Selection Styles */
+.companion-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+}
+
+.companion-card.selected {
+    border-color: var(--neon-accent) !important;
+    background: rgba(0, 255, 136, 0.1) !important;
+}
+
+.companion-card.selected[data-value="yes"] {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+        
+        .gender-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+        
+        .gender-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .gender-label {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        
+        /* Calendar */
+        .calendar-container {
+            margin-bottom: 30px;
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .calendar-month {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .calendar-nav-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            color: var(--text-primary);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .calendar-nav-btn:hover {
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 700;
+            color: var(--text-secondary);
+            padding: 10px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .calendar-day:hover:not(.disabled) {
+            background: rgba(0, 255, 136, 0.2);
+            border-color: var(--neon-accent);
+        }
+        
+        .calendar-day.selected {
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            font-weight: 700;
+        }
+        
+        .calendar-day.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .calendar-day.has-party {
+            border-color: var(--neon-pink);
+            background: rgba(255, 0, 102, 0.1);
+        }
+        /* 무드왕 파티 특별 스타일 */
+.calendar-day.mood-king-party {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1)) !important;
+    border: 2px solid #FFD700 !important;
+    font-weight: 700;
+    position: relative;
+    animation: goldPulse 2s infinite;
+}
+
+@keyframes goldPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+}
+
+.calendar-day.mood-king-party::after {
+    content: '👑';
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 0.9rem;
+}
+
+.mood-king-notice {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+        
+        .calendar-day.has-party::after {
+            content: '🎉';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 0.8rem;
+        }
+        
+        /* Price Display */
+        .price-display {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--neon-accent);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .price-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--neon-accent);
+        }
+        
+        .price-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .price-option {
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .price-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.2);
+        }
+        
+        .price-option.selected {
+            border-color: var(--neon-accent);
+            background: rgba(0, 255, 136, 0.1);
+        }
+        
+        .price-option input[type="radio"] {
+            display: none;
+        }
+        
+        .price-option-name {
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .price-option-price {
+            font-size: 1.3rem;
+            color: var(--neon-accent);
+        }
+        
+        /* File Upload */
+        .file-upload {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .file-upload input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
+        .file-upload-label {
+            display: block;
+            padding: 15px;
+            background: var(--input-bg);
+            border: 2px dashed var(--input-border);
+            border-radius: 5px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .file-upload:hover .file-upload-label {
+            border-color: var(--neon-accent);
+            background: rgba(0, 255, 136, 0.1);
+        }
+        
+        /* Agreement Section */
+        .agreement-section {
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .agreement-section h3 {
+            color: var(--neon-accent);
+            margin-bottom: 15px;
+        }
+        
+        .agreement-section p {
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        
+        /* Checkbox */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        
+        /* Submit Button */
+        .submit-button {
+            width: 100%;
+            padding: 20px;
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 5px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.5);
+        }
+        
+        .submit-button:disabled {
+            background: var(--input-border);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .submit-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .submit-button:hover::before {
+            left: 100%;
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--bg-primary);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Success Message */
+        .success-message {
+            display: none;
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--neon-accent);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .success-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Loading message for calendar */
+        .calendar-loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+        }
+        
+        /* No party dates message */
+        .no-party-dates {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 0, 102, 0.1);
+            border: 1px solid var(--neon-pink);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-section {
+                padding: 20px;
+            }
+            
+            .gender-selection,
+            .price-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .calendar-grid {
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg"></div>
+    
+    <div class="form-container">
+        <!-- Header -->
+        <div class="form-header">
+            <h1 class="form-logo">MONO PARTY</h1>
+            <p class="form-subtitle">참가 신청서</p>
+        </div>
+        
+        <form id="applicationForm">
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <h2 class="section-title">기본 정보</h2>
+                
+                <!-- Gender Selection -->
+                <div class="form-group">
+                    <label class="form-label">성별 <span class="required">*</span></label>
+                    <div class="gender-selection">
+                        <label class="gender-card">
+                            <input type="radio" name="gender" value="male" required>
+                            <div class="gender-icon">🤵</div>
+                            <div class="gender-label">남성</div>
+                        </label>
+                        <label class="gender-card">
+                            <input type="radio" name="gender" value="female" required>
+                            <div class="gender-icon">👗</div>
+                            <div class="gender-label">여성</div>
+                        </label>
+                    </div>
+                </div>
+                <!-- Companion Selection -->
+<div class="form-group">
+    <label class="form-label">동반인 여부 <span class="required">*</span></label>
+    <p style="color: var(--neon-accent); font-size: 0.9rem; margin-bottom: 15px;">
+        💑 동반인과 함께 오시면 ALL NIGHT 티켓 할인 혜택!
+    </p>
+    <div class="companion-selection" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <label class="companion-card" style="
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        ">
+            <input type="radio" name="companion" value="no" checked required style="position: absolute; opacity: 0;">
+            <div style="font-size: 2rem; margin-bottom: 10px;">👤</div>
+            <div style="font-weight: 700;">혼자 참가</div>
+            <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">일반 가격</div>
+        </label>
+        
+        <label class="companion-card" style="
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        ">
+            <input type="radio" name="companion" value="yes" required style="position: absolute; opacity: 0;">
+            <div style="font-size: 2rem; margin-bottom: 10px;">👥</div>
+            <div style="font-weight: 700;">동반인과 함께</div>
+            <div style="color: var(--neon-accent); font-size: 0.9rem; margin-top: 5px;">
+                <strong>할인 혜택!</strong>
+            </div>
+        </label>
+    </div>
+    
+    <!-- 동반인 이름 입력 필드 -->
+    <div id="companionNameGroup" style="display: none; background: rgba(0, 255, 136, 0.1); padding: 20px; border-radius: 10px; border: 1px solid var(--neon-accent);">
+        <label class="form-label" for="companionName">
+            동반인 성함 <span class="required">*</span>
+        </label>
+        <input type="text" class="form-input" id="companionName" name="companionName" placeholder="함께 오실 분의 성함을 입력해주세요" style="margin-top: 10px;">
+        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 10px; margin-bottom: 0;">
+            ※ 동반인도 별도로 신청서를 작성하셔야 합니다
+        </p>
+    </div>
+</div>
+                
+                <!-- Date Selection -->
+                <div class="form-group">
+                    <label class="form-label">참가 날짜 선택 <span class="required">*</span></label>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 15px;">
+                        관리자가 설정한 파티 날짜만 선택 가능합니다 🎉
+                    </p>
+                    <div class="calendar-container">
+                        <div class="calendar-loading" id="calendarLoading" style="display: none;">
+                            파티 일정을 불러오는 중입니다...
+                        </div>
+                        <div class="no-party-dates" id="noPartyDates" style="display: none;">
+                            <p style="color: var(--neon-pink); font-weight: 700; margin-bottom: 10px;">📅 현재 예약 가능한 파티가 없습니다</p>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem;">새로운 파티 일정은 인스타그램에서 확인해주세요!</p>
+                        </div>
+                        <div id="calendarContent">
+                            <div class="calendar-header">
+                                <div class="calendar-month" id="currentMonth">2025년 8월</div>
+                                <div class="calendar-nav">
+                                    <button type="button" class="calendar-nav-btn" id="prevMonth">◀</button>
+                                    <button type="button" class="calendar-nav-btn" id="nextMonth">▶</button>
+                                </div>
+                            </div>
+                            <div class="calendar-grid" id="calendarGrid">
+                                <!-- Calendar will be generated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="selectedDate" id="selectedDate" required>
+                </div>
+                
+                <!-- Price Display -->
+                <div class="price-display">
+                    <div class="price-title">참가비</div>
+                    <div class="price-options" id="priceOptions">
+                        <!-- Price options will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Personal Information Section -->
+            <div class="form-section">
+                <h2 class="section-title">개인 정보</h2>
+                
+                <div class="form-group">
+                    <label class="form-label" for="name">성함 (본명) <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+    <label class="form-label" for="nickname">파티에서 사용할 닉네임 <span class="required">*</span></label>
+    <input type="text" class="form-input" id="nickname" name="nickname" placeholder="파티에서 사용할 닉네임" required>
+</div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="height">키 (cm) <span class="required">*</span></label>
+                    <input type="number" class="form-input" id="height" name="height" min="140" max="210" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="age">나이 <span class="required">*</span></label>
+                    <input type="number" class="form-input" id="age" name="age" min="20" max="40" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="phone">연락처 <span class="required">*</span></label>
+                    <input type="tel" class="form-input" id="phone" name="phone" placeholder="010-0000-0000" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="job">어떤 일을 하시나요? <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="job" name="job" placeholder="직업 또는 하시는 일을 적어주세요" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="photo">본인 사진 첨부</label>
+                    <div class="file-upload">
+                        <input type="file" id="photo" name="photo" accept="image/*">
+                        <label class="file-upload-label" for="photo">
+                            📷 사진을 선택하거나 드래그하세요 (선택사항)
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="instagram">인스타그램 아이디 <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="instagram" name="instagram" placeholder="@username" required>
+                </div>
+                
+                
+            </div>
+            
+            <!-- Agreement Section -->
+            <div class="form-section">
+                <h2 class="section-title">약관 동의</h2>
+                
+                <div class="agreement-section">
+                    <h3>MONO PARTY는 여러분을 기다리고 있어요</h3>
+                    <p>참여 기록은 인스타그램 DM 히스토리를 기반으로 확인하고 있습니다.</p>
+                    
+                    <h3>[개인정보 수집 및 이용에 관한 동의]</h3>
+                    <p>1. 개인정보의 수집 이용 목적: 모노파티 진행 및 CS 안내 등</p>
+                    <p>2. 수집하는 개인정보의 항목: 신청서 내 항목</p>
+                    <p>3. 개인정보의 보유 이용 기간: 선발자 안내 후 3년</p>
+                    
+                    <h3>[마케팅 활용 동의 및 광고 수신 동의]</h3>
+                    <p>4. 모노파티 서비스와 관련된 이벤트 소식, 빈자리 알림, 고객 혜택 등</p>
+                    
+                    <h3>[모노파티 주류 대리구매 제공 동의]</h3>
+                    <p>5. 모노파티는 게스트들의 편의를 위해 주류/음료/물/식사류를 대리 구매하여 제공하고 있습니다. 음식의 가공이나 조리에는 관여하지 않습니다.</p>
+                    
+                    <h3>[모노파티 환불 정책]</h3>
+                    <p>6. 신청하신 파티 일정은 7일 전부터 일정 변경 및 환불이 불가합니다.<br>
+                    ex) 7월 19일 파티 신청자는 7월 12일까지 환불 가능합니다. 7월 13일부터는 불가합니다.</p>
+                    
+                    <h3>[모노파티 CS 유의 사항]</h3>
+                    <p>7. 금요일~일요일은 파티 진행, 휴일로 인해 답장이 늦을 수 있습니다.<br>
+                    (만약, 신청 후 답장을 못받으셨거나 급한 사항이면, 한번 더 DM 주세요)</p>
+                    
+                    <h3>[모노파티 참가 기준]</h3>
+                    <p>8. 신청서를 신중하게 살피신 후 모노파티와 꼭 어울리는 분들만 파티에 초대합니다. 결이 맞지 않거나, 신청자가 많을 경우에는 선발 인원에서 제외되실 수 있습니다.<br>
+                    제외되신 경우에는 100% 환불을 진행하고 있으니 양해 부탁드립니다.</p>
+                    
+                    <h3>[모노파티 촬영 동의]</h3>
+                    <p>9. 모노파티에서는 게스트들의 빛나는 순간을 남기기 위해서 촬영을 진행합니다. 촬영된 결과물은 모노파티 계정과 콘텐츠 등에 활용될 수 있습니다.<br>
+                    *얼굴 모자이크 진행</p>
+                </div>
+                
+                <div class="checkbox-container">
+                    <input type="checkbox" id="agreeAll" name="agreeAll" required>
+                    <label for="agreeAll">위 내용을 모두 확인했으며, 동의합니다.</label>
+                </div>
+            </div>
+            <!-- Instagram Follow & DM Confirmation Section -->
+<div class="form-section" style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink);">
+    <h2 class="section-title" style="color: var(--neon-pink);">📱 필수 확인 사항</h2>
+    
+    <div style="background: var(--bg-card); padding: 25px; border-radius: 10px; margin-bottom: 20px;">
+        <h3 style="color: var(--neon-accent); margin-bottom: 20px; text-align: center;">
+            ⚠️ 신청 완료를 위한 마지막 단계 ⚠️
+        </h3>
+        
+        <ol style="line-height: 2; color: var(--text-primary); font-size: 1.1rem;">
+            <li style="margin-bottom: 15px;">
+                <strong style="color: var(--neon-accent);">@mono_party_</strong> 인스타그램 계정을 팔로우해주세요
+            </li>
+            <li style="margin-bottom: 15px;">
+                신청서 제출 및 다음 페이지에 나오는 계좌번호로 입금 후 <strong style="color: var(--neon-accent);">@mono_party_</strong>로 DM을 보내주세요
+                <div style="background: var(--input-bg); padding: 15px; border-radius: 5px; margin-top: 10px;">
+                    <p style="margin: 0; color: var(--text-secondary);">DM 내용 예시:</p>
+                    <p style="margin: 5px 0 0 0; color: var(--neon-accent);">
+                        "8월 15일 / 홍길동 / 신청 완료했습니다"
+                    </p>
+                </div>
+            </li>
+            <li style="margin-bottom: 15px;">
+                입금 확인 후 파티 참가가 확정됩니다
+            </li>
+        </ol>
+    </div>
+    
+    <div style="background: rgba(0, 255, 136, 0.2); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+        <p style="text-align: center; font-size: 1.1rem; margin-bottom: 20px;">
+            위 내용을 모두 확인하셨나요?<br>
+            <span style="color: var(--text-secondary); font-size: 0.9rem;">
+                아래 입력란에 <strong>"확인함"</strong>을 정확히 입력해주세요
+            </span>
+        </p>
+        
+        <div class="form-group" style="margin-bottom: 0;">
+            <input 
+                type="text" 
+                class="form-input" 
+                id="confirmText" 
+                name="confirmText" 
+                placeholder="확인함 (정확히 입력해주세요)"
+                style="text-align: center; font-size: 1.2rem; font-weight: 700;"
+                required
+            >
+            <p id="confirmError" style="color: var(--neon-pink); text-align: center; margin-top: 10px; display: none;">
+                ⚠️ "확인함"을 정확히 입력해주세요
+            </p>
+        </div>
+    </div>
+</div>
+            <!-- Submit Button -->
+            <button type="submit" class="submit-button" id="submitButton">
+                참가 신청하기
+                <div class="loading-spinner"></div>
+            </button>
+        </form>
+        
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">✨</div>
+            <h2>신청이 완료되었습니다!</h2>
+            <p>작성하신 연락처로 안내 메시지를 보내드릴 예정입니다.</p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase 초기화
+        const SUPABASE_URL = 'https://wframchrsfspkxrpughn.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmcmFtY2hyc2ZzcGt4cnB1Z2huIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0OTg1NDIsImV4cCI6MjA2OTA3NDU0Mn0.62tDcKGS8eVPC92MmO6mXyfNcM6QKiaRpydaBYKsum0';
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Discord Webhook URL
+        const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1399264687530577971/J0GsY_NM6X3ojNzuUIYFRzSDDIs2Ipm0Q3qaT0-3nZKvLASFpSK4sJvFiwxeAULi0-jB';
+        
+        // Discord 알림 전송 함수
+        async function sendDiscordNotification(applicationData) {
+            try {
+                const embed = {
+                    title: "🎉 새로운 MONO PARTY 참가 신청!",
+                    color: 0x00ff88,
+                    timestamp: new Date().toISOString(),
+                    footer: {
+                        text: "MONO PARTY 신청 시스템"
+                    },
+                    // 사진 추가 (큰 이미지로 표시)
+                    image: applicationData.photo_url ? {
+                        url: applicationData.photo_url
+                    } : undefined,
+                    fields: [
+                        {
+                            name: "👤 이름",
+                            value: applicationData.name || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "🎭 닉네임",
+                            value: applicationData.nickname || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "📱 연락처",
+                            value: applicationData.phone || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "⚧ 성별",
+                            value: applicationData.gender === 'male' ? '남성' : '여성',
+                            inline: true
+                        },
+                        {
+                            name: "📅 참가 날짜",
+                            value: applicationData.selected_date || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "🎫 티켓 타입",
+                            value: applicationData.ticket_type === 'allNight' ? 'ALL NIGHT (1부+2부)' : 
+                                   applicationData.ticket_type === 'part1' ? '1부만' : '2부만',
+                            inline: true
+                        },
+                        {
+                            name: "💰 결제 금액",
+                            value: `${applicationData.price.toLocaleString()}원`,
+                            inline: true
+                        },
+                        {
+                            name: "🎂 나이",
+                            value: `${applicationData.age}세`,
+                            inline: true
+                        },
+                        {
+                            name: "📏 키",
+                            value: `${applicationData.height}cm`,
+                            inline: true
+                        },
+                        {
+                            name: "💼 직업",
+                            value: applicationData.job || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "📸 인스타그램",
+                            value: applicationData.instagram || 'N/A',
+                            inline: true
+                        },
+                        {
+                            name: "👥 동반인",
+                            value: applicationData.companion === 'yes' ? 
+                                   `있음 (${applicationData.companion_name})` : '없음',
+                            inline: true
+                        },
+                        {
+                            name: "🆔 신청 번호",
+                            value: `#${applicationData.id || 'N/A'}`,
+                            inline: true
+                        },
+                        {
+                            name: "📷 사진 링크",
+                            value: applicationData.photo_url ? `[사진 보기](${applicationData.photo_url})` : '사진 없음',
+                            inline: false
+                        }
+                    ]
+                };
+
+                const response = await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: '@everyone 새로운 참가 신청이 접수되었습니다!',
+                        embeds: [embed]
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('Discord 알림 전송 실패:', response.status);
+                }
+            } catch (error) {
+                console.error('Discord 알림 에러:', error);
+                // Discord 전송 실패해도 신청은 계속 진행
+            }
+        }
+        
+        // Calendar functionality
+        let currentYear = new Date().getFullYear();
+        let currentMonth = new Date().getMonth();
+        const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+        const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
+        
+        // Available party dates from database
+        let availablePartyDates = [];
+        
+// Price information (추석 할인 적용)
+const prices = {
+    male: {
+        allNight: 64000,
+        part1: 42000,
+        part2: 25000,
+        allNightWithCompanion: 60000,
+        // 추석 할인 가격
+        chuseokAllNight: 54000,           // 10,000원 할인
+        chuseokAllNightWithCompanion: 50000  // 10,000원 할인
+    },
+    female: {
+        allNight: 40000,
+        part1: 30000,
+        part2: 20000,
+        allNightWithCompanion: 30000,
+        // 추석 할인 가격
+        chuseokAllNight: 30000,           // 10,000원 할인
+        chuseokAllNightWithCompanion: 20000  // 10,000원 할인
+    }
+};
+
+// 추석 기간 체크 함수
+function isChuseokPeriod(dateStr) {
+    // dateStr이 'YYYY-MM-DD' 형식이므로 직접 비교
+    const date = new Date(dateStr + 'T00:00:00'); // 시간대 문제 방지
+    const start = new Date('2025-10-02T00:00:00');
+    const end = new Date('2025-10-11T23:59:59');
+    
+    console.log('체크할 날짜:', dateStr, '파싱된 날짜:', date, '추석 기간:', start, '~', end);
+    
+    return date >= start && date <= end;
+}        
+        // Load available party dates from database
+        async function loadAvailablePartyDates() {
+            try {
+                // Show loading message
+                document.getElementById('calendarLoading').style.display = 'block';
+                document.getElementById('calendarContent').style.display = 'none';
+                document.getElementById('noPartyDates').style.display = 'none';
+                
+                const { data, error } = await supabaseClient
+                    .from('party_schedules')
+                    .select('*')
+                    .eq('is_active', true)
+                    .gte('party_date', new Date().toISOString().split('T')[0])
+                    .order('party_date', { ascending: true });
+                
+                if (error) throw error;
+                
+                // Hide loading message
+                document.getElementById('calendarLoading').style.display = 'none';
+                
+                if (data && data.length > 0) {
+                    availablePartyDates = data.map(item => item.party_date);
+                    document.getElementById('calendarContent').style.display = 'block';
+                    
+                    // Set calendar to the month of the first available date
+                    const firstDate = new Date(availablePartyDates[0]);
+                    currentYear = firstDate.getFullYear();
+                    currentMonth = firstDate.getMonth();
+                    
+                    generateCalendar();
+                } else {
+                    // No party dates available
+                    document.getElementById('noPartyDates').style.display = 'block';
+                    document.getElementById('calendarContent').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading party dates:', error);
+                document.getElementById('calendarLoading').style.display = 'none';
+                document.getElementById('noPartyDates').style.display = 'block';
+            }
+        }
+        
+        // Generate calendar
+        function generateCalendar() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            const currentMonthElement = document.getElementById('currentMonth');
+            
+            currentMonthElement.textContent = `${currentYear}년 ${monthNames[currentMonth]}`;
+            
+            // Clear calendar
+            calendarGrid.innerHTML = '';
+            
+            // Add day headers
+            dayNames.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.className = 'calendar-day-header';
+                dayHeader.textContent = day;
+                calendarGrid.appendChild(dayHeader);
+            });
+            
+            // Get first day of month and number of days
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            // Add empty cells for days before month starts
+            for (let i = 0; i < firstDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'calendar-day disabled';
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Add days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                
+// Check if this date is available for party
+if (availablePartyDates.includes(dateStr)) {
+    dayElement.classList.add('has-party');
+    
+// 무드왕 파티 체크
+const partyDate = new Date(dateStr);
+const month = partyDate.getMonth();
+const dateNum = partyDate.getDate();
+const dayOfWeek = partyDate.getDay();
+
+// 9월 27일은 일반 파티로 예외 처리
+const isSeptember27 = (month === 8 && dateNum === 27);
+
+// 9월 20일이거나 다른 달의 마지막 토요일인지 체크 (9월 27일 제외)
+const isMoodKingParty = !isSeptember27 && (
+    (month === 8 && dateNum === 20) || 
+    (dayOfWeek === 6 && new Date(partyDate.getFullYear(), month, dateNum + 7).getMonth() !== month)
+);  
+    if (isMoodKingParty) {
+        dayElement.classList.add('mood-king-party');
+    }
+    
+    dayElement.addEventListener('click', () => selectDate(day, dateStr, isMoodKingParty));
+} else {
+                    dayElement.classList.add('disabled');
+                }
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+        
+// Select date
+function selectDate(day, dateStr, isMoodKing = false) {
+    // Remove previous selection
+    document.querySelectorAll('.calendar-day.selected').forEach(el => {
+        el.classList.remove('selected');
+    });
+    
+    // Remove previous notices
+    const existingNotice = document.getElementById('moodKingNotice');
+    if (existingNotice) {
+        existingNotice.remove();
+    }
+    const existingChuseokNotice = document.getElementById('chuseokNotice');
+    if (existingChuseokNotice) {
+        existingChuseokNotice.remove();
+    }
+    
+    // Add selection to clicked date
+    const dayElements = document.querySelectorAll('.calendar-day');
+    dayElements.forEach(el => {
+        if (el.textContent == day && el.classList.contains('has-party')) {
+            el.classList.add('selected');
+        }
+    });
+    
+    // Set hidden input value - 매우 중요!
+    document.getElementById('selectedDate').value = dateStr;
+    
+    // 추석 기간 체크
+    const isChuseok = isChuseokPeriod(dateStr);
+    
+    console.log('=== 날짜 선택 완료 ===');
+    console.log('선택된 날짜:', dateStr);
+    console.log('추석 기간 여부:', isChuseok);
+    console.log('무드왕 파티 여부:', isMoodKing);
+    console.log('Hidden input 값:', document.getElementById('selectedDate').value);
+    
+    // 추석 기간 선택 시 특별 안내 표시
+    if (isChuseok) {
+        const priceDisplay = document.querySelector('.price-display');
+        const notice = document.createElement('div');
+        notice.id = 'chuseokNotice';
+        notice.className = 'mood-king-notice';
+        notice.style.background = 'linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1))';
+        notice.style.borderColor = '#FFD700';
+        notice.innerHTML = `
+            <h3 style="color: #FFD700; margin-bottom: 10px; font-size: 1.3rem;">
+                🌕 추석 연휴 특별 할인! 🌕
+            </h3>
+            <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 10px;">
+                <strong>10월 2일 ~ 10월 11일</strong><br>
+                ALL NIGHT 티켓 <span style="color: #FFD700; font-weight: 700;">10,000원 할인</span>
+            </p>
+            <p style="color: #FFD700; font-size: 0.9rem;">
+                ✨ 추석 연휴 기간 한정 혜택입니다 ✨
+            </p>
+        `;
+        priceDisplay.parentNode.insertBefore(notice, priceDisplay);
+        
+        // 스크롤 애니메이션
+        notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    // 무드왕 파티 선택 시 특별 안내 표시 (추석 아닌 경우만)
+    else if (isMoodKing) {
+        const priceDisplay = document.querySelector('.price-display');
+        const notice = document.createElement('div');
+        notice.id = 'moodKingNotice';
+        notice.className = 'mood-king-notice';
+        notice.innerHTML = `
+            <h3 style="color: #FFD700; margin-bottom: 10px; font-size: 1.3rem;">
+                👑 무드왕 파티를 선택하셨습니다! 👑
+            </h3>
+            <p style="color: var(--text-primary); line-height: 1.6; margin-bottom: 10px;">
+                <strong>월 1회 스페셜 이벤트</strong><br>
+                80명이 실명 투표로 선발한 매력왕들이 모이는 특별한 날
+            </p>
+            <p style="color: #FFD700; font-size: 0.9rem;">
+                ✨ 무드왕 선발자는 우선 초대 및 특별 혜택이 제공됩니다 ✨
+            </p>
+        `;
+        priceDisplay.parentNode.insertBefore(notice, priceDisplay);
+        
+        // 스크롤 애니메이션
+        notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    
+    // 성별이 선택되어 있으면 가격 업데이트 - 강화된 버전
+    const gender = document.querySelector('input[name="gender"]:checked');
+    
+    if (gender) {
+        console.log('성별 선택 확인:', gender.value);
+        
+        // 즉시 한 번 실행
+        updatePrices();
+        
+        // DOM 업데이트 보장을 위해 추가 실행
+        setTimeout(() => {
+            console.log('지연 실행 - 가격 재계산');
+            updatePrices();
+            
+            // 추석 할인이 제대로 적용되었는지 확인
+            if (isChuseok) {
+                const allNightOption = document.querySelector('.price-option-price');
+                if (allNightOption) {
+                    const priceText = allNightOption.textContent;
+                    console.log('표시된 ALL NIGHT 가격:', priceText);
+                    
+                    // 추석 할인 가격 확인 (남성 54,000원, 여성 30,000원)
+                    const expectedPrice = gender.value === 'male' ? '54,000' : '30,000';
+                    if (!priceText.includes(expectedPrice)) {
+                        console.warn('⚠️ 추석 할인이 제대로 적용되지 않았습니다! 재시도...');
+                        updatePrices();
+                    } else {
+                        console.log('✅ 추석 할인이 정상적으로 적용되었습니다');
+                    }
+                }
+            }
+        }, 150);
+        
+    } else {
+        console.log('성별이 아직 선택되지 않음');
+        
+        // 성별 선택 유도 메시지 (선택적)
+        const genderSection = document.querySelector('.gender-selection');
+        if (genderSection) {
+            // 성별 선택 섹션에 하이라이트 효과 추가
+            genderSection.style.transition = 'all 0.3s ease';
+            genderSection.style.border = '2px solid var(--neon-accent)';
+            genderSection.style.boxShadow = '0 0 20px rgba(0, 255, 136, 0.3)';
+            
+            // 3초 후 하이라이트 제거
+            setTimeout(() => {
+                genderSection.style.border = '';
+                genderSection.style.boxShadow = '';
+            }, 3000);
+            
+            // 스크롤
+            genderSection.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }
+    }
+    
+    // 동반인 선택이 되어 있는 경우도 가격 재계산
+    const companion = document.querySelector('input[name="companion"]:checked');
+    if (companion && companion.value === 'yes') {
+        console.log('동반인 선택됨 - 추가 가격 업데이트');
+        setTimeout(() => {
+            updatePrices();
+        }, 200);
+    }
+}
+        
+      // Update price display
+// Update price display
+function updatePrices() {
+    const gender = document.querySelector('input[name="gender"]:checked');
+    const priceOptions = document.getElementById('priceOptions');
+    const companion = document.querySelector('input[name="companion"]:checked')?.value || 'no';
+    const selectedDate = document.getElementById('selectedDate').value;
+    
+    if (!gender) return;
+    
+    // 날짜가 선택되지 않은 경우 기본 가격 표시
+    if (!selectedDate) {
+        console.log('날짜가 선택되지 않음, 기본 가격 표시');
+        const genderPrices = prices[gender.value];
+        
+        priceOptions.innerHTML = `
+            <label class="price-option">
+                <input type="radio" name="ticketType" value="allNight" required>
+                <div class="price-option-name">
+                    ALL NIGHT<br>(1부 + 2부)
+                    ${companion === 'yes' ? '<br><span style="color: var(--neon-accent); font-size: 0.8rem;">동반인 할인</span>' : ''}
+                </div>
+                <div class="price-option-price">
+                    ${companion === 'yes' ? `<span style="text-decoration: line-through; opacity: 0.5; font-size: 0.9rem;">${genderPrices.allNight.toLocaleString()}원</span><br>` : ''}
+                    ${(companion === 'yes' ? genderPrices.allNightWithCompanion : genderPrices.allNight).toLocaleString()}원
+                </div>
+            </label>
+            <label class="price-option">
+                <input type="radio" name="ticketType" value="part1" required>
+                <div class="price-option-name">1부</div>
+                <div class="price-option-price">${genderPrices.part1.toLocaleString()}원</div>
+            </label>
+            <label class="price-option">
+                <input type="radio" name="ticketType" value="part2" required>
+                <div class="price-option-name">2부</div>
+                <div class="price-option-price">${genderPrices.part2.toLocaleString()}원</div>
+            </label>
+        `;
+        
+        // Add click events to price options
+        document.querySelectorAll('.price-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.price-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        return;
+    }
+    
+    const genderPrices = prices[gender.value];
+    const isChuseok = isChuseokPeriod(selectedDate);
+    
+    // 디버깅용 로그
+    console.log('=== 가격 계산 ===');
+    console.log('선택된 날짜:', selectedDate);
+    console.log('추석 기간 여부:', isChuseok);
+    console.log('성별:', gender.value);
+    console.log('동반인:', companion);
+    
+    // ALL NIGHT 가격 결정
+    let allNightPrice;
+    let originalAllNightPrice;
+    let showDiscount = false;
+    let discountLabel = '';
+    
+    if (isChuseok) {
+        // 추석 기간 할인 가격
+        if (companion === 'yes') {
+            allNightPrice = genderPrices.chuseokAllNightWithCompanion;
+            originalAllNightPrice = genderPrices.allNightWithCompanion;
+            discountLabel = '추석+동반 할인';
+        } else {
+            allNightPrice = genderPrices.chuseokAllNight;
+            originalAllNightPrice = genderPrices.allNight;
+            discountLabel = '🌕 추석 특가 (10,000원 할인)';
+        }
+        showDiscount = true;
+        console.log('추석 할인 적용 - 최종 가격:', allNightPrice, '원래 가격:', originalAllNightPrice);
+    } else {
+        // 일반 가격
+        if (companion === 'yes') {
+            allNightPrice = genderPrices.allNightWithCompanion;
+            originalAllNightPrice = genderPrices.allNight;
+            showDiscount = true;
+            discountLabel = '동반인 할인';
+        } else {
+            allNightPrice = genderPrices.allNight;
+            originalAllNightPrice = genderPrices.allNight;
+            showDiscount = false;
+        }
+        console.log('일반 가격 적용 - 최종 가격:', allNightPrice);
+    }
+    
+    // HTML 생성
+    priceOptions.innerHTML = `
+        <label class="price-option">
+            <input type="radio" name="ticketType" value="allNight" required>
+            <div class="price-option-name">
+                ALL NIGHT<br>(1부 + 2부)
+                ${discountLabel ? `<br><span style="color: ${isChuseok ? '#FFD700' : 'var(--neon-accent)'}; font-size: 0.8rem;">${discountLabel}</span>` : ''}
+            </div>
+            <div class="price-option-price">
+                ${showDiscount ? `<span style="text-decoration: line-through; opacity: 0.5; font-size: 0.9rem;">${originalAllNightPrice.toLocaleString()}원</span><br>` : ''}
+                <span style="${isChuseok ? 'color: #FFD700; font-weight: 700;' : ''}">${allNightPrice.toLocaleString()}원</span>
+            </div>
+        </label>
+        <label class="price-option">
+            <input type="radio" name="ticketType" value="part1" required>
+            <div class="price-option-name">1부</div>
+            <div class="price-option-price">${genderPrices.part1.toLocaleString()}원</div>
+        </label>
+        <label class="price-option">
+            <input type="radio" name="ticketType" value="part2" required>
+            <div class="price-option-name">2부</div>
+            <div class="price-option-price">${genderPrices.part2.toLocaleString()}원</div>
+        </label>
+    `;
+    
+    // Add click events to price options
+    document.querySelectorAll('.price-option').forEach(option => {
+        option.addEventListener('click', function() {
+            document.querySelectorAll('.price-option').forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+        });
+    });
+    
+    console.log('가격 업데이트 완료');
+}
+        
+        // Toggle companion name field
+        // Toggle companion name field
+function toggleCompanionName() {
+    const companionSelect = document.querySelector('input[name="companion"]:checked');  // ✅ 수정
+    const companionNameGroup = document.getElementById('companionNameGroup');
+    const companionNameInput = document.getElementById('companionName');
+    
+    if (companionSelect.value === 'yes') {
+        companionNameGroup.style.display = 'block';
+        companionNameInput.required = true;
+        
+        // 가격 업데이트 (동반인 할인 적용)
+        updatePrices();
+        
+        // 동반인 할인 안내 메시지 표시
+        const gender = document.querySelector('input[name="gender"]:checked');
+        if (gender) {
+            const discountAmount = gender.value === 'male' ? '2,000' : '5,000';
+            alert(`✨ 동반인 할인이 적용됩니다!\nALL NIGHT 티켓에서 ${discountAmount}원 할인`);
+        }
+    } else {
+        companionNameGroup.style.display = 'none';
+        companionNameInput.required = false;
+        companionNameInput.value = '';
+        
+        // 가격 원복
+        updatePrices();
+    }
+}
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load available party dates first
+            loadAvailablePartyDates();
+                // ✅ 초기 가격 표시 추가
+    setTimeout(() => {
+        const gender = document.querySelector('input[name="gender"]:checked');
+        if (gender) {
+            updatePrices();
+        }
+    }, 100);
+                // Companion selection cards
+    document.querySelectorAll('input[name="companion"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            // Remove selected class from all cards
+            document.querySelectorAll('.companion-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to parent card
+            this.parentElement.classList.add('selected');
+            this.parentElement.setAttribute('data-value', this.value);
+            
+            // Toggle companion name field
+            const companionNameGroup = document.getElementById('companionNameGroup');
+            const companionNameInput = document.getElementById('companionName');
+            
+            if (this.value === 'yes') {
+                companionNameGroup.style.display = 'block';
+                companionNameInput.required = true;
+                
+                // 성별이 선택되어 있으면 가격 업데이트
+                const gender = document.querySelector('input[name="gender"]:checked');
+                if (gender) {
+                    updatePrices();
+                    
+                    // 할인 안내 애니메이션
+                    companionNameGroup.style.animation = 'slideDown 0.3s ease';
+                } else {
+                    alert('💡 먼저 성별을 선택해주세요!');
+                    document.querySelector('input[name="companion"][value="no"]').checked = true;
+                    this.parentElement.classList.remove('selected');
+                    return;
+                }
+            } else {
+                companionNameGroup.style.display = 'none';
+                companionNameInput.required = false;
+                companionNameInput.value = '';
+                updatePrices();
+            }
+        });
+    });
+            
+            // Gender selection
+            document.querySelectorAll('input[name="gender"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    document.querySelectorAll('.gender-card').forEach(card => card.classList.remove('selected'));
+                    this.parentElement.classList.add('selected');
+
+                                const companion = document.querySelector('input[name="companion"]:checked');
+            if (companion) {
+                updatePrices();
+            }
+                    
+                });
+            });
+            
+            // Calendar navigation
+            document.getElementById('prevMonth').addEventListener('click', function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                generateCalendar();
+            });
+            
+            document.getElementById('nextMonth').addEventListener('click', function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                generateCalendar();
+            });
+            
+            // File upload
+            document.getElementById('photo').addEventListener('change', function(e) {
+                const fileName = e.target.files[0]?.name || '📷 사진을 선택하거나 드래그하세요 (선택사항)';
+                document.querySelector('.file-upload-label').textContent = fileName;
+            });
+
+             // 확인함 입력 실시간 검증
+    document.getElementById('confirmText').addEventListener('input', function() {
+        const confirmError = document.getElementById('confirmError');
+        if (this.value.trim() === '확인함') {
+            confirmError.style.display = 'none';
+            this.style.borderColor = 'var(--neon-accent)';
+            this.style.boxShadow = '0 0 10px rgba(0, 255, 136, 0.3)';
+        } else {
+            confirmError.style.display = 'block';
+            this.style.borderColor = 'var(--neon-pink)';
+            this.style.boxShadow = '0 0 10px rgba(255, 0, 102, 0.3)';
+        }
+    });
+            
+            // Form submission
+            document.getElementById('applicationForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                // 확인함 텍스트 검증
+const confirmText = document.getElementById('confirmText').value.trim();
+const confirmError = document.getElementById('confirmError');
+
+if (confirmText !== '확인함') {
+    confirmError.style.display = 'block';
+    document.getElementById('confirmText').style.borderColor = 'var(--neon-pink)';
+    document.getElementById('confirmText').focus();
+    
+    // 해당 섹션으로 스크롤
+    document.getElementById('confirmText').scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'center' 
+    });
+    
+    alert('신청을 완료하려면 "확인함"을 정확히 입력해주세요.');
+    return;
+} else {
+    confirmError.style.display = 'none';
+    document.getElementById('confirmText').style.borderColor = 'var(--input-border)';
+}
+    // Validate all required fields
+    const requiredFields = this.querySelectorAll('[required]');
+    let isValid = true;
+    
+    requiredFields.forEach(field => {
+        // 사진은 선택사항이므로 제외
+        if (field.id === 'photo') return;
+        
+        if (!field.value && !field.checked) {
+            isValid = false;
+            field.classList.add('error');
+        } else {
+            field.classList.remove('error');
+        }
+    });
+    
+    if (!isValid) {
+        alert('모든 필수 항목을 입력해주세요.');
+        return;
+    }
+    
+    // Show loading
+    const submitButton = document.getElementById('submitButton');
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<div class="loading-spinner" style="display: block;"></div>';
+    
+    try {
+        // Collect form data
+        const formData = new FormData(this);
+        
+        // ===== 사진 업로드 처리 (선택사항) =====
+        let photoUrl = null;
+        const photoFile = document.getElementById('photo').files[0];
+        
+        if (photoFile) {
+            console.log('📸 파일 업로드 시작:', photoFile.name, '크기:', photoFile.size);
+            
+            try {
+                // 파일명 생성 (타임스탬프 + 랜덤 문자열)
+                const timestamp = Date.now();
+                const randomString = Math.random().toString(36).substring(7);
+                const fileExt = photoFile.name.split('.').pop();
+                const fileName = `${timestamp}_${randomString}.${fileExt}`;
+                
+                console.log('📁 생성된 파일명:', fileName);
+                
+                // Supabase Storage에 업로드
+                const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                    .from('application-photos')
+                    .upload(fileName, photoFile, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+                
+                if (uploadError) {
+                    console.error('❌ Supabase 업로드 에러:', uploadError);
+                    throw uploadError;
+                }
+                
+                console.log('✅ 업로드 성공:', uploadData);
+                
+                // 업로드된 파일의 공개 URL 가져오기
+                const { data: { publicUrl } } = supabaseClient.storage
+                    .from('application-photos')
+                    .getPublicUrl(fileName);
+                
+                photoUrl = publicUrl;
+                console.log('🔗 생성된 공개 URL:', photoUrl);
+                
+            } catch (error) {
+                console.error('❌ 사진 업로드 실패 상세:', error);
+                // 사진 업로드 실패해도 계속 진행 (선택사항이므로)
+                console.log('사진 업로드 실패, 사진 없이 계속 진행');
+            }
+        } else {
+            console.log('⚠️ 사진 파일이 선택되지 않음 (선택사항)');
+        }
+        
+        const applicationData = {
+            // Basic info
+            gender: formData.get('gender'),
+            selected_date: formData.get('selectedDate'),
+            ticket_type: formData.get('ticketType'),
+            
+            // Personal info
+            name: formData.get('name'),
+            nickname: formData.get('nickname'),
+            height: parseInt(formData.get('height')),
+            age: parseInt(formData.get('age')),
+            phone: formData.get('phone'),
+            job: formData.get('job'),
+            instagram: formData.get('instagram'),
+            companion: formData.get('companion'),
+            companion_name: formData.get('companionName') || null,
+            
+               // Calculate price (추석 할인 + 동반인 할인 적용)
+        price: (() => {
+        const gender = formData.get('gender');
+        const ticketType = formData.get('ticketType');
+        const hasCompanion = formData.get('companion') === 'yes';
+        const selectedDate = formData.get('selectedDate');
+        const isChuseok = isChuseokPeriod(selectedDate);
+        
+        console.log('=== 최종 가격 계산 ===');
+        console.log('날짜:', selectedDate);
+        console.log('추석 여부:', isChuseok);
+        console.log('티켓 타입:', ticketType);
+        console.log('동반인:', hasCompanion);
+        
+        if (ticketType === 'allNight') {
+            if (isChuseok) {
+                const price = hasCompanion 
+                    ? prices[gender].chuseokAllNightWithCompanion 
+                    : prices[gender].chuseokAllNight;
+                console.log('추석 할인 적용 가격:', price);
+                return price;
+            } else if (hasCompanion) {
+                return prices[gender].allNightWithCompanion;
+            } else {
+                return prices[gender].allNight;
+            }
+        } else {
+            return prices[gender][ticketType === 'part1' ? 'part1' : 'part2'];
+        }
+    })(),
+            
+            // Party type is always 'provided' now
+            party_type: 'provided',
+            
+            // 사진 URL (선택사항)
+            photo_url: photoUrl
+        }; 
+        
+        // 저장할 데이터 확인
+        console.log('📤 데이터베이스 저장 데이터:', applicationData);
+        
+        // Save to Supabase
+        const { data, error } = await supabaseClient
+            .from('applications')
+            .insert([applicationData])
+            .select();
+        
+        if (error) {
+            console.error('❌ DB 저장 에러:', error);
+            throw error;
+        }
+        
+        console.log('✅ DB 저장 성공:', data);
+        console.log('신청 완료:', data);
+        
+        // Discord 알림 전송 (신청 ID 포함)
+        console.log('📨 Discord 알림 전송 시작');
+        await sendDiscordNotification({
+            ...applicationData,
+            id: data[0].id
+        });
+        console.log('✅ Discord 알림 전송 완료');
+        
+        // Create payment info based on gender (올바른 계좌번호로 수정)
+        const selectedPrice = applicationData.price.toLocaleString();
+        
+        const paymentInfo = `
+            <div style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink); padding: 25px; border-radius: 10px; margin-top: 30px;">
+                <h4 style="color: var(--neon-pink); margin-bottom: 20px; text-align: center;">⚠️ 중요 안내 ⚠️</h4>
+                
+                <!-- 계좌 정보 박스 -->
+                <div style="background: rgba(0, 255, 136, 0.2); border: 2px solid var(--neon-accent); padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
+                    <h5 style="color: var(--neon-accent); margin-bottom: 15px; font-size: 1.2rem;">💳 입금 계좌 정보</h5>
+                    <p style="font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: 10px;">
+                        카카오뱅크 79422264022
+                    </p>
+                    <p style="font-size: 1.1rem; color: var(--text-primary);">
+                        예금주: <strong>김O준</strong>
+                    </p>
+                    <p style="margin-top: 15px; font-size: 0.95rem; color: var(--neon-pink);">
+                        ⚡ 신청금액: <strong style="font-size: 1.2rem;">${selectedPrice}원</strong>
+                    </p>
+                </div>
+                
+                <p style="margin-bottom: 15px; line-height: 1.8;">
+                    <strong>위 계좌로 1시간 이내로 티켓 비용을 입금하셔야 신청이 접수됩니다.</strong><br>
+                    <span style="color: var(--text-secondary);">* 지연 입금 시 신청서를 다시 작성하셔야 합니다.</span>
+                </p>
+                <p style="margin-bottom: 15px; text-align: center;">
+                    <span style="color: var(--neon-accent); font-weight: 600; font-size: 1rem;">
+                        📱 입금 후 인스타그램 @mono_party_로 신청 날짜와 성함을 DM으로 보내주세요!
+                    </span>
+                </p>
+                
+                <div style="background: var(--bg-card); padding: 20px; border-radius: 5px; margin-top: 20px;">
+                    <h5 style="color: var(--neon-accent); margin-bottom: 15px;">티켓 비용 (${applicationData.gender === 'male' ? '남성' : '여성'})</h5>
+                    <p style="margin-bottom: 8px;">1부 + 2부 : <strong>${applicationData.gender === 'male' ? '64,000원' : '40,000원'}</strong></p>
+                    <p style="margin-bottom: 8px;">1부: <strong>${applicationData.gender === 'male' ? '42,000원' : '30,000원'}</strong></p>
+                    <p style="margin-bottom: 8px;">2부: <strong>${applicationData.gender === 'male' ? '25,000원' : '20,000원'}</strong></p>
+                    <p style="color: var(--neon-accent);">동반인이 있을 경우 : 1부 + 2부 <strong>${applicationData.gender === 'male' ? '60,000원' : '30,000원'}</strong></p>
+                </div>
+            </div>
+        `;
+        
+        // Create summary for display
+        const summaryHTML = `
+            <div style="background: var(--bg-card); padding: 30px; border-radius: 10px; margin-top: 30px;">
+                <h3 style="color: var(--neon-accent); margin-bottom: 20px;">신청 내역</h3>
+                <div style="display: grid; gap: 15px;">
+                    <p><strong>성함:</strong> ${applicationData.name}</p>
+                    <p><strong>닉네임:</strong> ${applicationData.nickname}</p>
+                    <p><strong>성별:</strong> ${applicationData.gender === 'male' ? '남성' : '여성'}</p>
+                    <p><strong>날짜:</strong> ${applicationData.selected_date}</p>
+                    <p><strong>티켓:</strong> ${applicationData.ticket_type === 'allNight' ? 'ALL NIGHT' : applicationData.ticket_type === 'part1' ? '1부' : '2부'}</p>
+                    <p><strong>참가비:</strong> ${applicationData.price.toLocaleString()}원</p>
+                    <p><strong>연락처:</strong> ${applicationData.phone}</p>
+                    <p><strong>인스타그램:</strong> ${applicationData.instagram}</p>
+                    ${applicationData.companion === 'yes' ? `<p><strong>동반인:</strong> ${applicationData.companion_name}</p>` : ''}
+                </div>
+                <div style="margin-top: 30px; padding: 20px; background: rgba(0, 255, 136, 0.1); border: 1px solid var(--neon-accent); border-radius: 5px;">
+                    <p style="text-align: center; margin: 0;">
+                        <strong>신청번호:</strong> #${data[0].id}<br>
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">이 번호는 무시하셔도 됩니다.</span>
+                    </p>
+                </div>
+                ${paymentInfo}
+            </div>
+        `;
+        
+        // Hide form and show success message with summary
+        this.style.display = 'none';
+        const successMessage = document.getElementById('successMessage');
+        successMessage.innerHTML += summaryHTML;
+        successMessage.style.display = 'block';
+        
+        // Alert for SMS notification
+        alert(`✅ 신청이 완료되었습니다!\n\n파티 인스타 DM으로 신청 날짜 및 이름을 한번 더 전송 부탁드려요!`);
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('신청 중 오류가 발생했습니다. 다시 시도해주세요.\n\n오류 내용: ' + error.message);
+        submitButton.disabled = false;
+        submitButton.innerHTML = '참가 신청하기';
+    }
+});
+        });
+        
+        // Add floating particles effect
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = window.innerHeight + 'px';
+            particle.style.width = '2px';
+            particle.style.height = '2px';
+            particle.style.background = '#00ff88';
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            particle.style.opacity = '0.5';
+            particle.style.zIndex = '1';
+            
+            document.body.appendChild(particle);
+            
+            // Animate particle
+            let posY = window.innerHeight;
+            const speed = 1 + Math.random() * 2;
+            const drift = (Math.random() - 0.5) * 2;
+            
+            const animateParticle = () => {
+                posY -= speed;
+                particle.style.top = posY + 'px';
+                particle.style.left = parseFloat(particle.style.left) + drift + 'px';
+                
+                if (posY < -10) {
+                    particle.remove();
+                } else {
+                    requestAnimationFrame(animateParticle);
+                }
+            };
+            
+            animateParticle();
+        }
+        
+        // Create particles periodically
+        setInterval(createParticle, 500);
+    </script>
+</body>
+</html>
