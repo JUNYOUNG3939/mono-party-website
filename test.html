@@ -7342,9 +7342,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('backButton').style.display = 'none';
 });
 </script>
-<!-- 추석 특별 할인 팝업 (모바일 최적화 v2) -->
+<!-- 추석 특별 할인 팝업 (더 작은 크기 + 완벽한 작동) -->
 <div id="chuseokPopup" style="
-    display: flex;
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -7356,101 +7356,71 @@ document.addEventListener('DOMContentLoaded', function() {
     justify-content: center;
     backdrop-filter: blur(15px);
     animation: fadeIn 0.5s ease;
-    padding: 20px;
 ">
     <div style="
         position: relative;
-        max-width: 420px;
-        width: 100%;
+        max-width: 340px;
+        width: 90%;
         background: linear-gradient(135deg, rgba(17, 17, 17, 0.98) 0%, rgba(0, 0, 0, 0.98) 100%);
-        border: 3px solid;
+        border: 2px solid;
         border-image: linear-gradient(45deg, #FFD700, #FFA500, #00ff88) 1;
-        border-radius: 25px;
+        border-radius: 20px;
         overflow: hidden;
         box-shadow: 0 20px 60px rgba(255, 215, 0, 0.4);
         animation: slideUp 0.6s ease;
     ">
         <!-- 닫기 버튼 -->
-        <button id="closeChuseokBtn" type="button" style="
+        <div style="
             position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(255, 0, 102, 0.9);
-            border: none;
+            top: 10px;
+            right: 10px;
+            background: #ff0066;
             color: white;
-            width: 38px;
-            height: 38px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 100;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.3rem;
             font-weight: bold;
-            box-shadow: 0 5px 20px rgba(255, 0, 102, 0.5);
-            transition: all 0.3s ease;
-            -webkit-tap-highlight-color: transparent;
-        ">×</button>
-        
-        <!-- 반짝이는 배경 효과 -->
-        <div style="
-            position: absolute;
-            top: -80px;
-            left: -80px;
-            width: 160px;
-            height: 160px;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
-            animation: float 4s ease-in-out infinite;
-            pointer-events: none;
-        "></div>
-        <div style="
-            position: absolute;
-            bottom: -80px;
-            right: -80px;
-            width: 160px;
-            height: 160px;
-            background: radial-gradient(circle, rgba(0, 255, 136, 0.3) 0%, transparent 70%);
-            animation: float 4s ease-in-out infinite reverse;
-            pointer-events: none;
-        "></div>
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 3px 15px rgba(255, 0, 102, 0.5);
+        " onclick="closeChuseokPopupNow()">×</div>
         
         <!-- 컨텐츠 -->
-        <div style="position: relative; z-index: 1; padding: 50px 20px 25px;">
+        <div style="padding: 45px 20px 20px;">
             <!-- 아이콘 -->
-            <div style="text-align: center; margin-bottom: 15px;">
-                <div style="
-                    font-size: 3rem;
-                    animation: bounce 1s infinite;
-                    display: inline-block;
-                ">🎁</div>
+            <div style="text-align: center; margin-bottom: 12px;">
+                <div style="font-size: 2.5rem;">🎁</div>
             </div>
             
             <!-- 타이틀 -->
             <h2 style="
                 text-align: center;
-                font-size: 1.6rem;
+                font-size: 1.4rem;
                 font-weight: 900;
-                margin-bottom: 12px;
+                margin-bottom: 10px;
                 background: linear-gradient(45deg, #FFD700, #FFA500);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
                 line-height: 1.3;
-            ">추석 연휴 특별 할인!</h2>
+            ">추석 연휴<br>특별 할인!</h2>
             
             <!-- 기간 -->
             <div style="
                 text-align: center;
-                margin: 0 auto 20px;
-                padding: 10px 18px;
+                margin: 0 auto 15px;
+                padding: 8px 15px;
                 background: rgba(255, 215, 0, 0.1);
-                border-radius: 25px;
+                border-radius: 20px;
                 border: 1px solid rgba(255, 215, 0, 0.3);
                 max-width: fit-content;
             ">
                 <p style="
                     color: #FFD700;
-                    font-size: 0.95rem;
+                    font-size: 0.85rem;
                     font-weight: 700;
                     margin: 0;
                 ">📅 10/2 ~ 10/11</p>
@@ -7459,79 +7429,74 @@ document.addEventListener('DOMContentLoaded', function() {
             <!-- 할인 금액 -->
             <div style="
                 text-align: center;
-                margin: 20px 0;
-                padding: 20px 15px;
+                margin: 15px 0;
+                padding: 18px 12px;
                 background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
-                border-radius: 18px;
+                border-radius: 15px;
                 border: 2px solid #FFD700;
             ">
                 <p style="
-                    font-size: 0.9rem;
+                    font-size: 0.8rem;
                     color: var(--text-secondary);
-                    margin-bottom: 8px;
+                    margin-bottom: 6px;
                 ">추석 특별가</p>
                 <p style="
-                    font-size: 2.2rem;
+                    font-size: 2rem;
                     font-weight: 900;
                     color: #FFD700;
                     margin: 0;
                     line-height: 1;
-                    text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+                    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
                 ">10,000원 할인</p>
                 <p style="
-                    font-size: 0.8rem;
+                    font-size: 0.75rem;
                     color: var(--text-secondary);
-                    margin-top: 8px;
+                    margin-top: 6px;
                 ">1부+2부 패키지 구매 시</p>
             </div>
             
             <!-- 설명 -->
             <div style="
                 text-align: center;
-                margin-bottom: 20px;
-                padding: 15px;
+                margin-bottom: 15px;
+                padding: 12px;
                 background: rgba(0, 255, 136, 0.05);
-                border-radius: 12px;
+                border-radius: 10px;
                 border: 1px solid rgba(0, 255, 136, 0.2);
             ">
                 <p style="
                     color: var(--text-primary);
-                    line-height: 1.5;
+                    line-height: 1.4;
                     margin: 0;
-                    font-size: 0.85rem;
+                    font-size: 0.8rem;
                 ">
-                    🌕 <strong>추석 연휴 기념</strong><br>
-                    평소보다 <span style="color: #FFD700; font-weight: 700;">10,000원 저렴하게!</span><br>
-                    이 기회를 놓치지 마세요
+                    🌕 평소보다 <span style="color: #FFD700; font-weight: 700;">10,000원 저렴!</span><br>
+                    추석 기간 한정 특가
                 </p>
             </div>
             
             <!-- CTA 버튼 -->
-            <button id="chuseokCTABtn" type="button" style="
+            <div style="
                 width: 100%;
-                padding: 16px;
+                padding: 14px;
                 background: linear-gradient(135deg, #FFD700, #FFA500);
                 color: #000;
-                border: none;
-                border-radius: 25px;
-                font-size: 1.05rem;
+                border-radius: 20px;
+                font-size: 0.95rem;
                 font-weight: 900;
                 cursor: pointer;
-                box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
-                position: relative;
-                z-index: 10;
-                -webkit-tap-highlight-color: transparent;
-                touch-action: manipulation;
-            ">
+                text-align: center;
+                box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            " onclick="handleChuseokCTANow()">
                 🎉 지금 할인받고 참가하기
-            </button>
+            </div>
             
             <!-- 하단 안내 -->
             <p style="
                 text-align: center;
                 color: var(--text-secondary);
-                font-size: 0.7rem;
-                margin-top: 12px;
+                font-size: 0.65rem;
+                margin-top: 10px;
                 margin-bottom: 0;
             ">* 추석 기간 한정 혜택</p>
         </div>
@@ -7539,13 +7504,13 @@ document.addEventListener('DOMContentLoaded', function() {
         <!-- 타이머 효과 -->
         <div style="
             position: absolute;
-            top: 12px;
-            left: 12px;
+            top: 10px;
+            left: 10px;
             background: rgba(255, 0, 102, 0.9);
             color: white;
-            padding: 6px 10px;
-            border-radius: 18px;
-            font-size: 0.7rem;
+            padding: 5px 8px;
+            border-radius: 15px;
+            font-size: 0.65rem;
             font-weight: 700;
             animation: pulse 2s infinite;
             pointer-events: none;
@@ -7568,22 +7533,12 @@ document.addEventListener('DOMContentLoaded', function() {
 @keyframes slideUp {
     from {
         opacity: 0;
-        transform: translateY(30px) scale(0.95);
+        transform: translateY(30px) scale(0.9);
     }
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
     }
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-15px); }
 }
 
 @keyframes pulse {
@@ -7597,178 +7552,98 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 
-/* 모바일 최적화 */
-@media (max-width: 768px) {
-    #chuseokPopup {
-        padding: 15px;
-    }
-    
+/* 작은 화면 대응 */
+@media (max-width: 360px) {
     #chuseokPopup > div {
-        max-width: 360px;
-    }
-    
-    #closeChuseokBtn {
-        width: 35px !important;
-        height: 35px !important;
-        font-size: 1.3rem !important;
-    }
-    
-    #chuseokCTABtn {
-        min-height: 48px;
-        font-size: 0.95rem !important;
-    }
-}
-
-@media (max-width: 400px) {
-    #chuseokPopup > div {
-        max-width: 100%;
-        padding: 45px 15px 20px !important;
+        max-width: 95% !important;
     }
     
     #chuseokPopup h2 {
-        font-size: 1.4rem !important;
+        font-size: 1.2rem !important;
     }
-    
-    #chuseokPopup .discount-amount {
-        font-size: 1.8rem !important;
-    }
-}
-
-/* 버튼 활성 상태 */
-#closeChuseokBtn:active {
-    transform: scale(0.9) !important;
-    background: rgba(255, 0, 102, 1) !important;
-}
-
-#chuseokCTABtn:active {
-    transform: scale(0.95) !important;
-    background: linear-gradient(135deg, #FFA500, #FFD700) !important;
 }
 </style>
 
 <script>
-(function() {
-    'use strict';
-    
-    let popupClosed = false;
-    
-<script>
-// 팝업 닫기 함수
-function closeChuseokPopup() {
-    console.log('팝업 닫기 시도'); // 디버깅용
+// 팝업 닫기 함수 (즉시 실행)
+function closeChuseokPopupNow() {
+    console.log('❌ 팝업 닫기 클릭됨!');
     const popup = document.getElementById('chuseokPopup');
-    if (!popup) {
-        console.log('팝업 요소 없음');
-        return;
-    }
-    
-    popup.style.animation = 'fadeOut 0.3s ease';
-    setTimeout(() => {
+    if (popup) {
         popup.style.display = 'none';
-        console.log('팝업 닫힘');
-    }, 300);
+        console.log('✅ 팝업 닫힘 완료');
+    } else {
+        console.log('⚠️ 팝업 요소를 찾을 수 없음');
+    }
 }
 
-// CTA 버튼 클릭 함수
-function handleChuseokCTA() {
-    console.log('CTA 버튼 클릭됨'); // 디버깅용
-    closeChuseokPopup();
-    setTimeout(() => {
-        console.log('신청 모달 열기 시도');
+// CTA 버튼 클릭 함수 (즉시 실행)
+function handleChuseokCTANow() {
+    console.log('🎉 CTA 버튼 클릭됨!');
+    
+    // 팝업 닫기
+    const popup = document.getElementById('chuseokPopup');
+    if (popup) {
+        popup.style.display = 'none';
+        console.log('✅ 팝업 닫힘');
+    }
+    
+    // 신청 모달 열기
+    setTimeout(function() {
+        console.log('📝 신청 모달 열기 시도...');
         if (typeof openApplicationModal === 'function') {
             openApplicationModal();
+            console.log('✅ 신청 모달 열림!');
         } else {
-            console.error('openApplicationModal 함수를 찾을 수 없음');
-        }
-    }, 400);
-}
-
-// 페이지 로드 시 실행
-window.addEventListener('load', function() {
-    console.log('추석 팝업 초기화 시작');
-    
-    const popup = document.getElementById('chuseokPopup');
-    const closeBtn = document.getElementById('closeChuseokBtn');
-    const ctaBtn = document.getElementById('chuseokCTABtn');
-    
-    if (!popup) {
-        console.error('팝업 요소를 찾을 수 없음');
-        return;
-    }
-    
-    // 팝업 표시
-    popup.style.display = 'flex';
-    console.log('팝업 표시됨');
-    
-    // 닫기 버튼 이벤트
-    if (closeBtn) {
-        console.log('닫기 버튼 이벤트 등록');
-        
-        // 클릭 이벤트
-        closeBtn.onclick = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('닫기 버튼 클릭됨 (click)');
-            closeChuseokPopup();
-        };
-        
-        // 터치 이벤트 (모바일)
-        closeBtn.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('닫기 버튼 터치됨 (touch)');
-            closeChuseokPopup();
-        }, { passive: false });
-    } else {
-        console.error('닫기 버튼을 찾을 수 없음');
-    }
-    
-    // CTA 버튼 이벤트
-    if (ctaBtn) {
-        console.log('CTA 버튼 이벤트 등록');
-        
-        // 클릭 이벤트
-        ctaBtn.onclick = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('CTA 버튼 클릭됨 (click)');
-            handleChuseokCTA();
-        };
-        
-        // 터치 이벤트 (모바일)
-        ctaBtn.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('CTA 버튼 터치됨 (touch)');
-            handleChuseokCTA();
-        }, { passive: false });
-    } else {
-        console.error('CTA 버튼을 찾을 수 없음');
-    }
-    
-    // ESC 키로 팝업 닫기
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            const popup = document.getElementById('chuseokPopup');
-            if (popup && popup.style.display !== 'none') {
-                console.log('ESC 키로 팝업 닫기');
-                closeChuseokPopup();
+            console.error('❌ openApplicationModal 함수를 찾을 수 없음');
+            // 대체 방법: 직접 모달 열기
+            const modal = document.getElementById('applicationModal');
+            const iframe = document.getElementById('applicationFrame');
+            if (modal && iframe) {
+                iframe.src = 'application.html';
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                console.log('✅ 대체 방법으로 모달 열림!');
+            } else {
+                console.error('❌ 모달 요소를 찾을 수 없음');
             }
         }
-    });
+    }, 100);
+}
+
+// 페이지 로드 시 팝업 표시
+window.addEventListener('load', function() {
+    console.log('🎁 추석 팝업 로드 시작...');
     
-    // 팝업 외부 클릭시 닫기
-    popup.addEventListener('click', function(e) {
-        if (e.target === this) {
-            console.log('외부 클릭으로 팝업 닫기');
-            closeChuseokPopup();
+    // 1초 후 팝업 표시 (다른 요소 로드 완료 후)
+    setTimeout(function() {
+        const popup = document.getElementById('chuseokPopup');
+        if (popup) {
+            popup.style.display = 'flex';
+            console.log('✅ 추석 팝업 표시 완료!');
+        } else {
+            console.error('❌ 팝업 요소를 찾을 수 없음');
         }
-    });
+    }, 1000);
 });
 
-// 전역 함수로 등록
-window.closeChuseokPopup = closeChuseokPopup;
-window.handleChuseokCTA = handleChuseokCTA;
+// ESC 키로 팝업 닫기
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        const popup = document.getElementById('chuseokPopup');
+        if (popup && popup.style.display === 'flex') {
+            closeChuseokPopupNow();
+            console.log('⌨️ ESC 키로 팝업 닫힘');
+        }
+    }
+});
+
+// 팝업 외부 클릭시 닫기
+document.addEventListener('click', function(e) {
+    const popup = document.getElementById('chuseokPopup');
+    if (popup && e.target === popup) {
+        closeChuseokPopupNow();
+        console.log('🖱️ 외부 클릭으로 팝업 닫힘');
+    }
+});
 </script>
-</body>
-</html>
