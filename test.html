@@ -7652,6 +7652,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let popupClosed = false;
     
+    <script>
+(function() {
+    'use strict';
+    
+    let popupClosed = false;
+    
     // 팝업 닫기 함수
     function closeChuseokPopup() {
         if (popupClosed) return;
@@ -7664,12 +7670,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         setTimeout(() => {
             popup.style.display = 'none';
-            // 오늘 하루 동안 팝업 안 보기
-            try {
-                localStorage.setItem('chuseokPopupClosed', new Date().toDateString());
-            } catch(e) {
-                console.log('localStorage not available');
-            }
+            // localStorage 제거 - 매번 보이도록
         }, 300);
     }
     
@@ -7690,23 +7691,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function initPopup() {
-        // 오늘 팝업을 닫았는지 확인
-        let shouldShowPopup = true;
-        try {
-            const lastClosed = localStorage.getItem('chuseokPopupClosed');
-            const today = new Date().toDateString();
-            if (lastClosed === today) {
-                shouldShowPopup = false;
-            }
-        } catch(e) {
-            console.log('localStorage not available');
-        }
-        
         const popup = document.getElementById('chuseokPopup');
         
-        if (!shouldShowPopup && popup) {
-            popup.style.display = 'none';
-            return;
+        // 항상 팝업 표시
+        if (popup) {
+            popup.style.display = 'flex';
         }
         
         // 닫기 버튼 이벤트
