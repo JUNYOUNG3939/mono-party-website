@@ -912,26 +912,6 @@
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
 }
-        /* ========== 추석 연휴 파티 스타일 ========== */
-.calendar-date.chuseok-party {
-    background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 165, 0, 0.3));
-    border: 2px solid #FFD700;
-    animation: glow-pulse 2s infinite;
-}
-
-.calendar-date.chuseok-party::before {
-    content: '🌕';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    font-size: 0.8rem;
-}
-
-/* 페이드인 애니메이션 */
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
         /* Only apply animations on desktop */
         @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
             .floating {
@@ -1431,152 +1411,6 @@
 
 </head>
 <body>
-    <body>
-    <!-- 추석 연휴 특별 할인 팝업 -->
-    <div id="chuseokPopup" style="
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.95);
-        z-index: 99999;
-        backdrop-filter: blur(10px);
-        animation: fadeIn 0.5s ease;
-    ">
-        <div style="
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(17, 17, 17, 0.98));
-            border: 3px solid #FFD700;
-            border-radius: 30px;
-            padding: 50px 40px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 0 60px rgba(255, 215, 0, 0.5);
-        ">
-            <!-- 닫기 버튼 -->
-            <button onclick="closeChuseokPopup()" style="
-                position: absolute;
-                top: 15px;
-                right: 15px;
-                background: transparent;
-                border: 2px solid #FFD700;
-                color: #FFD700;
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                font-size: 1.5rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            " onmouseover="this.style.background='#FFD700'; this.style.color='#000'" 
-               onmouseout="this.style.background='transparent'; this.style.color='#FFD700'">×</button>
-            
-            <!-- 아이콘 -->
-            <div style="font-size: 5rem; margin-bottom: 20px; animation: bounce 2s infinite;">
-                🌕
-            </div>
-            
-            <!-- 제목 -->
-            <h2 style="
-                font-size: 2rem;
-                background: linear-gradient(45deg, #FFD700, #FFA500);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                font-weight: 900;
-                margin-bottom: 15px;
-                line-height: 1.3;
-            ">추석 연휴 특별 할인!</h2>
-            
-            <!-- 부제목 -->
-            <p style="
-                color: #FFD700;
-                font-size: 1.2rem;
-                font-weight: 700;
-                margin-bottom: 25px;
-            ">🎉 10월 2일 ~ 10월 11일 🎉</p>
-            
-            <!-- 할인 정보 -->
-            <div style="
-                background: rgba(255, 215, 0, 0.1);
-                border: 2px solid #FFD700;
-                border-radius: 20px;
-                padding: 25px;
-                margin-bottom: 30px;
-            ">
-                <p style="
-                    color: var(--text-primary);
-                    font-size: 1.1rem;
-                    line-height: 1.8;
-                    margin-bottom: 20px;
-                ">
-                    추석 연휴 파티에<br>
-                    <span style="color: #FFD700; font-size: 1.3rem; font-weight: 900;">
-                        올나잇 1만원 할인!
-                    </span>
-                </p>
-                
-                <div style="
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    gap: 15px;
-                    margin-top: 15px;
-                ">
-                    <span style="
-                        color: #999;
-                        text-decoration: line-through;
-                        font-size: 1.2rem;
-                    ">60,000원</span>
-                    <span style="
-                        color: #FFD700;
-                        font-size: 2rem;
-                        font-weight: 900;
-                    ">→ 50,000원</span>
-                </div>
-            </div>
-            
-            <!-- 설명 -->
-            <p style="
-                color: var(--text-secondary);
-                font-size: 0.95rem;
-                margin-bottom: 25px;
-                line-height: 1.6;
-            ">
-                추석에도 파티는 계속됩니다!<br>
-                가족과 함께한 낮, 친구들과 보내는 밤 🌙
-            </p>
-            
-            <!-- CTA 버튼 -->
-            <button onclick="goToChuseokParty()" style="
-                background: linear-gradient(135deg, #FFD700, #FFA500);
-                color: #000;
-                border: none;
-                padding: 18px 50px;
-                border-radius: 30px;
-                font-size: 1.2rem;
-                font-weight: 900;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
-            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                지금 바로 신청하기 →
-            </button>
-            
-            <!-- 하단 문구 -->
-            <p style="
-                color: #999;
-                font-size: 0.85rem;
-                margin-top: 20px;
-            ">
-                * 추석 연휴 기간 한정 (10/2~10/11)
-            </p>
-        </div>
-    </div>
     <!-- Particles Background - Desktop Only -->
     <div class="particles" id="particles"></div>
     
@@ -5390,7 +5224,7 @@
 
 .party-indicator {
     position: absolute;
-    top: 4px;
+    bottom: 4px;
     left: 50%;
     transform: translateX(-50%);
     width: 6px;
@@ -6217,7 +6051,6 @@ function isMoodKingDate(checkDate) {
 }
 
 // ========== 날짜 셀 생성 ==========
-// ========== 날짜 셀 생성 ==========
 function createDateCell(date, dateString, partyInfo = null) {
     const cell = document.createElement('div');
     cell.className = 'calendar-date';
@@ -6227,15 +6060,7 @@ function createDateCell(date, dateString, partyInfo = null) {
         cell.classList.add('has-party');
         
         const checkDate = new Date(dateString + 'T00:00:00');
-        const month = checkDate.getMonth() + 1;
-        const day = checkDate.getDate();
-        
-        // 추석 연휴 체크 (10/2 ~ 10/11)
-        const isChuseok = month === 10 && day >= 2 && day <= 11;
-        
-        if (isChuseok) {
-            cell.classList.add('chuseok-party');
-        } else if (isMoodKingDate(checkDate)) {
+        if (isMoodKingDate(checkDate)) {
             cell.classList.add('special-party');
         }
         
@@ -6314,104 +6139,6 @@ function showDateDetails(dateString, partyInfo) {
     const femaleOccupancy = ((femaleMax - femaleRemaining) / femaleMax) * 100;
     
     const isSpecial = isMoodKingDate(date);
-    function showDateDetails(dateString, partyInfo) {
-    const detailsDiv = document.getElementById('dateDetails');
-    selectedDate = dateString;
-    
-    document.querySelectorAll('.calendar-date').forEach(cell => {
-        cell.classList.remove('selected');
-    });
-    event.target.classList.add('selected');
-    
-    const date = new Date(dateString + 'T00:00:00');
-    const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-    const dayOfWeek = dayNames[date.getDay()];
-    
-    const maleRemaining = partyInfo.male_remaining_seats || 0;
-    const femaleRemaining = partyInfo.female_remaining_seats || 0;
-    const maleMax = partyInfo.male_max_capacity || 35;
-    const femaleMax = partyInfo.female_max_capacity || 35;
-    const totalRemaining = maleRemaining + femaleRemaining;
-    
-    const maleOccupancy = ((maleMax - maleRemaining) / maleMax) * 100;
-    const femaleOccupancy = ((femaleMax - femaleRemaining) / femaleMax) * 100;
-    
-    const isSpecial = isMoodKingDate(date);
-    const isChuseok = month === 10 && day >= 2 && day <= 11; // 👈 이 줄 추가
-    
-    detailsDiv.innerHTML = `
-        <div style="text-align: center; margin-bottom: 25px;">
-            ${isSpecial ? '<div style="font-size: 3rem; margin-bottom: 10px;">👑</div>' : 
-              isChuseok ? '<div style="font-size: 3rem; margin-bottom: 10px;">🌕</div>' :
-              '<div style="font-size: 3rem; margin-bottom: 10px;">🎉</div>'}
-            <h3 style="font-size: 2rem; color: ${isSpecial ? '#FFD700' : isChuseok ? '#FFD700' : 'var(--neon-accent)'}; margin-bottom: 10px;">
-                ${month}월 ${day}일 ${dayOfWeek}요일
-            </h3>
-            ${isSpecial ? '<p style="color: #FFD700; font-weight: 700; font-size: 1.1rem;">스페셜 파티 🌟</p>' : ''}
-            ${isChuseok ? '<p style="color: #FFD700; font-weight: 700; font-size: 1.1rem;">추석 연휴 특별 파티 🌕</p>' : ''}
-        </div>
-        
-        ${isChuseok ? `
-            <div style="
-                background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
-                border: 2px solid #FFD700;
-                border-radius: 20px;
-                padding: 20px;
-                margin-bottom: 25px;
-                text-align: center;
-            ">
-                <div style="font-size: 2rem; margin-bottom: 10px;">🎁</div>
-                <p style="
-                    color: #FFD700;
-                    font-size: 1.8rem;
-                    font-weight: 900;
-                    margin-bottom: 5px;
-                ">만원 할인!</p>
-                <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                    추석 연휴 특별 프로모션
-                </p>
-            </div>
-        ` : ''}
-        
-        <div style="margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <span style="color: #00e5ff; font-weight: 600;">♂ 남성</span>
-                <span style="color: ${maleRemaining <= 5 ? '#ff0066' : '#00e5ff'}; font-weight: 700;">
-                    ${maleRemaining}석 남음
-                </span>
-            </div>
-            <div style="background: rgba(0, 229, 255, 0.1); border-radius: 10px; height: 12px; overflow: hidden;">
-                <div style="background: linear-gradient(90deg, #00e5ff, #0099ff); height: 100%; width: ${maleOccupancy}%; transition: width 0.5s ease;"></div>
-            </div>
-        </div>
-        
-        <div style="margin-bottom: 25px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <span style="color: #ff0066; font-weight: 600;">♀ 여성</span>
-                <span style="color: ${femaleRemaining <= 5 ? '#ff0066' : '#ff0066'}; font-weight: 700;">
-                    ${femaleRemaining}석 남음
-                </span>
-            </div>
-            <div style="background: rgba(255, 0, 102, 0.1); border-radius: 10px; height: 12px; overflow: hidden;">
-                <div style="background: linear-gradient(90deg, #ff0066, #ff3388); height: 100%; width: ${femaleOccupancy}%; transition: width 0.5s ease;"></div>
-            </div>
-        </div>
-        
-        <div style="text-align: center;">
-            ${totalRemaining === 0 ? 
-                '<button disabled style="padding: 15px 40px; background: #666; color: #999; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: not-allowed;">매진되었습니다</button>' :
-                `<button onclick="openApplicationModal()" style="padding: 15px 40px; background: ${isChuseok ? 'linear-gradient(135deg, #FFD700, #FFA500)' : 'var(--neon-accent)'}; color: ${isChuseok ? '#000' : 'var(--bg-primary)'}; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                    ${isChuseok ? '🌕 할인가로 신청하기 →' : '지금 참가 신청하기 →'}
-                </button>`
-            }
-        </div>
-    `;
-    
-    detailsDiv.style.display = 'block';
-    detailsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
     
     detailsDiv.innerHTML = `
         <div style="text-align: center; margin-bottom: 25px;">
@@ -7111,7 +6838,6 @@ if (isWeekend && !isMoodKingParty) {
             generateRandomNotifications();
             updateViewerCount();
              updateMoodKingDate(); 
-             checkChuseokPopup();
                 // 메인 페이지가 보이면 파티 일정 로드
     const mainPageObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -7595,40 +7321,7 @@ document.addEventListener('DOMContentLoaded', function() {
             scrollToMain();
         });
     });
-// ========== 추석 연휴 팝업 관련 함수 ========== 👈 여기부터 추가
-function checkChuseokPopup() {
-    const now = new Date();
-    const currentMonth = now.getMonth() + 1;
-    const currentYear = now.getFullYear();
-    
-    if (currentMonth === 10 && currentYear === 2025) {
-        const popupShownToday = localStorage.getItem('chuseokPopupShown');
-        const today = now.toDateString();
-        
-        if (popupShownToday !== today) {
-            setTimeout(() => {
-                document.getElementById('chuseokPopup').style.display = 'block';
-            }, 1000);
-        }
-    }
-}
-
-function closeChuseokPopup() {
-    document.getElementById('chuseokPopup').style.display = 'none';
-    const today = new Date().toDateString();
-    localStorage.setItem('chuseokPopupShown', today);
-}
-
-function goToChuseokParty() {
-    closeChuseokPopup();
-    currentDate = new Date(2025, 9, 1);
-    document.getElementById('introPage').style.display = 'none';
-    document.getElementById('mainPage').style.display = 'block';
-    loadPartyDatesForIntro();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-        
+});
 </script>
     <script>
 // 전역 함수로 등록 (혹시 누락된 경우를 대비)
