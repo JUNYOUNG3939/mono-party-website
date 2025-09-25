@@ -7652,128 +7652,123 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let popupClosed = false;
     
-    <script>
-(function() {
-    'use strict';
-    
-    let popupClosed = false;
-    
-    // 팝업 닫기 함수
-    function closeChuseokPopup() {
-        if (popupClosed) return;
-        
-        const popup = document.getElementById('chuseokPopup');
-        if (!popup) return;
-        
-        popupClosed = true;
-        popup.style.animation = 'fadeOut 0.3s ease';
-        
-        setTimeout(() => {
-            popup.style.display = 'none';
-            // localStorage 제거 - 매번 보이도록
-        }, 300);
+<script>
+// 팝업 닫기 함수
+function closeChuseokPopup() {
+    console.log('팝업 닫기 시도'); // 디버깅용
+    const popup = document.getElementById('chuseokPopup');
+    if (!popup) {
+        console.log('팝업 요소 없음');
+        return;
     }
     
-    // 팝업 열기 함수
-    function openChuseokPopup() {
-        const popup = document.getElementById('chuseokPopup');
-        if (popup) {
-            popup.style.display = 'flex';
-            popupClosed = false;
+    popup.style.animation = 'fadeOut 0.3s ease';
+    setTimeout(() => {
+        popup.style.display = 'none';
+        console.log('팝업 닫힘');
+    }, 300);
+}
+
+// CTA 버튼 클릭 함수
+function handleChuseokCTA() {
+    console.log('CTA 버튼 클릭됨'); // 디버깅용
+    closeChuseokPopup();
+    setTimeout(() => {
+        console.log('신청 모달 열기 시도');
+        if (typeof openApplicationModal === 'function') {
+            openApplicationModal();
+        } else {
+            console.error('openApplicationModal 함수를 찾을 수 없음');
         }
+    }, 400);
+}
+
+// 페이지 로드 시 실행
+window.addEventListener('load', function() {
+    console.log('추석 팝업 초기화 시작');
+    
+    const popup = document.getElementById('chuseokPopup');
+    const closeBtn = document.getElementById('closeChuseokBtn');
+    const ctaBtn = document.getElementById('chuseokCTABtn');
+    
+    if (!popup) {
+        console.error('팝업 요소를 찾을 수 없음');
+        return;
     }
     
-    // DOM 로드 완료 후 실행
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initPopup);
+    // 팝업 표시
+    popup.style.display = 'flex';
+    console.log('팝업 표시됨');
+    
+    // 닫기 버튼 이벤트
+    if (closeBtn) {
+        console.log('닫기 버튼 이벤트 등록');
+        
+        // 클릭 이벤트
+        closeBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('닫기 버튼 클릭됨 (click)');
+            closeChuseokPopup();
+        };
+        
+        // 터치 이벤트 (모바일)
+        closeBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('닫기 버튼 터치됨 (touch)');
+            closeChuseokPopup();
+        }, { passive: false });
     } else {
-        initPopup();
+        console.error('닫기 버튼을 찾을 수 없음');
     }
     
-    function initPopup() {
-        const popup = document.getElementById('chuseokPopup');
+    // CTA 버튼 이벤트
+    if (ctaBtn) {
+        console.log('CTA 버튼 이벤트 등록');
         
-        // 항상 팝업 표시
-        if (popup) {
-            popup.style.display = 'flex';
-        }
+        // 클릭 이벤트
+        ctaBtn.onclick = function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('CTA 버튼 클릭됨 (click)');
+            handleChuseokCTA();
+        };
         
-        // 닫기 버튼 이벤트
-        const closeBtn = document.getElementById('closeChuseokBtn');
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
+        // 터치 이벤트 (모바일)
+        ctaBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('CTA 버튼 터치됨 (touch)');
+            handleChuseokCTA();
+        }, { passive: false });
+    } else {
+        console.error('CTA 버튼을 찾을 수 없음');
+    }
+    
+    // ESC 키로 팝업 닫기
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const popup = document.getElementById('chuseokPopup');
+            if (popup && popup.style.display !== 'none') {
+                console.log('ESC 키로 팝업 닫기');
                 closeChuseokPopup();
-            }, false);
-            
-            closeBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }, { passive: false });
-            
-            closeBtn.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                closeChuseokPopup();
-            }, { passive: false });
-        }
-        
-        // CTA 버튼 이벤트
-        const ctaBtn = document.getElementById('chuseokCTABtn');
-        if (ctaBtn) {
-            ctaBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                closeChuseokPopup();
-                setTimeout(() => {
-                    if (typeof openApplicationModal === 'function') {
-                        openApplicationModal();
-                    }
-                }, 100);
-            }, false);
-            
-            ctaBtn.addEventListener('touchstart', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }, { passive: false });
-            
-            ctaBtn.addEventListener('touchend', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                closeChuseokPopup();
-                setTimeout(() => {
-                    if (typeof openApplicationModal === 'function') {
-                        openApplicationModal();
-                    }
-                }, 100);
-            }, { passive: false });
-        }
-        
-        // ESC 키로 팝업 닫기
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const popup = document.getElementById('chuseokPopup');
-                if (popup && popup.style.display !== 'none' && !popupClosed) {
-                    closeChuseokPopup();
-                }
             }
-        });
-        
-        // 팝업 외부 클릭시 닫기
-        if (popup) {
-            popup.addEventListener('click', function(e) {
-                if (e.target === this && !popupClosed) {
-                    closeChuseokPopup();
-                }
-            });
         }
-    }
+    });
     
-    // 전역 함수로 등록 (필요시)
-    window.closeChuseokPopup = closeChuseokPopup;
-    window.openChuseokPopup = openChuseokPopup;
-})();
+    // 팝업 외부 클릭시 닫기
+    popup.addEventListener('click', function(e) {
+        if (e.target === this) {
+            console.log('외부 클릭으로 팝업 닫기');
+            closeChuseokPopup();
+        }
+    });
+});
+
+// 전역 함수로 등록
+window.closeChuseokPopup = closeChuseokPopup;
+window.handleChuseokCTA = handleChuseokCTA;
 </script>
 </body>
 </html>
