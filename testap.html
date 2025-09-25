@@ -1024,6 +1024,9 @@ function isChuseokPeriod(dateStr) {
     const date = new Date(dateStr);
     const start = new Date('2025-10-02');
     const end = new Date('2025-10-11');
+    
+    console.log('체크할 날짜:', date, '추석 기간:', start, '~', end); // 디버깅용
+    
     return date >= start && date <= end;
 }
         
@@ -1233,10 +1236,11 @@ function selectDate(day, dateStr, isMoodKing = false) {
         
         // 스크롤 애니메이션
         notice.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        updatePrices();
     }
 }
         
-       // Update price display
+      // Update price display
 function updatePrices() {
     const gender = document.querySelector('input[name="gender"]:checked');
     const priceOptions = document.getElementById('priceOptions');
@@ -1247,6 +1251,10 @@ function updatePrices() {
     
     const genderPrices = prices[gender.value];
     const isChuseok = selectedDate && isChuseokPeriod(selectedDate);
+    
+    // 디버깅용 로그 추가
+    console.log('선택된 날짜:', selectedDate);
+    console.log('추석 기간 여부:', isChuseok);
     
     // ALL NIGHT 가격 결정
     let allNightPrice;
@@ -1263,6 +1271,7 @@ function updatePrices() {
             originalAllNightPrice = genderPrices.allNight;
         }
         showDiscount = true;
+        console.log('추석 할인 적용:', allNightPrice); // 디버깅용
     } else {
         // 일반 가격
         if (companion === 'yes') {
@@ -1279,13 +1288,13 @@ function updatePrices() {
             <input type="radio" name="ticketType" value="allNight" required>
             <div class="price-option-name">
                 ALL NIGHT<br>(1부 + 2부)
-                ${isChuseok ? '<br><span style="color: #FFD700; font-size: 0.8rem;">🌕 추석 특가</span>' : ''}
+                ${isChuseok ? '<br><span style="color: #FFD700; font-size: 0.8rem;">🌕 추석 특가 (10,000원 할인)</span>' : ''}
                 ${companion === 'yes' && !isChuseok ? '<br><span style="color: var(--neon-accent); font-size: 0.8rem;">동반인 할인</span>' : ''}
                 ${companion === 'yes' && isChuseok ? '<br><span style="color: var(--neon-accent); font-size: 0.8rem;">추석+동반 할인</span>' : ''}
             </div>
             <div class="price-option-price">
                 ${showDiscount ? `<span style="text-decoration: line-through; opacity: 0.5; font-size: 0.9rem;">${originalAllNightPrice.toLocaleString()}원</span><br>` : ''}
-                <span style="${isChuseok ? 'color: #FFD700;' : ''}">${allNightPrice.toLocaleString()}원</span>
+                <span style="${isChuseok ? 'color: #FFD700; font-weight: 700;' : ''}">${allNightPrice.toLocaleString()}원</span>
             </div>
         </label>
         <label class="price-option">
