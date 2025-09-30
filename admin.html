@@ -599,6 +599,7 @@
                         <tr>
                             <th>신청일시</th>
                             <th>이름</th>
+                            <th>닉네임</th>
                             <th>성별</th>
                             <th>나이</th>
                             <th>연락처</th>
@@ -724,6 +725,7 @@
                 <tr>
                     <td>${new Date(app.created_at).toLocaleString('ko-KR')}</td>
                     <td>${app.name}</td>
+                    <td>${app.nickname || '-'}</td>
                     <td>${app.gender === 'male' ? '남성' : '여성'}</td>
                     <td>${app.age}세</td>
                     <td>${app.phone}</td>
@@ -773,6 +775,10 @@
                     <span class="info-label">이름</span>
                     <span class="info-value">${app.name}</span>
                 </div>
+                <div class="info-row">
+    <span class="info-label">닉네임</span>
+    <span class="info-value">${app.nickname || '-'}</span>
+</div>
                 <div class="info-row">
                     <span class="info-label">성별</span>
                     <span class="info-value">${app.gender === 'male' ? '남성' : '여성'}</span>
@@ -872,10 +878,11 @@
         // Export to Excel
         window.exportToExcel = function() {
             // Simple CSV export
-            const headers = ['신청일시', '이름', '성별', '나이', '연락처', '파티타입', '날짜', '티켓', '금액', '상태'];
+            const headers = ['신청일시', '이름', '닉네임', '성별', '나이', '연락처', '파티타입', '날짜', '티켓', '금액', '상태'];
             const rows = applications.map(app => [
                 new Date(app.created_at).toLocaleString('ko-KR'),
                 app.name,
+                app.nickname || '-',
                 app.gender === 'male' ? '남성' : '여성',
                 app.age,
                 app.phone,
