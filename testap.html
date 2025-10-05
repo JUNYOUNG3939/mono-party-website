@@ -1390,12 +1390,23 @@ function updatePrices() {
     const companion = document.querySelector('input[name="companion"]:checked')?.value || 'no';
     const selectedDate = document.getElementById('selectedDate').value;
     
-    if (!gender) return;
+    if (!gender || !gender.value) {
+        console.log('성별이 선택되지 않음');
+        return;
+    }
+    
+    // 성별 값 검증
+    const genderValue = gender.value;
+    if (!prices[genderValue]) {
+        console.error('잘못된 성별 값:', genderValue);
+        return;
+    }
+    
+    const genderPrices = prices[genderValue];
     
     // 날짜가 선택되지 않은 경우 기본 가격 표시
     if (!selectedDate) {
         console.log('날짜가 선택되지 않음, 기본 가격 표시');
-        const genderPrices = prices[gender.value];
         
         priceOptions.innerHTML = `
             <label class="price-option">
@@ -1432,14 +1443,13 @@ function updatePrices() {
         return;
     }
     
-    const genderPrices = prices[gender.value];
     const isChuseok = isChuseokPeriod(selectedDate);
     
     // 디버깅용 로그
     console.log('=== 가격 계산 ===');
     console.log('선택된 날짜:', selectedDate);
     console.log('추석 기간 여부:', isChuseok);
-    console.log('성별:', gender.value);
+    console.log('성별:', genderValue);
     console.log('동반인:', companion);
     
     // ALL NIGHT 가격 결정
@@ -1449,15 +1459,21 @@ function updatePrices() {
     let discountLabel = '';
     
     if (isChuseok) {
-        // 추석 기간 할인 가격
-        if (companion === 'yes') {
+        // 추석 기간 할인 가격 - 속성 존재 여부 확인
+        if (companion === 'yes' && genderPrices.chuseokAllNightWithCompanion) {
             allNightPrice = genderPrices.chuseokAllNightWithCompanion;
             originalAllNightPrice = genderPrices.allNightWithCompanion;
             discountLabel = '추석+동반 할인';
-        } else {
+        } else if (genderPrices.chuseokAllNight) {
             allNightPrice = genderPrices.chuseokAllNight;
             originalAllNightPrice = genderPrices.allNight;
             discountLabel = '🌕 추석 특가 (10,000원 할인)';
+        } else {
+            // 추석 가격이 정의되지 않은 경우 일반 가격 사용
+            allNightPrice = companion === 'yes' ? genderPrices.allNightWithCompanion : genderPrices.allNight;
+            originalAllNightPrice = genderPrices.allNight;
+            showDiscount = companion === 'yes';
+            discountLabel = companion === 'yes' ? '동반인 할인' : '';
         }
         showDiscount = true;
         console.log('추석 할인 적용 - 최종 가격:', allNightPrice, '원래 가격:', originalAllNightPrice);
@@ -1519,6 +1535,8 @@ function toggleCompanionName() {
     const companionNameGroup = document.getElementById('companionNameGroup');
     const companionNameInput = document.getElementById('companionName');
     
+    if (!companionSelect) return;
+    
     if (companionSelect.value === 'yes') {
         companionNameGroup.style.display = 'block';
         companionNameInput.required = true;
@@ -1529,7 +1547,7 @@ function toggleCompanionName() {
         
         // 동반인 할인 안내 메시지 표시
         const gender = document.querySelector('input[name="gender"]:checked');
-        if (gender) {
+        if (gender && gender.value && prices[gender.value]) {
             const discountAmount = gender.value === 'male' ? '2,000' : '5,000';
             alert(`✨ 동반인 할인이 적용됩니다!\nALL NIGHT 티켓에서 ${discountAmount}원 할인`);
         }
@@ -1571,7 +1589,7 @@ function lockGenderSelection() {
                 // ✅ 초기 가격 표시 추가
     setTimeout(() => {
         const gender = document.querySelector('input[name="gender"]:checked');
-        if (gender) {
+        if (gender && gender.value && prices[gender.value]) {
             checkPersonalInfoFields(); // Check if all conditions are met to show price
         }
     }, 100);
@@ -1597,7 +1615,7 @@ function lockGenderSelection() {
                 
                 // 성별이 선택되어 있으면 가격 업데이트
                 const gender = document.querySelector('input[name="gender"]:checked');
-                if (gender) {
+                if (gender && gender.value && prices[gender.value]) {
                     updatePrices();
                     checkPersonalInfoFields(); // Check if price should be shown
                     
@@ -1632,6 +1650,8 @@ function lockGenderSelection() {
                     if (companion) {
                         updatePrices();
                         checkPersonalInfoFields(); // Check if price should be shown
+                    } else {
+                        checkPersonalInfoFields(); // Check if price should be shown even without companion selection
                     }
                 });
             });
@@ -1938,6 +1958,15 @@ try {
         const ticketType = formData.get('ticketType') || 'allNight'; // Default to allNight
         const hasCompanion = formData.get('companion') === 'yes';
         const selectedDate = formData.get('selectedDate');
+        
+        // gender 값 검증
+        if (!gender || !prices[gender]) {
+            console.error('유효하지 않은 성별 값:', gender);
+            // 기본값으로 male 사용
+            return prices.male.allNight;
+        }
+        
+        const genderPrices = prices[gender];
         const isChuseok = isChuseokPeriod(selectedDate);
         
         console.log('=== 최종 가격 계산 ===');
@@ -1948,18 +1977,32 @@ try {
         
         if (ticketType === 'allNight') {
             if (isChuseok) {
-                const price = hasCompanion 
-                    ? prices[gender].chuseokAllNightWithCompanion 
-                    : prices[gender].chuseokAllNight;
-                console.log('추석 할인 적용 가격:', price);
-                return price;
+                // 추석 가격이 정의되어 있는지 확인
+                if (hasCompanion && genderPrices.chuseokAllNightWithCompanion) {
+                    const price = genderPrices.chuseokAllNightWithCompanion;
+                    console.log('추석 + 동반인 할인 적용 가격:', price);
+                    return price;
+                } else if (genderPrices.chuseokAllNight) {
+                    const price = genderPrices.chuseokAllNight;
+                    console.log('추석 할인 적용 가격:', price);
+                    return price;
+                } else {
+                    // 추석 가격이 없으면 일반 가격 사용
+                    console.log('추석 가격 정의 없음, 일반 가격 사용');
+                    return hasCompanion ? genderPrices.allNightWithCompanion : genderPrices.allNight;
+                }
             } else if (hasCompanion) {
-                return prices[gender].allNightWithCompanion;
+                return genderPrices.allNightWithCompanion;
             } else {
-                return prices[gender].allNight;
+                return genderPrices.allNight;
             }
+        } else if (ticketType === 'part1') {
+            return genderPrices.part1;
+        } else if (ticketType === 'part2') {
+            return genderPrices.part2;
         } else {
-            return prices[gender][ticketType === 'part1' ? 'part1' : 'part2'];
+            // 티켓 타입이 없으면 기본값
+            return genderPrices.allNight;
         }
     })(),
             
