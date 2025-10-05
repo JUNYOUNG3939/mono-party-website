@@ -1116,14 +1116,21 @@ const prices = {
 
 // 추석 기간 체크 함수
 function isChuseokPeriod(dateStr) {
-    // dateStr이 'YYYY-MM-DD' 형식이므로 직접 비교
-    const date = new Date(dateStr + 'T00:00:00'); // 시간대 문제 방지
-    const start = new Date('2025-10-02T00:00:00');
-    const end = new Date('2025-10-11T23:59:59');
+    if (!dateStr) return false;
     
-    console.log('체크할 날짜:', dateStr, '파싱된 날짜:', date, '추석 기간:', start, '~', end);
+    // dateStr이 'YYYY-MM-DD' 형식
+    const dateParts = dateStr.split('-');
+    const year = parseInt(dateParts[0]);
+    const month = parseInt(dateParts[1]);
+    const day = parseInt(dateParts[2]);
     
-    return date >= start && date <= end;
+    // 2025년 10월 2일 ~ 11일 추석 기간
+    if (year === 2025 && month === 10 && day >= 2 && day <= 11) {
+        console.log('추석 기간 확인됨:', dateStr);
+        return true;
+    }
+    
+    return false;
 }
 
 // Check if all personal info fields are filled
@@ -1959,51 +1966,61 @@ try {
         const hasCompanion = formData.get('companion') === 'yes';
         const selectedDate = formData.get('selectedDate');
         
-        // gender 값 검증
-        if (!gender || !prices[gender]) {
-            console.error('유효하지 않은 성별 값:', gender);
-            // 기본값으로 male 사용
-            return prices.male.allNight;
-        }
-        
-        const genderPrices = prices[gender];
-        const isChuseok = isChuseokPeriod(selectedDate);
-        
-        console.log('=== 최종 가격 계산 ===');
+        console.log('=== 최종 가격 계산 (FormData) ===');
+        console.log('성별 원본 값:', gender);
         console.log('날짜:', selectedDate);
-        console.log('추석 여부:', isChuseok);
         console.log('티켓 타입:', ticketType);
         console.log('동반인:', hasCompanion);
         
+        // gender 값 검증 및 정정
+        const validGender = (gender === 'male' || gender === 'female') ? gender : 'male';
+        
+        if (!prices[validGender]) {
+            console.error('유효하지 않은 성별 값:', gender);
+            return 40000; // 여성 기본 가격
+        }
+        
+        const genderPrices = prices[validGender];
+        const isChuseok = isChuseokPeriod(selectedDate);
+        
+        console.log('사용할 성별:', validGender);
+        console.log('추석 여부:', isChuseok);
+        console.log('성별별 가격:', genderPrices);
+        
+        let finalPrice = 0;
+        
         if (ticketType === 'allNight') {
             if (isChuseok) {
-                // 추석 가격이 정의되어 있는지 확인
-                if (hasCompanion && genderPrices.chuseokAllNightWithCompanion) {
-                    const price = genderPrices.chuseokAllNightWithCompanion;
-                    console.log('추석 + 동반인 할인 적용 가격:', price);
-                    return price;
-                } else if (genderPrices.chuseokAllNight) {
-                    const price = genderPrices.chuseokAllNight;
-                    console.log('추석 할인 적용 가격:', price);
-                    return price;
+                // 추석 할인 적용
+                if (hasCompanion) {
+                    finalPrice = genderPrices.chuseokAllNightWithCompanion || genderPrices.allNightWithCompanion;
                 } else {
-                    // 추석 가격이 없으면 일반 가격 사용
-                    console.log('추석 가격 정의 없음, 일반 가격 사용');
-                    return hasCompanion ? genderPrices.allNightWithCompanion : genderPrices.allNight;
+                    finalPrice = genderPrices.chuseokAllNight || genderPrices.allNight;
                 }
-            } else if (hasCompanion) {
-                return genderPrices.allNightWithCompanion;
+                console.log('추석 할인 적용 - ALL NIGHT 가격:', finalPrice);
             } else {
-                return genderPrices.allNight;
+                // 일반 가격
+                if (hasCompanion) {
+                    finalPrice = genderPrices.allNightWithCompanion;
+                } else {
+                    finalPrice = genderPrices.allNight;
+                }
+                console.log('일반 ALL NIGHT 가격:', finalPrice);
             }
         } else if (ticketType === 'part1') {
-            return genderPrices.part1;
+            finalPrice = genderPrices.part1;
+            console.log('1부 가격:', finalPrice);
         } else if (ticketType === 'part2') {
-            return genderPrices.part2;
+            finalPrice = genderPrices.part2;
+            console.log('2부 가격:', finalPrice);
         } else {
             // 티켓 타입이 없으면 기본값
-            return genderPrices.allNight;
+            finalPrice = genderPrices.allNight;
+            console.log('기본 가격 (ALL NIGHT):', finalPrice);
         }
+        
+        console.log('=== 최종 결정 가격:', finalPrice, '원 ===');
+        return finalPrice;
     })(),
             
             // Party type is always 'provided' now
@@ -2040,6 +2057,7 @@ try {
         
         // Create payment info based on gender (올바른 계좌번호로 수정)
         const selectedPrice = applicationData.price.toLocaleString();
+        const isInChuseokDate = isChuseokPeriod(applicationData.selected_date);
         
         const paymentInfo = `
             <div style="background: rgba(255, 0, 102, 0.1); border: 2px solid var(--neon-pink); padding: 25px; border-radius: 10px; margin-top: 30px;">
@@ -2056,6 +2074,7 @@ try {
                     </p>
                     <p style="margin-top: 15px; font-size: 0.95rem; color: var(--neon-pink);">
                         ⚡ 신청금액: <strong style="font-size: 1.2rem;">${selectedPrice}원</strong>
+                        ${isInChuseokDate ? '<br><span style="color: #FFD700;">🌕 추석 할인 적용됨</span>' : ''}
                     </p>
                 </div>
                 
@@ -2071,25 +2090,41 @@ try {
                 
                 <div style="background: var(--bg-card); padding: 20px; border-radius: 5px; margin-top: 20px;">
                     <h5 style="color: var(--neon-accent); margin-bottom: 15px;">티켓 비용 (${applicationData.gender === 'male' ? '남성' : '여성'})</h5>
-                    <p style="margin-bottom: 8px;">1부 + 2부 : <strong>${applicationData.gender === 'male' ? '64,000원' : '40,000원'}</strong></p>
+                    ${isInChuseokDate ? 
+                        `<p style="color: #FFD700; margin-bottom: 10px;"><strong>🌕 추석 특별 할인 적용중! 🌕</strong></p>` : ''}
+                    <p style="margin-bottom: 8px;">1부 + 2부 : ${applicationData.gender === 'male' ? 
+                        (isInChuseokDate ? '<del>64,000원</del> <strong style="color: #FFD700;">54,000원</strong>' : '<strong>64,000원</strong>') : 
+                        (isInChuseokDate ? '<del>40,000원</del> <strong style="color: #FFD700;">30,000원</strong>' : '<strong>40,000원</strong>')
+                    }</p>
                     <p style="margin-bottom: 8px;">1부: <strong>${applicationData.gender === 'male' ? '42,000원' : '30,000원'}</strong></p>
                     <p style="margin-bottom: 8px;">2부: <strong>${applicationData.gender === 'male' ? '25,000원' : '20,000원'}</strong></p>
-                    <p style="color: var(--neon-accent);">동반인이 있을 경우 : 1부 + 2부 <strong>${applicationData.gender === 'male' ? '60,000원' : '30,000원'}</strong></p>
+                    <p style="color: var(--neon-accent);">동반인이 있을 경우 : 1부 + 2부 ${applicationData.gender === 'male' ? 
+                        (isInChuseokDate ? '<del>60,000원</del> <strong style="color: #FFD700;">50,000원</strong>' : '<strong>60,000원</strong>') :
+                        (isInChuseokDate ? '<del>30,000원</del> <strong style="color: #FFD700;">20,000원</strong>' : '<strong>30,000원</strong>')
+                    }</p>
                 </div>
             </div>
         `;
         
         // Create summary for display
+        const isInChuseok = isChuseokPeriod(applicationData.selected_date);
         const summaryHTML = `
             <div style="background: var(--bg-card); padding: 30px; border-radius: 10px; margin-top: 30px;">
                 <h3 style="color: var(--neon-accent); margin-bottom: 20px;">신청 내역</h3>
+                ${isInChuseok ? `
+                    <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1)); border: 2px solid #FFD700; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                        <p style="text-align: center; color: #FFD700; font-weight: 700; margin: 0;">
+                            🌕 추석 연휴 특별 할인이 적용되었습니다! 🌕
+                        </p>
+                    </div>
+                ` : ''}
                 <div style="display: grid; gap: 15px;">
                     <p><strong>성함:</strong> ${applicationData.name}</p>
                     <p><strong>닉네임:</strong> ${applicationData.nickname}</p>
                     <p><strong>성별:</strong> ${applicationData.gender === 'male' ? '남성' : '여성'}</p>
                     <p><strong>날짜:</strong> ${applicationData.selected_date}</p>
-                    <p><strong>티켓:</strong> ${(applicationData.ticket_type || 'allNight') === 'allNight' ? 'ALL NIGHT' : applicationData.ticket_type === 'part1' ? '1부' : '2부'}</p>
-                    <p><strong>참가비:</strong> ${applicationData.price.toLocaleString()}원</p>
+                    <p><strong>티켓:</strong> ${(applicationData.ticket_type || 'allNight') === 'allNight' ? 'ALL NIGHT (1부+2부)' : applicationData.ticket_type === 'part1' ? '1부' : '2부'}</p>
+                    <p><strong>참가비:</strong> ${applicationData.price.toLocaleString()}원 ${isInChuseok ? '<span style="color: #FFD700;">(추석 할인 적용)</span>' : ''}</p>
                     <p><strong>연락처:</strong> ${applicationData.phone}</p>
                     <p><strong>인스타그램:</strong> ${applicationData.instagram}</p>
                     ${applicationData.companion === 'yes' ? `<p><strong>동반인:</strong> ${applicationData.companion_name}</p>` : ''}
