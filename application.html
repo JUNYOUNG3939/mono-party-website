@@ -207,9 +207,16 @@
 }
 
 @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.02); }
+    0%, 100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% { 
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
 }
+
         
         .gender-card input[type="radio"] {
             position: absolute;
@@ -434,7 +441,18 @@
             border-color: var(--neon-accent);
             background: rgba(0, 255, 136, 0.1);
         }
-        
+
+        /* 에러 상태 스타일 추가 */
+.file-upload input[type="file"].error + .file-upload-label {
+    border-color: var(--neon-pink) !important;
+    color: var(--neon-pink) !important;
+    animation: filePulse 1s infinite;  /* 또는 pulse 사용 */
+}
+
+.file-upload input[type="file"]:required + .file-upload-label::after {
+    content: ' *';
+    color: var(--neon-pink);
+}
         /* Agreement Section */
         .agreement-section {
             background: var(--input-bg);
@@ -737,15 +755,18 @@
                     <input type="text" class="form-input" id="job" name="job" placeholder="직업 또는 하시는 일을 적어주세요" required>
                 </div>
                 
-                <div class="form-group">
-                    <label class="form-label" for="photo">본인 사진 첨부</label>
-                    <div class="file-upload">
-                        <input type="file" id="photo" name="photo" accept="image/*">
-                        <label class="file-upload-label" for="photo">
-                            📷 사진을 선택하거나 드래그하세요 
-                        </label>
-                    </div>
-                </div>
+<div class="form-group">
+    <label class="form-label" for="photo">본인 사진 첨부 <span class="required">*</span></label>
+    <div class="file-upload">
+        <input type="file" id="photo" name="photo" accept="image/*" required>
+        <label class="file-upload-label" for="photo">
+            📷 사진을 선택해주세요 (필수)
+        </label>
+    </div>
+    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 10px;">
+        ※ 얼굴이 잘 보이는 사진을 업로드해주세요 (필수)
+    </p>
+</div>
                 
                 <div class="form-group">
                     <label class="form-label" for="instagram">인스타그램 아이디 <span class="required">*</span></label>
@@ -1536,12 +1557,28 @@ function toggleCompanionName() {
                 generateCalendar();
             });
             
-            // File upload
-            document.getElementById('photo').addEventListener('change', function(e) {
-                const fileName = e.target.files[0]?.name || '📷 사진을 선택하거나 드래그하세요 (선택사항)';
-                document.querySelector('.file-upload-label').textContent = fileName;
-            });
-
+document.getElementById('photo').addEventListener('change', function(e) {
+    const fileLabel = document.querySelector('.file-upload-label');
+    if (e.target.files && e.target.files[0]) {
+        const fileName = e.target.files[0].name;
+        fileLabel.textContent = `✅ ${fileName}`;
+        fileLabel.style.borderColor = 'var(--neon-accent)';
+        fileLabel.style.color = 'var(--neon-accent)';
+        
+        // 파일 크기 체크
+        if (e.target.files[0].size > 5 * 1024 * 1024) {
+            alert('⚠️ 파일 크기는 5MB 이하여야 합니다.');
+            e.target.value = '';
+            fileLabel.textContent = '📷 사진을 선택해주세요 (필수)';
+            fileLabel.style.borderColor = 'var(--neon-pink)';
+            fileLabel.style.color = 'var(--neon-pink)';
+        }
+    } else {
+        fileLabel.textContent = '📷 사진을 선택해주세요 (필수)';
+        fileLabel.style.borderColor = '';
+        fileLabel.style.color = '';
+    }
+});
              // 확인함 입력 실시간 검증
     document.getElementById('confirmText').addEventListener('input', function() {
         const confirmError = document.getElementById('confirmError');
@@ -1585,17 +1622,46 @@ if (confirmText !== '확인함') {
     const requiredFields = this.querySelectorAll('[required]');
     let isValid = true;
     
-    requiredFields.forEach(field => {
-        // 사진은 선택사항이므로 제외
-        if (field.id === 'photo') return;
-        
-        if (!field.value && !field.checked) {
+requiredFields.forEach(field => {
+    // 파일 입력 필드 특별 처리
+    if (field.type === 'file') {
+        if (!field.files || field.files.length === 0) {
             isValid = false;
             field.classList.add('error');
+            // 파일 업로드 라벨도 에러 스타일 적용
+            const fileLabel = field.parentElement.querySelector('.file-upload-label');
+            if (fileLabel) {
+                fileLabel.style.borderColor = 'var(--neon-pink)';
+                fileLabel.style.color = 'var(--neon-pink)';
+            }
         } else {
             field.classList.remove('error');
+            const fileLabel = field.parentElement.querySelector('.file-upload-label');
+            if (fileLabel) {
+                fileLabel.style.borderColor = '';
+                fileLabel.style.color = '';
+            }
         }
-    });
+    } else if (!field.value && !field.checked) {
+        isValid = false;
+        field.classList.add('error');
+    } else {
+        field.classList.remove('error');
+    }
+});
+
+if (!isValid) {
+    // 사진이 없는 경우 특별 알림
+    const photoInput = document.getElementById('photo');
+    if (!photoInput.files || photoInput.files.length === 0) {
+        alert('📸 본인 사진을 필수로 업로드해주세요!');
+        photoInput.focus();
+        photoInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+        alert('모든 필수 항목을 입력해주세요.');
+    }
+    return;
+}
     
     if (!isValid) {
         alert('모든 필수 항목을 입력해주세요.');
@@ -1607,74 +1673,144 @@ if (confirmText !== '확인함') {
     submitButton.disabled = true;
     submitButton.innerHTML = '<div class="loading-spinner" style="display: block;"></div>';
     
-    try {
-        // Collect form data
-        const formData = new FormData(this);
+try {
+    // Collect form data
+    const formData = new FormData(this);
+    
+    // ===== 사진 업로드 처리 (필수) =====
+    let photoUrl = null;
+    const photoFile = document.getElementById('photo').files[0];
+    
+    // 사진 파일 필수 체크
+    if (!photoFile) {
+        alert('📸 사진 업로드는 필수입니다!\n\n얼굴이 잘 보이는 본인 사진을 선택해주세요.');
         
-        // ===== 사진 업로드 처리 (선택사항) =====
-        let photoUrl = null;
-        const photoFile = document.getElementById('photo').files[0];
+        // 사진 업로드 필드로 스크롤
+        const photoInput = document.getElementById('photo');
+        photoInput.focus();
+        photoInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
-        if (photoFile) {
-            console.log('📸 파일 업로드 시작:', photoFile.name, '크기:', photoFile.size);
-            
-            try {
-                // 파일명 생성 (타임스탬프 + 랜덤 문자열)
-                const timestamp = Date.now();
-                const randomString = Math.random().toString(36).substring(7);
-                const fileExt = photoFile.name.split('.').pop();
-                const fileName = `${timestamp}_${randomString}.${fileExt}`;
-                
-                console.log('📁 생성된 파일명:', fileName);
-                
-                // Supabase Storage에 업로드
-                const { data: uploadData, error: uploadError } = await supabaseClient.storage
-                    .from('application-photos')
-                    .upload(fileName, photoFile, {
-                        cacheControl: '3600',
-                        upsert: false
-                    });
-                
-                if (uploadError) {
-                    console.error('❌ Supabase 업로드 에러:', uploadError);
-                    throw uploadError;
-                }
-                
-                console.log('✅ 업로드 성공:', uploadData);
-                
-                // 업로드된 파일의 공개 URL 가져오기
-                const { data: { publicUrl } } = supabaseClient.storage
-                    .from('application-photos')
-                    .getPublicUrl(fileName);
-                
-                photoUrl = publicUrl;
-                console.log('🔗 생성된 공개 URL:', photoUrl);
-                
-            } catch (error) {
-                console.error('❌ 사진 업로드 실패 상세:', error);
-                // 사진 업로드 실패해도 계속 진행 (선택사항이므로)
-                console.log('사진 업로드 실패, 사진 없이 계속 진행');
-            }
-        } else {
-            console.log('⚠️ 사진 파일이 선택되지 않음 (선택사항)');
+        // 파일 업로드 라벨 강조
+        const fileLabel = document.querySelector('.file-upload-label');
+        if (fileLabel) {
+            fileLabel.style.borderColor = 'var(--neon-pink)';
+            fileLabel.style.color = 'var(--neon-pink)';
+            fileLabel.style.animation = 'pulse 1s infinite';
         }
         
-        const applicationData = {
-            // Basic info
-            gender: formData.get('gender'),
-            selected_date: formData.get('selectedDate'),
-            ticket_type: formData.get('ticketType'),
+        // 버튼 원복
+        submitButton.disabled = false;
+        submitButton.innerHTML = '참가 신청하기';
+        return; // 폼 제출 중단
+    }
+    
+    console.log('📸 파일 업로드 시작:', photoFile.name, '크기:', photoFile.size);
+    
+    // 파일 유형 체크 (이미지 파일만 허용)
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(photoFile.type)) {
+        alert('📸 이미지 파일만 업로드 가능합니다!\n\n허용 형식: JPG, PNG, GIF, WEBP');
+        submitButton.disabled = false;
+        submitButton.innerHTML = '참가 신청하기';
+        return;
+    }
+    
+    // 파일 크기 체크 (5MB 제한)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (photoFile.size > maxSize) {
+        alert(`📸 파일 크기가 너무 큽니다!\n\n현재 크기: ${(photoFile.size / 1024 / 1024).toFixed(2)}MB\n최대 크기: 5MB\n\n사진 크기를 줄여서 다시 선택해주세요.`);
+        submitButton.disabled = false;
+        submitButton.innerHTML = '참가 신청하기';
+        return;
+    }
+    
+    try {
+        // 파일명 생성 (타임스탬프 + 랜덤 문자열)
+        const timestamp = Date.now();
+        const randomString = Math.random().toString(36).substring(7);
+        const fileExt = photoFile.name.split('.').pop().toLowerCase();
+        const fileName = `${timestamp}_${randomString}.${fileExt}`;
+        
+        console.log('📁 생성된 파일명:', fileName);
+        
+        // Supabase Storage에 업로드
+        const { data: uploadData, error: uploadError } = await supabaseClient.storage
+            .from('application-photos')
+            .upload(fileName, photoFile, {
+                cacheControl: '3600',
+                upsert: false
+            });
+        
+        if (uploadError) {
+            console.error('❌ Supabase 업로드 에러:', uploadError);
             
-            // Personal info
-            name: formData.get('name'),
-            nickname: formData.get('nickname'),
-            height: parseInt(formData.get('height')),
-            age: parseInt(formData.get('age')),
-            phone: formData.get('phone'),
-            job: formData.get('job'),
-            instagram: formData.get('instagram'),
-            companion: formData.get('companion'),
-            companion_name: formData.get('companionName') || null,
+            // 사용자 친화적 에러 메시지
+            if (uploadError.message.includes('payload too large')) {
+                alert('📸 파일 크기가 너무 큽니다. 5MB 이하의 파일을 선택해주세요.');
+            } else if (uploadError.message.includes('Invalid file type')) {
+                alert('📸 허용되지 않는 파일 형식입니다. JPG, PNG 파일을 선택해주세요.');
+            } else {
+                alert(`📸 사진 업로드 중 오류가 발생했습니다.\n\n오류: ${uploadError.message}\n\n다시 시도해주세요.`);
+            }
+            
+            submitButton.disabled = false;
+            submitButton.innerHTML = '참가 신청하기';
+            return; // 업로드 실패 시 폼 제출 중단
+        }
+        
+        console.log('✅ 업로드 성공:', uploadData);
+        
+        // 업로드된 파일의 공개 URL 가져오기
+        const { data: { publicUrl } } = supabaseClient.storage
+            .from('application-photos')
+            .getPublicUrl(fileName);
+        
+        photoUrl = publicUrl;
+        console.log('🔗 생성된 공개 URL:', photoUrl);
+        
+        // URL이 제대로 생성되었는지 확인
+        if (!photoUrl) {
+            throw new Error('사진 URL 생성 실패');
+        }
+        
+    } catch (error) {
+        console.error('❌ 사진 업로드 실패 상세:', error);
+        
+        // 상세한 에러 알림
+        alert(`📸 사진 업로드 중 오류가 발생했습니다.\n\n${error.message || '알 수 없는 오류'}\n\n다른 사진을 선택하거나 잠시 후 다시 시도해주세요.`);
+        
+        // 버튼 원복
+        submitButton.disabled = false;
+        submitButton.innerHTML = '참가 신청하기';
+        return; // 폼 제출 중단
+    }
+    
+    // 사진 URL이 성공적으로 생성된 경우에만 계속 진행
+    if (!photoUrl) {
+        alert('📸 사진 업로드에 실패했습니다. 다시 시도해주세요.');
+        submitButton.disabled = false;
+        submitButton.innerHTML = '참가 신청하기';
+        return;
+    }
+    
+    console.log('📸 사진 업로드 완료! URL:', photoUrl);
+    
+    const applicationData = {
+        // Basic info
+        gender: formData.get('gender'),
+        selected_date: formData.get('selectedDate'),
+        ticket_type: formData.get('ticketType'),
+        
+        // Personal info
+        name: formData.get('name'),
+        nickname: formData.get('nickname'),
+        height: parseInt(formData.get('height')),
+        age: parseInt(formData.get('age')),
+        phone: formData.get('phone'),
+        job: formData.get('job'),
+        instagram: formData.get('instagram'),
+        companion: formData.get('companion'),
+        companion_name: formData.get('companionName') || null,
             
                // Calculate price (추석 할인 + 동반인 할인 적용)
         price: (() => {
@@ -1710,7 +1846,7 @@ if (confirmText !== '확인함') {
             // Party type is always 'provided' now
             party_type: 'provided',
             
-            // 사진 URL (선택사항)
+            // 사진 URL 
             photo_url: photoUrl
         }; 
         
