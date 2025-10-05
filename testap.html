@@ -1155,8 +1155,22 @@ function checkPersonalInfoFields() {
         priceDisplay.classList.add('show');
         personalInfoStatus.classList.remove('show');
         updatePrices(); // Update prices when showing
+        
+        // Enable required for ticket type when price is shown
+        const priceRadios = document.querySelectorAll('input[name="ticketType"]');
+        priceRadios.forEach(radio => {
+            radio.required = true;
+        });
     } else {
         priceDisplay.classList.remove('show');
+        
+        // Remove required from ticket type when price is hidden
+        const priceRadios = document.querySelectorAll('input[name="ticketType"]');
+        priceRadios.forEach(radio => {
+            radio.required = false;
+            radio.checked = false; // Clear selection when hiding
+        });
+        
         // Show status message only if gender and date are selected but personal info is incomplete
         if (genderSelected && dateSelected && !allFilled) {
             personalInfoStatus.classList.add('show');
@@ -1385,7 +1399,7 @@ function updatePrices() {
         
         priceOptions.innerHTML = `
             <label class="price-option">
-                <input type="radio" name="ticketType" value="allNight" required>
+                <input type="radio" name="ticketType" value="allNight">
                 <div class="price-option-name">
                     ALL NIGHT<br>(1부 + 2부)
                     ${companion === 'yes' ? '<br><span style="color: var(--neon-accent); font-size: 0.8rem;">동반인 할인</span>' : ''}
@@ -1396,12 +1410,12 @@ function updatePrices() {
                 </div>
             </label>
             <label class="price-option">
-                <input type="radio" name="ticketType" value="part1" required>
+                <input type="radio" name="ticketType" value="part1">
                 <div class="price-option-name">1부</div>
                 <div class="price-option-price">${genderPrices.part1.toLocaleString()}원</div>
             </label>
             <label class="price-option">
-                <input type="radio" name="ticketType" value="part2" required>
+                <input type="radio" name="ticketType" value="part2">
                 <div class="price-option-name">2부</div>
                 <div class="price-option-price">${genderPrices.part2.toLocaleString()}원</div>
             </label>
@@ -1462,10 +1476,10 @@ function updatePrices() {
         console.log('일반 가격 적용 - 최종 가격:', allNightPrice);
     }
     
-    // HTML 생성
+    // HTML 생성 - required 속성 제거 (checkPersonalInfoFields에서 관리)
     priceOptions.innerHTML = `
         <label class="price-option">
-            <input type="radio" name="ticketType" value="allNight" required>
+            <input type="radio" name="ticketType" value="allNight" class="price-radio">
             <div class="price-option-name">
                 ALL NIGHT<br>(1부 + 2부)
                 ${discountLabel ? `<br><span style="color: ${isChuseok ? '#FFD700' : 'var(--neon-accent)'}; font-size: 0.8rem;">${discountLabel}</span>` : ''}
@@ -1476,12 +1490,12 @@ function updatePrices() {
             </div>
         </label>
         <label class="price-option">
-            <input type="radio" name="ticketType" value="part1" required>
+            <input type="radio" name="ticketType" value="part1" class="price-radio">
             <div class="price-option-name">1부</div>
             <div class="price-option-price">${genderPrices.part1.toLocaleString()}원</div>
         </label>
         <label class="price-option">
-            <input type="radio" name="ticketType" value="part2" required>
+            <input type="radio" name="ticketType" value="part2" class="price-radio">
             <div class="price-option-name">2부</div>
             <div class="price-option-price">${genderPrices.part2.toLocaleString()}원</div>
         </label>
@@ -1712,8 +1726,20 @@ if (confirmText !== '확인함') {
     confirmError.style.display = 'none';
     document.getElementById('confirmText').style.borderColor = 'var(--input-border)';
 }
+
+    // Check if price is displayed and ticket type is selected
+    const priceDisplay = document.getElementById('priceDisplay');
+    if (priceDisplay.classList.contains('show')) {
+        const ticketType = document.querySelector('input[name="ticketType"]:checked');
+        if (!ticketType) {
+            alert('티켓 종류를 선택해주세요.');
+            priceDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+    }
+
     // Validate all required fields
-    const requiredFields = this.querySelectorAll('[required]');
+    const requiredFields = this.querySelectorAll('[required]:not([name="ticketType"])'); // Exclude ticketType from general validation
     let isValid = true;
     
 requiredFields.forEach(field => {
@@ -1893,7 +1919,7 @@ try {
         // Basic info
         gender: formData.get('gender'),
         selected_date: formData.get('selectedDate'),
-        ticket_type: formData.get('ticketType'),
+        ticket_type: formData.get('ticketType') || 'allNight', // Default to allNight if not selected
         
         // Personal info
         name: formData.get('name'),
@@ -1909,7 +1935,7 @@ try {
                // Calculate price (추석 할인 + 동반인 할인 적용)
         price: (() => {
         const gender = formData.get('gender');
-        const ticketType = formData.get('ticketType');
+        const ticketType = formData.get('ticketType') || 'allNight'; // Default to allNight
         const hasCompanion = formData.get('companion') === 'yes';
         const selectedDate = formData.get('selectedDate');
         const isChuseok = isChuseokPeriod(selectedDate);
@@ -2019,7 +2045,7 @@ try {
                     <p><strong>닉네임:</strong> ${applicationData.nickname}</p>
                     <p><strong>성별:</strong> ${applicationData.gender === 'male' ? '남성' : '여성'}</p>
                     <p><strong>날짜:</strong> ${applicationData.selected_date}</p>
-                    <p><strong>티켓:</strong> ${applicationData.ticket_type === 'allNight' ? 'ALL NIGHT' : applicationData.ticket_type === 'part1' ? '1부' : '2부'}</p>
+                    <p><strong>티켓:</strong> ${(applicationData.ticket_type || 'allNight') === 'allNight' ? 'ALL NIGHT' : applicationData.ticket_type === 'part1' ? '1부' : '2부'}</p>
                     <p><strong>참가비:</strong> ${applicationData.price.toLocaleString()}원</p>
                     <p><strong>연락처:</strong> ${applicationData.phone}</p>
                     <p><strong>인스타그램:</strong> ${applicationData.instagram}</p>
