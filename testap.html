@@ -1079,6 +1079,72 @@ function isChuseokPeriod(dateStr) {
     
     return date >= start && date <= end;
 }        
+        // 개인정보 입력 완료 체크 함수
+function checkPersonalInfoCompletion() {
+    // 필수 개인정보 필드들
+    const requiredFields = {
+        name: document.getElementById('name'),
+        nickname: document.getElementById('nickname'),
+        height: document.getElementById('height'),
+        age: document.getElementById('age'),
+        phone: document.getElementById('phone'),
+        job: document.getElementById('job'),
+        instagram: document.getElementById('instagram')
+    };
+    
+    // 모든 필드가 입력되었는지 확인
+    let allFieldsFilled = true;
+    for (const [fieldName, field] of Object.entries(requiredFields)) {
+        if (!field.value || field.value.trim() === '') {
+            allFieldsFilled = false;
+            break;
+        }
+    }
+    
+    // 사진 업로드 확인
+    const photoInput = document.getElementById('photo');
+    const photoUploaded = photoInput.files && photoInput.files.length > 0;
+    
+    // 성별과 날짜 선택 확인
+    const genderSelected = document.querySelector('input[name="gender"]:checked');
+    const dateSelected = document.getElementById('selectedDate').value;
+    
+    // 가격 표시 섹션 제어
+    const priceDisplay = document.getElementById('priceDisplay');
+    
+    if (genderSelected && dateSelected && allFieldsFilled && photoUploaded) {
+        // 모든 조건이 충족되면 가격 표시
+        priceDisplay.style.display = 'block';
+        updatePrices();
+        
+        // 부드러운 스크롤 효과로 가격 섹션으로 이동
+        priceDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // 가격 섹션 하이라이트 효과
+        priceDisplay.style.animation = 'pulse 1s';
+    } else {
+        // 조건이 충족되지 않으면 가격 숨기기
+        priceDisplay.style.display = 'none';
+        
+        // 미입력 필드 안내
+        if (genderSelected && dateSelected) {
+            let missingFields = [];
+            for (const [fieldName, field] of Object.entries(requiredFields)) {
+                if (!field.value || field.value.trim() === '') {
+                    const label = field.previousElementSibling?.textContent || fieldName;
+                    missingFields.push(label.replace('*', '').trim());
+                }
+            }
+            if (!photoUploaded) {
+                missingFields.push('본인 사진');
+            }
+            
+            if (missingFields.length > 0) {
+                console.log('미입력 항목:', missingFields.join(', '));
+            }
+        }
+    }
+}
         // Load available party dates from database
         async function loadAvailablePartyDates() {
             try {
@@ -1344,75 +1410,7 @@ if (companion && companion.value === 'yes') {
     }, 200);
 }
 
-        // 개인정보 입력 완료 체크 함수
-function checkPersonalInfoCompletion() {
-    // 필수 개인정보 필드들
-    const requiredFields = {
-        name: document.getElementById('name'),
-        nickname: document.getElementById('nickname'),
-        height: document.getElementById('height'),
-        age: document.getElementById('age'),
-        phone: document.getElementById('phone'),
-        job: document.getElementById('job'),
-        instagram: document.getElementById('instagram')
-    };
-    
-    // 모든 필드가 입력되었는지 확인
-    let allFieldsFilled = true;
-    for (const [fieldName, field] of Object.entries(requiredFields)) {
-        if (!field.value || field.value.trim() === '') {
-            allFieldsFilled = false;
-            break;
-        }
-    }
-    
-    // 사진 업로드 확인
-    const photoInput = document.getElementById('photo');
-    const photoUploaded = photoInput.files && photoInput.files.length > 0;
-    
-    // 성별과 날짜 선택 확인
-    const genderSelected = document.querySelector('input[name="gender"]:checked');
-    const dateSelected = document.getElementById('selectedDate').value;
-    
-    // 가격 표시 섹션 제어
-    const priceDisplay = document.getElementById('priceDisplay');
-    
-    if (genderSelected && dateSelected && allFieldsFilled && photoUploaded) {
-        // 모든 조건이 충족되면 가격 표시
-        priceDisplay.style.display = 'block';
-        updatePrices();
-        
-        // 부드러운 스크롤 효과로 가격 섹션으로 이동
-        priceDisplay.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        
-        // 가격 섹션 하이라이트 효과
-        priceDisplay.style.animation = 'pulse 1s';
-    } else {
-        // 조건이 충족되지 않으면 가격 숨기기
-        priceDisplay.style.display = 'none';
-        
-        // 미입력 필드 안내
-        if (genderSelected && dateSelected) {
-            let missingFields = [];
-            for (const [fieldName, field] of Object.entries(requiredFields)) {
-                if (!field.value || field.value.trim() === '') {
-                    const label = field.previousElementSibling?.textContent || fieldName;
-                    missingFields.push(label.replace('*', '').trim());
-                }
-            }
-            if (!photoUploaded) {
-                missingFields.push('본인 사진');
-            }
-            
-            if (missingFields.length > 0) {
-                console.log('미입력 항목:', missingFields.join(', '));
-            }
-        }
-    }
-}
 
-// Update price display
-function updatePrices() {
         
       // Update price display
 // Update price display
@@ -1665,7 +1663,7 @@ document.querySelectorAll('input[name="gender"]').forEach(radio => {
             this.parentElement.classList.remove('selected');
         }
     });
-});
+
             // 개인정보 입력 필드 실시간 체크 (이 전체 블록을 추가)
 const personalInfoFields = ['name', 'nickname', 'height', 'age', 'phone', 'job', 'instagram'];
 personalInfoFields.forEach(fieldId => {
@@ -1676,8 +1674,7 @@ personalInfoFields.forEach(fieldId => {
     }
 });
 
-// Calendar navigation
-document.getElementById('prevMonth').addEventListener('click', function() {
+
             
             // Calendar navigation
             document.getElementById('prevMonth').addEventListener('click', function() {
