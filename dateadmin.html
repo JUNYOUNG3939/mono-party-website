@@ -589,12 +589,12 @@
                     
                     <div class="setting-item">
                         <label class="setting-label">기본 남성 정원 (새로 추가되는 날짜에 적용)</label>
-                        <input type="number" class="setting-input" id="maleMaxCapacity" value="35" min="5" max="100">
+                        <input type="number" class="setting-input" id="maleMaxCapacity" value="35" min="0" max="100">
                     </div>
 
                     <div class="setting-item">
                         <label class="setting-label">기본 여성 정원 (새로 추가되는 날짜에 적용)</label>
-                        <input type="number" class="setting-input" id="femaleMaxCapacity" value="35" min="5" max="100">
+                        <input type="number" class="setting-input" id="femaleMaxCapacity" value="35" min="0" max="100">
                     </div>
                     
                     <div class="setting-item">
@@ -683,14 +683,14 @@
                         if (item.is_active) {
                             selectedDates.set(item.party_date, {
                                 id: item.id,
-                                male_remaining_seats: item.male_remaining_seats || 35,
-                                female_remaining_seats: item.female_remaining_seats || 35,
-                                male_max_capacity: item.male_max_capacity || 35,
-                                female_max_capacity: item.female_max_capacity || 35,
-                                male_temp_closed: item.male_temp_closed || false,
-                                female_temp_closed: item.female_temp_closed || false,
-                                male_closed: item.male_closed || false,
-                                female_closed: item.female_closed || false
+                                male_remaining_seats: item.male_remaining_seats ?? 35,
+                                female_remaining_seats: item.female_remaining_seats ?? 35,
+                                male_max_capacity: item.male_max_capacity ?? 35,
+                                female_max_capacity: item.female_max_capacity ?? 35,
+                                male_temp_closed: item.male_temp_closed ?? false,
+                                female_temp_closed: item.female_temp_closed ?? false,
+                                male_closed: item.male_closed ?? false,
+                                female_closed: item.female_closed ?? false
                             });
                         }
                         existingDatesFromDB.set(item.party_date, {
@@ -780,16 +780,16 @@
             if (selectedDates.has(dateStr)) {
                 selectedDates.delete(dateStr);
             } else {
-                const maleMaxCapacity = parseInt(document.getElementById('maleMaxCapacity').value) || 35;
-                const femaleMaxCapacity = parseInt(document.getElementById('femaleMaxCapacity').value) || 35;
+                const maleMaxCapacity = parseInt(document.getElementById('maleMaxCapacity').value);
+                const femaleMaxCapacity = parseInt(document.getElementById('femaleMaxCapacity').value);
                 const existingDate = existingDatesFromDB.get(dateStr);
                 
                 selectedDates.set(dateStr, {
                     id: existingDate?.id || null,
-                    male_remaining_seats: maleMaxCapacity,
-                    female_remaining_seats: femaleMaxCapacity,
-                    male_max_capacity: maleMaxCapacity,
-                    female_max_capacity: femaleMaxCapacity,
+                    male_remaining_seats: isNaN(maleMaxCapacity) ? 35 : maleMaxCapacity,
+                    female_remaining_seats: isNaN(femaleMaxCapacity) ? 35 : femaleMaxCapacity,
+                    male_max_capacity: isNaN(maleMaxCapacity) ? 35 : maleMaxCapacity,
+                    female_max_capacity: isNaN(femaleMaxCapacity) ? 35 : femaleMaxCapacity,
                     male_temp_closed: false,
                     female_temp_closed: false,
                     male_closed: false,
@@ -804,7 +804,8 @@
         function updateMaleRemainingSeats(dateStr, value) {
             if (selectedDates.has(dateStr)) {
                 const dateInfo = selectedDates.get(dateStr);
-                dateInfo.male_remaining_seats = parseInt(value) || 0;
+                const seats = parseInt(value);
+                dateInfo.male_remaining_seats = isNaN(seats) ? 0 : seats;
                 selectedDates.set(dateStr, dateInfo);
             }
         }
@@ -812,7 +813,8 @@
         function updateFemaleRemainingSeats(dateStr, value) {
             if (selectedDates.has(dateStr)) {
                 const dateInfo = selectedDates.get(dateStr);
-                dateInfo.female_remaining_seats = parseInt(value) || 0;
+                const seats = parseInt(value);
+                dateInfo.female_remaining_seats = isNaN(seats) ? 0 : seats;
                 selectedDates.set(dateStr, dateInfo);
             }
         }
@@ -1091,16 +1093,16 @@
                     const partyData = {
                         party_date: dateStr,
                         is_active: true,
-                        max_capacity: (dateInfo.male_max_capacity || 35) + (dateInfo.female_max_capacity || 35),
-                        remaining_seats: (dateInfo.male_remaining_seats || 35) + (dateInfo.female_remaining_seats || 35),
-                        male_max_capacity: dateInfo.male_max_capacity || 35,
-                        female_max_capacity: dateInfo.female_max_capacity || 35,
-                        male_remaining_seats: dateInfo.male_remaining_seats || 35,
-                        female_remaining_seats: dateInfo.female_remaining_seats || 35,
-                        male_temp_closed: dateInfo.male_temp_closed || false,
-                        female_temp_closed: dateInfo.female_temp_closed || false,
-                        male_closed: dateInfo.male_closed || false,
-                        female_closed: dateInfo.female_closed || false
+                        max_capacity: (dateInfo.male_max_capacity ?? 35) + (dateInfo.female_max_capacity ?? 35),
+                        remaining_seats: (dateInfo.male_remaining_seats ?? 35) + (dateInfo.female_remaining_seats ?? 35),
+                        male_max_capacity: dateInfo.male_max_capacity ?? 35,
+                        female_max_capacity: dateInfo.female_max_capacity ?? 35,
+                        male_remaining_seats: dateInfo.male_remaining_seats ?? 35,
+                        female_remaining_seats: dateInfo.female_remaining_seats ?? 35,
+                        male_temp_closed: dateInfo.male_temp_closed ?? false,
+                        female_temp_closed: dateInfo.female_temp_closed ?? false,
+                        male_closed: dateInfo.male_closed ?? false,
+                        female_closed: dateInfo.female_closed ?? false
                     };
                     
                     const existingRecord = existingDatesFromDB.get(dateStr);
