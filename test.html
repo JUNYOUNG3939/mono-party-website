@@ -6651,6 +6651,17 @@ if (isWeekend && !isMoodKingParty) {
     }
 }
                 
+               // 디버깅 코드 - return 문 바로 위에 추가
+if (party.party_date === '2025-10-06') {
+    console.log('🎯 10/6 렌더링 직전 최종 상태:', {
+        날짜: party.party_date,
+        male_temp_closed: maleTempClosed,
+        male_closed: maleClosed, 
+        male_remaining: maleRemaining,
+        렌더링될_텍스트: maleClosed ? '❌ 마감' : maleTempClosed ? '⏸️ 임시마감' : maleRemaining === 0 ? '마감' : `${maleRemaining}석`
+    });
+}
+
                 return `
                     <div style="
                         background: rgba(17, 17, 17, 0.98);
