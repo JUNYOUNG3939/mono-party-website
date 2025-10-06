@@ -6542,7 +6542,7 @@ async function loadPartyDates() {
             .eq('is_active', true)
             .gte('party_date', new Date().toISOString().split('T')[0])
             .order('party_date', { ascending: true })
-            .limit(6);
+           
         
         if (error) throw error;
         
