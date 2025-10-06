@@ -18,6 +18,7 @@
             --neon-accent: #00ff88;
             --neon-pink: #ff0066;
             --neon-blue: #00e5ff;
+            --neon-orange: #ff9933;
             --text-primary: #ffffff;
             --text-secondary: #999999;
             --bg-primary: #000000;
@@ -174,51 +175,91 @@
         .date-list {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
             margin-top: 15px;
         }
         
         .date-item {
             background: var(--bg-card);
             border: 1px solid var(--neon-accent);
-            padding: 15px;
+            padding: 20px;
             border-radius: 10px;
+            position: relative;
+        }
+        
+        .date-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-        }
-        
-        .date-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex: 1;
+            margin-bottom: 20px;
         }
         
         .date-text {
-            font-size: 1.1rem;
-            font-weight: 500;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--neon-accent);
         }
         
-        .remaining-seats-control {
+        .gender-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .gender-section {
+            background: var(--input-bg);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--input-border);
+        }
+        
+        .gender-section.male {
+            border-color: rgba(0, 229, 255, 0.5);
+            background: rgba(0, 229, 255, 0.05);
+        }
+        
+        .gender-section.female {
+            border-color: rgba(255, 0, 102, 0.5);
+            background: rgba(255, 0, 102, 0.05);
+        }
+        
+        .gender-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        
+        .gender-label.male {
+            color: var(--neon-blue);
+        }
+        
+        .gender-label.female {
+            color: var(--neon-pink);
+        }
+        
+        .seats-control {
             display: flex;
             align-items: center;
             gap: 10px;
-            background: var(--input-bg);
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 1px solid var(--input-border);
+            margin-bottom: 12px;
+            background: var(--bg-card);
+            padding: 8px 12px;
+            border-radius: 8px;
         }
         
         .seats-label {
             color: var(--text-secondary);
             font-size: 0.9rem;
+            min-width: 50px;
         }
         
         .seats-input {
             width: 60px;
             padding: 5px;
-            background: var(--bg-card);
+            background: var(--input-bg);
             border: 1px solid var(--input-border);
             border-radius: 5px;
             color: var(--neon-accent);
@@ -226,7 +267,125 @@
             font-weight: 700;
         }
         
+        .quick-adjust {
+            display: flex;
+            gap: 5px;
+            margin-left: auto;
+        }
+        
+        .quick-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--input-border);
+            color: var(--text-secondary);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-btn:hover {
+            background: var(--neon-accent);
+            color: var(--bg-primary);
+            border-color: var(--neon-accent);
+        }
+        
+        .status-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .status-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card);
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+        
+        .status-toggle-label {
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .status-badge.temp-closed {
+            background: var(--neon-orange);
+            color: var(--bg-primary);
+        }
+        
+        .status-badge.closed {
+            background: var(--neon-pink);
+            color: white;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--input-border);
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--neon-accent);
+        }
+        
+        input:checked + .slider.temp-closed {
+            background-color: var(--neon-orange);
+        }
+        
+        input:checked + .slider.closed {
+            background-color: var(--neon-pink);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(24px);
+        }
+        
         .date-remove {
+            position: absolute;
+            top: 20px;
+            right: 20px;
             background: var(--neon-pink);
             color: white;
             border: none;
@@ -298,51 +457,6 @@
             font-family: 'Noto Sans KR', sans-serif;
         }
         
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 60px;
-            height: 34px;
-        }
-        
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: var(--input-border);
-            transition: .4s;
-            border-radius: 34px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: var(--neon-accent);
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
-        }
-        
         .status-message {
             padding: 15px;
             border-radius: 10px;
@@ -395,43 +509,19 @@
             display: none;
         }
         
-        /* Quick adjust buttons */
-        .quick-adjust {
-            display: flex;
-            gap: 5px;
-            margin-left: 10px;
-        }
-        
-        .quick-btn {
-            background: var(--bg-card);
-            border: 1px solid var(--input-border);
-            color: var(--text-secondary);
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s ease;
-        }
-        
-        .quick-btn:hover {
-            background: var(--neon-accent);
-            color: var(--bg-primary);
-            border-color: var(--neon-accent);
-        }
-        
         @media (max-width: 768px) {
-            .date-item {
+            .gender-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .date-header {
                 flex-direction: column;
-                gap: 15px;
+                gap: 10px;
             }
             
-            .date-info {
-                width: 100%;
-            }
-            
-            .remaining-seats-control {
-                width: 100%;
-                justify-content: center;
+            .date-remove {
+                top: 10px;
+                right: 10px;
             }
         }
     </style>
@@ -480,7 +570,7 @@
                     </div>
                 </div>
                 
-                <button class="btn" onclick="savePartyDates()">날짜 및 잔여석 저장하기</button>
+                <button class="btn" onclick="savePartyDates()">날짜 및 설정 저장하기</button>
                 <button class="btn btn-danger" onclick="clearAllDates()" style="margin-left: 10px;">모든 날짜 초기화</button>
             </div>
             
@@ -497,16 +587,15 @@
                         </label>
                     </div>
                     
-<!-- 수정된 코드로 교체 -->
-<div class="setting-item">
-    <label class="setting-label">기본 남성 정원 (새로 추가되는 날짜에 적용)</label>
-    <input type="number" class="setting-input" id="maleMaxCapacity" value="35" min="5" max="100">
-</div>
+                    <div class="setting-item">
+                        <label class="setting-label">기본 남성 정원 (새로 추가되는 날짜에 적용)</label>
+                        <input type="number" class="setting-input" id="maleMaxCapacity" value="35" min="5" max="100">
+                    </div>
 
-<div class="setting-item">
-    <label class="setting-label">기본 여성 정원 (새로 추가되는 날짜에 적용)</label>
-    <input type="number" class="setting-input" id="femaleMaxCapacity" value="35" min="5" max="100">
-</div>
+                    <div class="setting-item">
+                        <label class="setting-label">기본 여성 정원 (새로 추가되는 날짜에 적용)</label>
+                        <input type="number" class="setting-input" id="femaleMaxCapacity" value="35" min="5" max="100">
+                    </div>
                     
                     <div class="setting-item">
                         <label class="setting-label">공지사항 (선택사항)</label>
@@ -556,7 +645,7 @@
         // Calendar variables
         let currentYear = 2025;
         let currentMonth = 0; // January
-        let selectedDates = new Map(); // Map to store date and remaining seats
+        let selectedDates = new Map(); // Map to store date and all settings
         let existingDatesFromDB = new Map(); // Store original DB data
         const monthNames = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
         const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
@@ -591,18 +680,19 @@
                 
                 if (data) {
                     data.forEach(item => {
-                        // Active인 것만 selectedDates에 추가
-// 다음과 같이 수정
-if (item.is_active) {
-    selectedDates.set(item.party_date, {
-        id: item.id,
-        male_remaining_seats: item.male_remaining_seats || 35,
-        female_remaining_seats: item.female_remaining_seats || 35,
-        male_max_capacity: item.male_max_capacity || 35,
-        female_max_capacity: item.female_max_capacity || 35
-    });
-}
-                        // 모든 기존 데이터를 별도로 저장
+                        if (item.is_active) {
+                            selectedDates.set(item.party_date, {
+                                id: item.id,
+                                male_remaining_seats: item.male_remaining_seats || 35,
+                                female_remaining_seats: item.female_remaining_seats || 35,
+                                male_max_capacity: item.male_max_capacity || 35,
+                                female_max_capacity: item.female_max_capacity || 35,
+                                male_temp_closed: item.male_temp_closed || false,
+                                female_temp_closed: item.female_temp_closed || false,
+                                male_closed: item.male_closed || false,
+                                female_closed: item.female_closed || false
+                            });
+                        }
                         existingDatesFromDB.set(item.party_date, {
                             id: item.id,
                             is_active: item.is_active
@@ -642,10 +732,8 @@ if (item.is_active) {
             
             currentMonthElement.textContent = `${currentYear}년 ${monthNames[currentMonth]}`;
             
-            // Clear calendar
             calendarGrid.innerHTML = '';
             
-            // Add day headers
             dayNames.forEach(day => {
                 const dayHeader = document.createElement('div');
                 dayHeader.className = 'calendar-day-header';
@@ -653,17 +741,14 @@ if (item.is_active) {
                 calendarGrid.appendChild(dayHeader);
             });
             
-            // Get first day of month and number of days
             const firstDay = new Date(currentYear, currentMonth, 1).getDay();
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
             
-            // Add empty cells for days before month starts
             for (let i = 0; i < firstDay; i++) {
                 const emptyDay = document.createElement('div');
                 calendarGrid.appendChild(emptyDay);
             }
             
-            // Add days of month
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'calendar-day';
@@ -671,12 +756,10 @@ if (item.is_active) {
                 
                 const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 
-                // Check if date is selected
                 if (selectedDates.has(dateStr)) {
                     dayElement.classList.add('has-party');
                 }
                 
-                // Check if date is in the past
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);
                 const currentDate = new Date(currentYear, currentMonth, day);
@@ -693,65 +776,120 @@ if (item.is_active) {
         }
         
         // Toggle date selection
-// 수정된 코드
-function toggleDate(dateStr) {
-    if (selectedDates.has(dateStr)) {
-        selectedDates.delete(dateStr);
-    } else {
-        const maleMaxCapacity = parseInt(document.getElementById('maleMaxCapacity').value) || 35;
-        const femaleMaxCapacity = parseInt(document.getElementById('femaleMaxCapacity').value) || 35;
-        const existingDate = existingDatesFromDB.get(dateStr);
+        function toggleDate(dateStr) {
+            if (selectedDates.has(dateStr)) {
+                selectedDates.delete(dateStr);
+            } else {
+                const maleMaxCapacity = parseInt(document.getElementById('maleMaxCapacity').value) || 35;
+                const femaleMaxCapacity = parseInt(document.getElementById('femaleMaxCapacity').value) || 35;
+                const existingDate = existingDatesFromDB.get(dateStr);
+                
+                selectedDates.set(dateStr, {
+                    id: existingDate?.id || null,
+                    male_remaining_seats: maleMaxCapacity,
+                    female_remaining_seats: femaleMaxCapacity,
+                    male_max_capacity: maleMaxCapacity,
+                    female_max_capacity: femaleMaxCapacity,
+                    male_temp_closed: false,
+                    female_temp_closed: false,
+                    male_closed: false,
+                    female_closed: false
+                });
+            }
+            generateCalendar();
+            updateSelectedDatesList();
+        }
         
-        selectedDates.set(dateStr, {
-            id: existingDate?.id || null,
-            male_remaining_seats: maleMaxCapacity,
-            female_remaining_seats: femaleMaxCapacity,
-            male_max_capacity: maleMaxCapacity,
-            female_max_capacity: femaleMaxCapacity
-        });
-    }
-    generateCalendar();
-    updateSelectedDatesList();
-}
-        
-function updateMaleRemainingSeats(dateStr, value) {
-    if (selectedDates.has(dateStr)) {
-        const dateInfo = selectedDates.get(dateStr);
-        dateInfo.male_remaining_seats = parseInt(value) || 0;
-        selectedDates.set(dateStr, dateInfo);
-    }
-}
+        // Update remaining seats functions
+        function updateMaleRemainingSeats(dateStr, value) {
+            if (selectedDates.has(dateStr)) {
+                const dateInfo = selectedDates.get(dateStr);
+                dateInfo.male_remaining_seats = parseInt(value) || 0;
+                selectedDates.set(dateStr, dateInfo);
+            }
+        }
 
-function updateFemaleRemainingSeats(dateStr, value) {
-    if (selectedDates.has(dateStr)) {
-        const dateInfo = selectedDates.get(dateStr);
-        dateInfo.female_remaining_seats = parseInt(value) || 0;
-        selectedDates.set(dateStr, dateInfo);
-    }
-}
+        function updateFemaleRemainingSeats(dateStr, value) {
+            if (selectedDates.has(dateStr)) {
+                const dateInfo = selectedDates.get(dateStr);
+                dateInfo.female_remaining_seats = parseInt(value) || 0;
+                selectedDates.set(dateStr, dateInfo);
+            }
+        }
         
         // Quick adjust seats
-function quickAdjustMaleSeats(dateStr, adjustment) {
-    if (selectedDates.has(dateStr)) {
-        const dateInfo = selectedDates.get(dateStr);
-        const currentSeats = dateInfo.male_remaining_seats;
-        const newSeats = Math.max(0, Math.min(dateInfo.male_max_capacity, currentSeats + adjustment));
-        dateInfo.male_remaining_seats = newSeats;
-        selectedDates.set(dateStr, dateInfo);
-        document.getElementById(`male-seats-${dateStr}`).value = newSeats;
-    }
-}
+        function quickAdjustMaleSeats(dateStr, adjustment) {
+            if (selectedDates.has(dateStr)) {
+                const dateInfo = selectedDates.get(dateStr);
+                const currentSeats = dateInfo.male_remaining_seats;
+                const newSeats = Math.max(0, Math.min(dateInfo.male_max_capacity, currentSeats + adjustment));
+                dateInfo.male_remaining_seats = newSeats;
+                selectedDates.set(dateStr, dateInfo);
+                document.getElementById(`male-seats-${dateStr}`).value = newSeats;
+            }
+        }
 
-function quickAdjustFemaleSeats(dateStr, adjustment) {
-    if (selectedDates.has(dateStr)) {
-        const dateInfo = selectedDates.get(dateStr);
-        const currentSeats = dateInfo.female_remaining_seats;
-        const newSeats = Math.max(0, Math.min(dateInfo.female_max_capacity, currentSeats + adjustment));
-        dateInfo.female_remaining_seats = newSeats;
-        selectedDates.set(dateStr, dateInfo);
-        document.getElementById(`female-seats-${dateStr}`).value = newSeats;
-    }
-}
+        function quickAdjustFemaleSeats(dateStr, adjustment) {
+            if (selectedDates.has(dateStr)) {
+                const dateInfo = selectedDates.get(dateStr);
+                const currentSeats = dateInfo.female_remaining_seats;
+                const newSeats = Math.max(0, Math.min(dateInfo.female_max_capacity, currentSeats + adjustment));
+                dateInfo.female_remaining_seats = newSeats;
+                selectedDates.set(dateStr, dateInfo);
+                document.getElementById(`female-seats-${dateStr}`).value = newSeats;
+            }
+        }
+        
+        // Toggle status functions
+        function toggleMaleTempClosed(dateStr) {
+            if (selectedDates.has(dateStr)) {
+                const dateInfo = selectedDates.get(dateStr);
+                dateInfo.male_temp_closed = !dateInfo.male_temp_closed;
+                // 완전마감이 켜져있으면 임시마감은 꺼짐
+                if (dateInfo.male_closed && dateInfo.male_temp_closed) {
+                    dateInfo.male_closed = false;
+                }
+                selectedDates.set(dateStr, dateInfo);
+                updateSelectedDatesList();
+            }
+        }
+
+        function toggleFemaleTempClosed(dateStr) {
+            if (selectedDates.has(dateStr)) {
+                const dateInfo = selectedDates.get(dateStr);
+                dateInfo.female_temp_closed = !dateInfo.female_temp_closed;
+                if (dateInfo.female_closed && dateInfo.female_temp_closed) {
+                    dateInfo.female_closed = false;
+                }
+                selectedDates.set(dateStr, dateInfo);
+                updateSelectedDatesList();
+            }
+        }
+
+        function toggleMaleClosed(dateStr) {
+            if (selectedDates.has(dateStr)) {
+                const dateInfo = selectedDates.get(dateStr);
+                dateInfo.male_closed = !dateInfo.male_closed;
+                // 완전마감이 켜지면 임시마감은 꺼짐
+                if (dateInfo.male_closed && dateInfo.male_temp_closed) {
+                    dateInfo.male_temp_closed = false;
+                }
+                selectedDates.set(dateStr, dateInfo);
+                updateSelectedDatesList();
+            }
+        }
+
+        function toggleFemaleClosed(dateStr) {
+            if (selectedDates.has(dateStr)) {
+                const dateInfo = selectedDates.get(dateStr);
+                dateInfo.female_closed = !dateInfo.female_closed;
+                if (dateInfo.female_closed && dateInfo.female_temp_closed) {
+                    dateInfo.female_temp_closed = false;
+                }
+                selectedDates.set(dateStr, dateInfo);
+                updateSelectedDatesList();
+            }
+        }
         
         // Update selected dates list
         function updateSelectedDatesList() {
@@ -768,53 +906,136 @@ function quickAdjustFemaleSeats(dateStr, adjustment) {
                 const date = new Date(dateStr + 'T00:00:00');
                 const dayOfWeek = ['일', '월', '화', '수', '목', '금', '토'][date.getDay()];
                 
-// 🟢 새 코드로 완전히 교체
-dateItem.innerHTML = `
-    <div class="date-info" style="flex-direction: column; width: 100%;">
-        <span class="date-text" style="margin-bottom: 15px;">${dateStr} (${dayOfWeek})</span>
-        
-        <!-- 남성 잔여석 -->
-        <div class="remaining-seats-control" style="background: rgba(0, 229, 255, 0.1); margin-bottom: 10px;">
-            <span class="seats-label" style="color: #00e5ff; font-weight: 600;">♂ 남성:</span>
-            <input type="number" 
-                   class="seats-input" 
-                   id="male-seats-${dateStr}"
-                   value="${dateInfo.male_remaining_seats}" 
-                   min="0" 
-                   max="${dateInfo.male_max_capacity}"
-                   onchange="updateMaleRemainingSeats('${dateStr}', this.value)"
-                   style="background: rgba(0, 229, 255, 0.2);">
-            <span class="seats-label">/ ${dateInfo.male_max_capacity}명</span>
-            <div class="quick-adjust">
-                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', -5)">-5</button>
-                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', -1)">-1</button>
-                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', 1)">+1</button>
-                <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', 5)">+5</button>
-            </div>
-        </div>
-        
-        <!-- 여성 잔여석 -->
-        <div class="remaining-seats-control" style="background: rgba(255, 0, 102, 0.1);">
-            <span class="seats-label" style="color: #ff0066; font-weight: 600;">♀ 여성:</span>
-            <input type="number" 
-                   class="seats-input" 
-                   id="female-seats-${dateStr}"
-                   value="${dateInfo.female_remaining_seats}" 
-                   min="0" 
-                   max="${dateInfo.female_max_capacity}"
-                   onchange="updateFemaleRemainingSeats('${dateStr}', this.value)"
-                   style="background: rgba(255, 0, 102, 0.2);">
-            <span class="seats-label">/ ${dateInfo.female_max_capacity}명</span>
-            <div class="quick-adjust">
-                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', -5)">-5</button>
-                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', -1)">-1</button>
-                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', 1)">+1</button>
-                <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', 5)">+5</button>
-            </div>
-        </div>
-    </div>
-    <button class="date-remove" onclick="removeDate('${dateStr}')">×</button>
-`;
+                // 마감 상태 표시
+                const getMaleStatusBadges = () => {
+                    let badges = '';
+                    if (dateInfo.male_closed) badges += '<span class="status-badge closed">마감</span>';
+                    else if (dateInfo.male_temp_closed) badges += '<span class="status-badge temp-closed">임시마감</span>';
+                    return badges;
+                };
+
+                const getFemaleStatusBadges = () => {
+                    let badges = '';
+                    if (dateInfo.female_closed) badges += '<span class="status-badge closed">마감</span>';
+                    else if (dateInfo.female_temp_closed) badges += '<span class="status-badge temp-closed">임시마감</span>';
+                    return badges;
+                };
+                
+                dateItem.innerHTML = `
+                    <div class="date-header">
+                        <span class="date-text">${dateStr} (${dayOfWeek})</span>
+                    </div>
+                    
+                    <div class="gender-controls">
+                        <!-- 남성 섹션 -->
+                        <div class="gender-section male">
+                            <div class="gender-label male">
+                                <span>♂ 남성</span>
+                                ${getMaleStatusBadges()}
+                            </div>
+                            
+                            <div class="seats-control">
+                                <span class="seats-label">잔여석:</span>
+                                <input type="number" 
+                                       class="seats-input" 
+                                       id="male-seats-${dateStr}"
+                                       value="${dateInfo.male_remaining_seats}" 
+                                       min="0" 
+                                       max="${dateInfo.male_max_capacity}"
+                                       onchange="updateMaleRemainingSeats('${dateStr}', this.value)">
+                                <span class="seats-label">/ ${dateInfo.male_max_capacity}명</span>
+                                <div class="quick-adjust">
+                                    <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', -5)">-5</button>
+                                    <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', -1)">-1</button>
+                                    <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', 1)">+1</button>
+                                    <button class="quick-btn" onclick="quickAdjustMaleSeats('${dateStr}', 5)">+5</button>
+                                </div>
+                            </div>
+                            
+                            <div class="status-controls">
+                                <div class="status-toggle">
+                                    <span class="status-toggle-label">
+                                        🚧 임시마감
+                                    </span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" 
+                                               id="male-temp-closed-${dateStr}"
+                                               ${dateInfo.male_temp_closed ? 'checked' : ''} 
+                                               onchange="toggleMaleTempClosed('${dateStr}')">
+                                        <span class="slider temp-closed"></span>
+                                    </label>
+                                </div>
+                                <div class="status-toggle">
+                                    <span class="status-toggle-label">
+                                        🔒 완전마감
+                                    </span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" 
+                                               id="male-closed-${dateStr}"
+                                               ${dateInfo.male_closed ? 'checked' : ''} 
+                                               onchange="toggleMaleClosed('${dateStr}')">
+                                        <span class="slider closed"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 여성 섹션 -->
+                        <div class="gender-section female">
+                            <div class="gender-label female">
+                                <span>♀ 여성</span>
+                                ${getFemaleStatusBadges()}
+                            </div>
+                            
+                            <div class="seats-control">
+                                <span class="seats-label">잔여석:</span>
+                                <input type="number" 
+                                       class="seats-input" 
+                                       id="female-seats-${dateStr}"
+                                       value="${dateInfo.female_remaining_seats}" 
+                                       min="0" 
+                                       max="${dateInfo.female_max_capacity}"
+                                       onchange="updateFemaleRemainingSeats('${dateStr}', this.value)">
+                                <span class="seats-label">/ ${dateInfo.female_max_capacity}명</span>
+                                <div class="quick-adjust">
+                                    <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', -5)">-5</button>
+                                    <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', -1)">-1</button>
+                                    <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', 1)">+1</button>
+                                    <button class="quick-btn" onclick="quickAdjustFemaleSeats('${dateStr}', 5)">+5</button>
+                                </div>
+                            </div>
+                            
+                            <div class="status-controls">
+                                <div class="status-toggle">
+                                    <span class="status-toggle-label">
+                                        🚧 임시마감
+                                    </span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" 
+                                               id="female-temp-closed-${dateStr}"
+                                               ${dateInfo.female_temp_closed ? 'checked' : ''} 
+                                               onchange="toggleFemaleTempClosed('${dateStr}')">
+                                        <span class="slider temp-closed"></span>
+                                    </label>
+                                </div>
+                                <div class="status-toggle">
+                                    <span class="status-toggle-label">
+                                        🔒 완전마감
+                                    </span>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" 
+                                               id="female-closed-${dateStr}"
+                                               ${dateInfo.female_closed ? 'checked' : ''} 
+                                               onchange="toggleFemaleClosed('${dateStr}')">
+                                        <span class="slider closed"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="date-remove" onclick="removeDate('${dateStr}')">×</button>
+                `;
                 
                 list.appendChild(dateItem);
             });
@@ -850,7 +1071,7 @@ dateItem.innerHTML = `
             generateCalendar();
         }
         
-        // Save party dates - 완전히 수정된 버전
+        // Save party dates
         async function savePartyDates() {
             try {
                 showMessage('success', '저장 중...');
@@ -859,7 +1080,7 @@ dateItem.innerHTML = `
                 const { error: deactivateError } = await supabaseClient
                     .from('party_schedules')
                     .update({ is_active: false })
-                    .neq('id', -1); // 모든 레코드 업데이트
+                    .neq('id', -1);
                 
                 if (deactivateError) throw deactivateError;
                 
@@ -867,24 +1088,24 @@ dateItem.innerHTML = `
                 const promises = [];
                 
                 for (const [dateStr, dateInfo] of selectedDates) {
- // 🟢 새 코드로 교체
-const partyData = {
-    party_date: dateStr,
-    is_active: true,
-    max_capacity: (dateInfo.male_max_capacity || 35) + (dateInfo.female_max_capacity || 35), // 전체 유지
-    remaining_seats: (dateInfo.male_remaining_seats || 35) + (dateInfo.female_remaining_seats || 35), // 전체 유지
-    male_max_capacity: dateInfo.male_max_capacity || 35,
-    female_max_capacity: dateInfo.female_max_capacity || 35,
-    male_remaining_seats: dateInfo.male_remaining_seats || 35,
-    female_remaining_seats: dateInfo.female_remaining_seats || 35
-};
-
+                    const partyData = {
+                        party_date: dateStr,
+                        is_active: true,
+                        max_capacity: (dateInfo.male_max_capacity || 35) + (dateInfo.female_max_capacity || 35),
+                        remaining_seats: (dateInfo.male_remaining_seats || 35) + (dateInfo.female_remaining_seats || 35),
+                        male_max_capacity: dateInfo.male_max_capacity || 35,
+                        female_max_capacity: dateInfo.female_max_capacity || 35,
+                        male_remaining_seats: dateInfo.male_remaining_seats || 35,
+                        female_remaining_seats: dateInfo.female_remaining_seats || 35,
+                        male_temp_closed: dateInfo.male_temp_closed || false,
+                        female_temp_closed: dateInfo.female_temp_closed || false,
+                        male_closed: dateInfo.male_closed || false,
+                        female_closed: dateInfo.female_closed || false
+                    };
                     
-                    // 기존 레코드가 있는지 확인
                     const existingRecord = existingDatesFromDB.get(dateStr);
                     
                     if (existingRecord && existingRecord.id) {
-                        // 기존 레코드 업데이트
                         promises.push(
                             supabaseClient
                                 .from('party_schedules')
@@ -892,13 +1113,12 @@ const partyData = {
                                 .eq('id', existingRecord.id)
                         );
                     } else {
-                        // 새 레코드 삽입
                         promises.push(
                             supabaseClient
                                 .from('party_schedules')
                                 .upsert({
                                     ...partyData,
-                                    party_date: dateStr // party_date를 unique key로 사용
+                                    party_date: dateStr
                                 }, {
                                     onConflict: 'party_date'
                                 })
@@ -906,10 +1126,8 @@ const partyData = {
                     }
                 }
                 
-                // 3. 모든 작업 실행
                 const results = await Promise.all(promises);
                 
-                // 에러 체크
                 results.forEach((result, index) => {
                     if (result.error) {
                         console.error(`Error at index ${index}:`, result.error);
@@ -917,9 +1135,8 @@ const partyData = {
                     }
                 });
                 
-                showMessage('success', '✅ 파티 날짜와 잔여석이 성공적으로 저장되었습니다!');
+                showMessage('success', '✅ 파티 날짜와 설정이 성공적으로 저장되었습니다!');
                 
-                // 4. 데이터 다시 로드 (ID 업데이트를 위해)
                 setTimeout(() => {
                     loadExistingDates();
                 }, 500);
@@ -1005,10 +1222,14 @@ const partyData = {
         });
         
         // Make functions globally accessible
-window.updateMaleRemainingSeats = updateMaleRemainingSeats;
-window.updateFemaleRemainingSeats = updateFemaleRemainingSeats;
-window.quickAdjustMaleSeats = quickAdjustMaleSeats;
-window.quickAdjustFemaleSeats = quickAdjustFemaleSeats;
+        window.updateMaleRemainingSeats = updateMaleRemainingSeats;
+        window.updateFemaleRemainingSeats = updateFemaleRemainingSeats;
+        window.quickAdjustMaleSeats = quickAdjustMaleSeats;
+        window.quickAdjustFemaleSeats = quickAdjustFemaleSeats;
+        window.toggleMaleTempClosed = toggleMaleTempClosed;
+        window.toggleFemaleTempClosed = toggleFemaleTempClosed;
+        window.toggleMaleClosed = toggleMaleClosed;
+        window.toggleFemaleClosed = toggleFemaleClosed;
         window.removeDate = removeDate;
         window.prevMonth = prevMonth;
         window.nextMonth = nextMonth;
