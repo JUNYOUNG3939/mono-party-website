@@ -6603,6 +6603,12 @@ const maleClosed = party.male_closed || false;
 const femaleClosed = party.female_closed || false;
                 const maleMax = party.male_max_capacity || 35;
                 const femaleMax = party.female_max_capacity || 35;
+                if (maleTempClosed || femaleTempClosed || maleClosed || femaleClosed) {
+    console.log('🔴 마감 상태 발견!');
+    console.log('날짜:', party.party_date);
+    console.log('남자 임시마감:', maleTempClosed);
+    console.log('여자 임시마감:', femaleTempClosed);
+}
 
                 
                 // 전체 잔여석
