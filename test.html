@@ -6592,12 +6592,18 @@ async function loadPartyDates() {
                 // 남녀 잔여석 계산
                 const maleRemaining = party.male_remaining_seats !== undefined ? party.male_remaining_seats : 35;
                 const femaleRemaining = party.female_remaining_seats !== undefined ? party.female_remaining_seats : 35;
-                const maleMax = party.male_max_capacity || 35;
-                const femaleMax = party.female_max_capacity || 35;
+                console.log('파티 데이터:', party);
+console.log('남자 임시마감:', party.male_temp_closed);
+console.log('여자 임시마감:', party.female_temp_closed);
+console.log('남자 마감:', party.male_closed);
+console.log('여자 마감:', party.female_closed);               
                 const maleTempClosed = party.male_temp_closed || false;
 const femaleTempClosed = party.female_temp_closed || false;
 const maleClosed = party.male_closed || false;
 const femaleClosed = party.female_closed || false;
+                const maleMax = party.male_max_capacity || 35;
+                const femaleMax = party.female_max_capacity || 35;
+
                 
                 // 전체 잔여석
                 const totalRemaining = maleRemaining + femaleRemaining;
