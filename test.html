@@ -6152,6 +6152,16 @@ function showDateDetails(dateString, partyInfo) {
     const maleMax = partyInfo.male_max_capacity || 35;
     const femaleMax = partyInfo.female_max_capacity || 35;
     const totalRemaining = maleRemaining + femaleRemaining;
+    // 마감 상태 확인
+const maleTempClosed = partyInfo.male_temp_closed || false;
+const femaleTempClosed = partyInfo.female_temp_closed || false;
+const maleClosed = partyInfo.male_closed || false;
+const femaleClosed = partyInfo.female_closed || false;
+
+// 신청 가능 여부
+const canMaleApply = !maleClosed && !maleTempClosed && maleRemaining > 0;
+const canFemaleApply = !femaleClosed && !femaleTempClosed && femaleRemaining > 0;
+const canApply = canMaleApply || canFemaleApply;
     
     const maleOccupancy = ((maleMax - maleRemaining) / maleMax) * 100;
     const femaleOccupancy = ((femaleMax - femaleRemaining) / femaleMax) * 100;
@@ -6192,10 +6202,10 @@ function showDateDetails(dateString, partyInfo) {
         </div>
         
         <div style="text-align: center;">
-            ${totalRemaining === 0 ? 
-                '<button disabled style="padding: 15px 40px; background: #666; color: #999; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: not-allowed;">매진되었습니다</button>' :
-                '<button onclick="openApplicationModal()" style="padding: 15px 40px; background: var(--neon-accent); color: var(--bg-primary); border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">지금 참가 신청하기 →</button>'
-            }
+${!canApply ? 
+    '<button disabled style="padding: 15px 40px; background: #666; color: #999; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: not-allowed;">현재 신청 불가</button>' :
+    '<button onclick="openApplicationModal()" style="padding: 15px 40px; background: var(--neon-accent); color: var(--bg-primary); border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform=\'scale(1.05)\'" onmouseout="this.style.transform=\'scale(1)\'">지금 참가 신청하기 →</button>'
+}
         </div>
     `;
     
@@ -6584,6 +6594,10 @@ async function loadPartyDates() {
                 const femaleRemaining = party.female_remaining_seats !== undefined ? party.female_remaining_seats : 35;
                 const maleMax = party.male_max_capacity || 35;
                 const femaleMax = party.female_max_capacity || 35;
+                const maleTempClosed = party.male_temp_closed || false;
+const femaleTempClosed = party.female_temp_closed || false;
+const maleClosed = party.male_closed || false;
+const femaleClosed = party.female_closed || false;
                 
                 // 전체 잔여석
                 const totalRemaining = maleRemaining + femaleRemaining;
@@ -6656,16 +6670,16 @@ if (isWeekend && !isMoodKingParty) {
                             </div>
                         </div>
                         
-                        <!-- 남성 잔여석 -->
-                        <div style="margin-bottom: 15px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <span style="color: #00e5ff; font-size: 0.9rem; font-weight: 600;">
-                                    ♂ 남성
-                                </span>
-                                <span style="color: ${maleRemaining <= 5 ? '#ff0066' : maleRemaining <= 10 ? '#ffaa00' : '#00e5ff'}; font-size: 0.9rem; font-weight: 700;">
-                                    ${maleRemaining === 0 ? '마감' : `${maleRemaining}석`}
-                                </span>
-                            </div>
+<!-- 남성 잔여석 -->
+<div style="margin-bottom: 15px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="color: #00e5ff; font-size: 0.9rem; font-weight: 600;">
+            ♂ 남성
+        </span>
+        <span style="color: ${maleClosed ? '#ff0066' : maleTempClosed ? '#ffaa00' : maleRemaining <= 5 ? '#ff0066' : '#00e5ff'}; font-size: 0.9rem; font-weight: 700;">
+            ${maleClosed ? '❌ 마감' : maleTempClosed ? '⏸️ 임시마감' : maleRemaining === 0 ? '마감' : `${maleRemaining}석`}
+        </span>
+    </div>
                             <div style="position: relative; background: rgba(0, 229, 255, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
                                 <div style="
                                     background: linear-gradient(90deg, #00e5ff, #0099ff);
@@ -6678,15 +6692,16 @@ if (isWeekend && !isMoodKingParty) {
                         </div>
                         
                         <!-- 여성 잔여석 -->
-                        <div style="margin-bottom: 20px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                <span style="color: #ff0066; font-size: 0.9rem; font-weight: 600;">
-                                    ♀ 여성
-                                </span>
-                                <span style="color: ${femaleRemaining <= 5 ? '#ff0066' : femaleRemaining <= 10 ? '#ffaa00' : '#ff0066'}; font-size: 0.9rem; font-weight: 700;">
-                                    ${femaleRemaining === 0 ? '마감' : `${femaleRemaining}석`}
-                                </span>
-                            </div>
+<!-- 여성 잔여석 -->
+<div style="margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <span style="color: #ff0066; font-size: 0.9rem; font-weight: 600;">
+            ♀ 여성
+        </span>
+        <span style="color: ${femaleClosed ? '#ff0066' : femaleTempClosed ? '#ffaa00' : femaleRemaining <= 5 ? '#ff0066' : '#ff0066'}; font-size: 0.9rem; font-weight: 700;">
+            ${femaleClosed ? '❌ 마감' : femaleTempClosed ? '⏸️ 임시마감' : femaleRemaining === 0 ? '마감' : `${femaleRemaining}석`}
+        </span>
+    </div>
                             <div style="position: relative; background: rgba(255, 0, 102, 0.1); border-radius: 10px; overflow: hidden; height: 8px;">
                                 <div style="
                                     background: linear-gradient(90deg, #ff0066, #ff3388);
@@ -6712,14 +6727,26 @@ if (isWeekend && !isMoodKingParty) {
         font-size: 0.95rem;
         font-weight: 700;
     ">
-            ${totalRemaining === 0 ? 
-        '🔥 매진 🔥' : 
-        totalRemaining <= 10 ?
-        `⚠️ 마감임박! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석` :
-        totalRemaining <= 20 ?
-        `⚡ 서둘러요! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석` :
-        `잔여석: 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석`
+${(() => {
+    const isMaleAvailable = !maleClosed && !maleTempClosed && maleRemaining > 0;
+    const isFemaleAvailable = !femaleClosed && !femaleTempClosed && femaleRemaining > 0;
+    
+    if (!isMaleAvailable && !isFemaleAvailable) {
+        return '🔒 신청 마감';
+    } else if (!isMaleAvailable) {
+        return `⚠️ 남자 ${maleClosed ? '마감' : '임시마감'} | 여자 ${femaleRemaining}석`;
+    } else if (!isFemaleAvailable) {
+        return `⚠️ 여자 ${femaleClosed ? '마감' : '임시마감'} | 남자 ${maleRemaining}석`;
+    } else if (totalRemaining === 0) {
+        return '🔥 매진 🔥';
+    } else if (totalRemaining <= 10) {
+        return `⚡ 마감임박! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석`;
+    } else if (totalRemaining <= 20) {
+        return `⚡ 서둘러요! 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석`;
+    } else {
+        return `잔여석: 남자 ${maleRemaining}석, 여자 ${femaleRemaining}석`;
     }
+})()}
     </span>
 </div>
                     </div>
