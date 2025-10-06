@@ -704,9 +704,9 @@
         💑 동반인과 함께 오시면 ALL NIGHT 티켓 할인 혜택!
     </p>
     <div class="companion-selection" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-        <label class="companion-card" style="
+        <label class="companion-card selected" style="
             background: var(--input-bg);
-            border: 2px solid var(--input-border);
+            border: 2px solid var(--neon-accent);
             border-radius: 10px;
             padding: 20px;
             text-align: center;
@@ -976,6 +976,27 @@
         // Discord 알림 전송 함수
         async function sendDiscordNotification(applicationData) {
             try {
+                // 가격 정보 텍스트 생성
+                const genderText = applicationData.gender === 'male' ? '남성' : '여성';
+                const ticketText = applicationData.ticket_type === 'allNight' ? 'ALL NIGHT (1부+2부)' : 
+                                   applicationData.ticket_type === 'part1' ? '1부만' : '2부만';
+                const companionText = applicationData.companion === 'yes' ? 
+                                      `있음 (${applicationData.companion_name})` : '없음';
+                
+                // 추석 할인 여부 확인
+                const isInChuseok = isChuseokPeriod(applicationData.selected_date);
+                const priceText = isInChuseok ? 
+                    `${applicationData.price.toLocaleString()}원 (추석 할인 적용)` : 
+                    `${applicationData.price.toLocaleString()}원`;
+                
+                console.log('Discord 전송 데이터:', {
+                    성별: genderText,
+                    티켓: ticketText,
+                    동반인: companionText,
+                    가격: priceText,
+                    날짜: applicationData.selected_date
+                });
+                
                 const embed = {
                     title: "🎉 새로운 MONO PARTY 참가 신청!",
                     color: 0x00ff88,
@@ -1005,7 +1026,7 @@
                         },
                         {
                             name: "⚧ 성별",
-                            value: applicationData.gender === 'male' ? '남성' : '여성',
+                            value: genderText,
                             inline: true
                         },
                         {
@@ -1015,13 +1036,12 @@
                         },
                         {
                             name: "🎫 티켓 타입",
-                            value: applicationData.ticket_type === 'allNight' ? 'ALL NIGHT (1부+2부)' : 
-                                   applicationData.ticket_type === 'part1' ? '1부만' : '2부만',
+                            value: ticketText,
                             inline: true
                         },
                         {
                             name: "💰 결제 금액",
-                            value: `${applicationData.price.toLocaleString()}원`,
+                            value: priceText,
                             inline: true
                         },
                         {
@@ -1046,8 +1066,7 @@
                         },
                         {
                             name: "👥 동반인",
-                            value: applicationData.companion === 'yes' ? 
-                                   `있음 (${applicationData.companion_name})` : '없음',
+                            value: companionText,
                             inline: true
                         },
                         {
@@ -1593,6 +1612,17 @@ function lockGenderSelection() {
         document.addEventListener('DOMContentLoaded', function() {
             // Load available party dates first
             loadAvailablePartyDates();
+            
+            // Initialize companion selection (ensure default is set)
+            const defaultCompanion = document.querySelector('input[name="companion"][value="no"]');
+            if (defaultCompanion) {
+                defaultCompanion.checked = true;
+                const companionCard = defaultCompanion.parentElement;
+                if (companionCard) {
+                    companionCard.classList.add('selected');
+                }
+            }
+            
                 // ✅ 초기 가격 표시 추가
     setTimeout(() => {
         const gender = document.querySelector('input[name="gender"]:checked');
